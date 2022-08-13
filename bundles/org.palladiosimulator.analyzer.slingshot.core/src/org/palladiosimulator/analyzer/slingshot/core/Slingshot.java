@@ -31,10 +31,7 @@ public class Slingshot extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		bundle = this;
 		System.out.println("Slingshot started");
-		
-		
-		this.guiceInjector = Guice.createInjector(new SlingshotSystem());
-		
+
 		
 		super.start(context);
 	}
