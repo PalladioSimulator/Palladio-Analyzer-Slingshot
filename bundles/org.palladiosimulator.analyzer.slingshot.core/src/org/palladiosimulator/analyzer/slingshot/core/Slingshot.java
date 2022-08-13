@@ -22,7 +22,7 @@ public class Slingshot extends Plugin {
 	
 	private static Slingshot bundle = null;
 	
-	private List<AbstractSlingshotExtension> extensions;
+	private List<AbstractSlingshotExtension> extensions = null;
 	
 	private Injector guiceInjector;
 	private final Bus bus = Bus.instance();
@@ -30,18 +30,10 @@ public class Slingshot extends Plugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		bundle = this;
+		System.out.println("Slingshot started");
 		
-		this.extensions = ExtensionHelper.getExecutableExtensions(ExtensionIds.EXTENSION_POINT_ID, ExtensionIds.EXTENSION_ATTRIBUTE_NAME);
 		
-		this.guiceInjector = Guice.createInjector(new AbstractModule() {
-			
-			@Override
-			protected void configure() {
-				bind(SimulationDriver.class).to(SlingshotSimulationDriver.class);
-				bind(SimulationEngine.class).to(SimulationEngineSSJ.class);
-			}
-			
-		});
+		this.guiceInjector = Guice.createInjector(new SlingshotSystem());
 		
 		
 		super.start(context);
@@ -52,10 +44,15 @@ public class Slingshot extends Plugin {
 		bundle = null;
 		this.extensions = null;
 		this.guiceInjector = null;
+		System.out.println("Slingshot ended");
 		super.stop(context);
 	}
 	
 	public List<AbstractSlingshotExtension> getExtensions() {
+		if (this.extensions == null) {
+			this.extensions = ExtensionHelper.getExecutableExtensions(ExtensionIds.EXTENSION_POINT_ID, ExtensionIds.EXTENSION_ATTRIBUTE_NAME);
+		}
+		
 		return Collections.unmodifiableList(this.extensions);
 	}
 

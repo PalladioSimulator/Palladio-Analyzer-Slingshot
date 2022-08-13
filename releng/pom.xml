@@ -7,4 +7,8 @@
   </parent>
   <artifactId>releng</artifactId>
   <packaging>pom</packaging>
+  
+  <modules>
+  	<module>org.palladiosimulator.slingshot.updatesite</module>
+  </modules>
 </project>

@@ -5,3 +5,4 @@ Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.workflow
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.workflow
 Bundle-RequiredExecutionEnvironment: JavaSE-11
+Require-Bundle: org.palladiosimulator.analyzer.slingshot.core;bundle-version="1.0.0"

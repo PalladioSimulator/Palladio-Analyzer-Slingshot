@@ -16,3 +16,4 @@ Require-Bundle: com.google.inject;bundle-version="5.0.1",
  org.palladiosimulator.analyzer.slingshot.eventdriver
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.palladiosimulator.analyzer.slingshot.core.Slingshot
+Export-Package: org.palladiosimulator.analyzer.slingshot.core
