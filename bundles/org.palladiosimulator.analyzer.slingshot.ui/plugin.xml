@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="org.palladiosimulator.analyzer.slingshot.ui.SlingshotLaunchSimulationTabGroup"
+            id="org.palladiosimulator.analyzer.slingshot.ui.launchConfigurationTabGroup1"
+            type="org.palladiosimulator.analyzer.slingshot.ui.launchConfigurationType1">
+      </launchConfigurationTabGroup>
+   </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="de.uka.ipd.sdq.codegen.simucontroller.runconfig.SimulationWorkflowLauncher"
+            id="org.palladiosimulator.analyzer.slingshot.ui.launchConfigurationType1"
+            modes="run, debug"
+            name="Slingshot Simulation"
+            public="true">
+      </launchConfigurationType>
+   </extension>
+</plugin>

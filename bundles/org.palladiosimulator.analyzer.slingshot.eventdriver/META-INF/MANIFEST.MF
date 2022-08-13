@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Eventdriver
+Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.eventdriver
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.eventdriver
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-ClassPath: lib/rxjava-3.1.5.jar,
+ .
+Require-Bundle: org.reactivestreams;bundle-version="1.0.2"
+Export-Package: org.palladiosimulator.analyzer.slingshot.eventdriver
