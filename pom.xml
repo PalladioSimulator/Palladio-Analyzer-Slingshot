@@ -5,7 +5,8 @@
     <artifactId>eclipse-parent-updatesite</artifactId>
     <version>0.7.5</version>
   </parent>
-  <groupId>org.palladiosimulator.analyzer</groupId>
+  
+  <groupId>org.palladiosimulator.analyzer.slingshot</groupId>
   <artifactId>slingshot</artifactId>
   <version>0.0.2-SNAPSHOT</version>
   <packaging>pom</packaging>
