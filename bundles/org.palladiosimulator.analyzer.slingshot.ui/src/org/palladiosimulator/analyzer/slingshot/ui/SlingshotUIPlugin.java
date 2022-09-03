@@ -4,6 +4,7 @@ import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.palladiosimulator.analyzer.slingshot.core.Slingshot;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
 
 public class SlingshotUIPlugin extends Plugin implements BundleActivator {
 
@@ -15,7 +16,6 @@ public class SlingshotUIPlugin extends Plugin implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		instance = this;
 		slingshot = Slingshot.getInstance();
-		System.out.println("Slingshot UI Plugin started");
 		super.start(context);
 	}
 
@@ -23,7 +23,6 @@ public class SlingshotUIPlugin extends Plugin implements BundleActivator {
 	public void stop(BundleContext context) throws Exception {
 		instance = null;
 		slingshot = null;
-		System.out.println("Slingshot UI Plugin ended.");
 		super.stop(context);
 	}
 	

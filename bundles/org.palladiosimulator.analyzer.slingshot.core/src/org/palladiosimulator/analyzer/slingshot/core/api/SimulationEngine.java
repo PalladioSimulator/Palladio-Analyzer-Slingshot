@@ -2,8 +2,8 @@ package org.palladiosimulator.analyzer.slingshot.core.api;
 
 import java.util.function.Function;
 
-import org.palladiosimulator.analyzer.slingshot.core.events.DESEvent;
-import org.palladiosimulator.analyzer.slingshot.core.events.SlingshotEvent;
+import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;
+import org.palladiosimulator.analyzer.slingshot.common.events.SlingshotEvent;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 
 public interface SimulationEngine {

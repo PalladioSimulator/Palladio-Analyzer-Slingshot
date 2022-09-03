@@ -5,7 +5,11 @@
     <artifactId>slingshot</artifactId>
     <version>0.0.2-SNAPSHOT</version>
   </parent>
-  <groupId>org.palladiosimulator.analyzer.slingshot</groupId>
+  
   <artifactId>tests</artifactId>
   <packaging>pom</packaging>
+  
+  <modules>
+  	<module>org.palladiosimulator.analyzer.slingshot.eventdriver.test</module>
+  </modules>
 </project>

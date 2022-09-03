@@ -14,5 +14,8 @@
   	<module>org.palladiosimulator.analyzer.slingshot.workflow</module>
   	<module>org.palladiosimulator.analyzer.slingshot.common</module>
   	<module>org.palladiosimulator.analyzer.slingshot.eventdriver</module>
+  	<module>org.palladiosimulator.analyzer.slingshot.eventdriver.annotationprocessor</module>
+  	<module>org.palladiosimulator.analyzer.slingshot.ui.events</module>
+  	<module>org.palladiosimulator.analyzer.slingshot.workflow.events</module>
   </modules>
 </project>

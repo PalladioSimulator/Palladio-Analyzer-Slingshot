@@ -4,14 +4,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;
+import org.palladiosimulator.analyzer.slingshot.common.events.SlingshotEvent;
 import org.palladiosimulator.analyzer.slingshot.core.Slingshot;
+import org.palladiosimulator.analyzer.slingshot.core.annotations.BehaviorExtensions;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationEngine;
-import org.palladiosimulator.analyzer.slingshot.core.events.DESEvent;
-import org.palladiosimulator.analyzer.slingshot.core.events.SlingshotEvent;
+import org.palladiosimulator.analyzer.slingshot.core.events.SimulationStarted;
 import org.palladiosimulator.analyzer.slingshot.core.extension.AbstractSlingshotExtension;
 import org.palladiosimulator.analyzer.slingshot.core.extension.BehaviorContainer;
 import org.palladiosimulator.analyzer.slingshot.core.extension.ExtensionIds;
+import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.commons.eclipseutils.ExtensionHelper;
 
 import com.google.inject.Inject;
@@ -25,13 +28,15 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 	
 	private final SimulationEngine engine;
 	private final Injector parentInjector;
-	
-	private final List<AbstractSlingshotExtension> extensions = Slingshot.getInstance().getExtensions();
+	private final List<BehaviorContainer> behaviorContainers;
 	
 	@Inject
-	public SlingshotSimulationDriver(final SimulationEngine engine, final Injector injector) {
+	public SlingshotSimulationDriver(final SimulationEngine engine,
+			final Injector injector,
+			@BehaviorExtensions final List<BehaviorContainer> behaviorContainers) {
 		this.engine = engine;
 		this.parentInjector = injector;
+		this.behaviorContainers = behaviorContainers;
 	}
 	
 	public void init() {
@@ -39,16 +44,17 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 			return;
 		}
 		
-		final List<BehaviorContainer> containers =	this.extensions.stream()
-					   .map(extension -> new BehaviorContainer(extension))
-					   .collect(Collectors.toList());
+		final Injector childInjector = this.parentInjector.createChildInjector(behaviorContainers);
 		
-		final List<Module> finalModules = new ArrayList<>(this.extensions.size() + containers.size());
-		this.extensions.forEach(finalModules::add);
-		containers.forEach(finalModules::add);
-		
-		
-		final Injector simulationChildInjector = this.parentInjector.createChildInjector(finalModules);
+		behaviorContainers.stream()
+			.flatMap(extensions -> extensions.getExtensions().stream())
+			.forEach(simExtension -> {
+				final Object e = childInjector.getInstance(simExtension);
+				if (!(e instanceof SimulationBehaviorExtension)) {
+					return;
+				}
+				engine.registerEventListener((SimulationBehaviorExtension) e);
+			});
 		
 		this.initialized = true;
 	}
@@ -63,6 +69,7 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		
 		this.engine.init();
 		this.engine.start();
+		this.scheduleEvent(new SimulationStarted());
 	}
 
 	@Override
@@ -72,6 +79,7 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		}
 		
 		this.running = false;
+		this.engine.stop();
 	}
 
 	@Override
@@ -81,15 +89,13 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 
 	@Override
-	public void scheduleEvent(SlingshotEvent event) {
-		// TODO Auto-generated method stub
-		
+	public void scheduleEvent(DESEvent event) {
+		this.engine.scheduleEvent(event);
 	}
 
 	@Override
-	public void scheduleEventAt(SlingshotEvent event, double simulationTime) {
-		// TODO Auto-generated method stub
-		
+	public void scheduleEventAt(DESEvent event, double simulationTime) {
+		this.engine.scheduleEventAt(event, simulationTime);
 	}
 
 }

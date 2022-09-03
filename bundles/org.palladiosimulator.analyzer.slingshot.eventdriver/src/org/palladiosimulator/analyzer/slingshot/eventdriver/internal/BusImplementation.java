@@ -17,6 +17,7 @@ import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.PreInter
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.Subscribe;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.AbstractSubscriber;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.AnnotatedSubscriber;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.CompositeInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.CompositePostInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.CompositePreInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.IPostInterceptor;
@@ -24,6 +25,7 @@ import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.InterceptorInformation;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.PostInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.PreInterceptor;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.internal.contractchecker.EventContractChecker;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
@@ -34,27 +36,40 @@ public final class BusImplementation implements Bus {
 	
 	private final Subject<Object> bus;
 	
+	/** Maps events (event classes) to handlers */
 	private final Map<Class<?>, CompositeDisposable> observers = new HashMap<>();
 	
-	private final Map<Class<?>, CompositePreInterceptor> preInterceptors = new HashMap<>();
-	private final Map<Class<?>, CompositePostInterceptor> postInterceptors = new HashMap<>();
+	private final CompositeInterceptor compositeInterceptor = new CompositeInterceptor();
+	
+	/** Maps exception classes to set of exception handlers */
 	private final Map<Class<?>, Set<Consumer<? super Throwable>>> exceptionHandlers = new HashMap<>();
 	
 	
 	private final Map<Class<?>, Set<AbstractSubscriber<?>>> subscribers = new HashMap<>();
 	
 	private boolean registrationOpened = true;
-	private boolean invocationOpened = false;
+	private boolean invocationOpened = true;
 	
+	private final String identifier;
+	
+	
+	public BusImplementation(final String identifier) {
+		this.identifier = Objects.requireNonNull(identifier);
+		this.bus = PublishSubject.create();
+		this.init();
+	}
+	
+	private void init() {
+		this.register(new EventContractChecker());
+	}
 	
 	public BusImplementation() {
-		this.bus = PublishSubject.create();
+		this("default");
 	}
 
 	@Override
 	public String getIdentifier() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.identifier;
 	}
 
 	@Override
@@ -74,10 +89,13 @@ public final class BusImplementation implements Bus {
 		
 		final Set<Class<?>> events = new HashSet<>();
 		
+		System.out.println("Register " + object.getClass().getSimpleName());
+		
 		for (final Method method : observerClass.getDeclaredMethods()) {
 			if (method.isBridge() || method.isSynthetic()) {
 				continue;
 			}
+			
 			this.searchForSubscribers(composite, events, method, object);
 			this.searchExceptionHandlers(method, object);
 			this.searchPreInterceptors(method, object);
@@ -103,6 +121,7 @@ public final class BusImplementation implements Bus {
 		if (!this.invocationOpened) {
 			throw new IllegalStateException("The bus is not currently allowing posting of events.");
 		}
+		System.out.println("Now post " + event.getClass().getSimpleName());
 		this.bus.onNext(Objects.requireNonNull(event));
 	}
 
@@ -126,35 +145,43 @@ public final class BusImplementation implements Bus {
 			throw new IllegalArgumentException("Subscriber for " + eventClass.getSimpleName() + " has already been registered.");
 		}
 		
+		EventContractChecker.checkEventContract(method, object, eventClass);
+		
 		final Class<?> returnType = method.getReturnType();
 		if (!returnType.equals(void.class) && !returnType.equals(Void.class) && !returnType.equals(Result.class)) {
 			throw new IllegalArgumentException("Observables must return either void (primitive), Void (object) or Result, but this method returns " + returnType.getSimpleName());
 		}
 		
+		
+		System.out.println("\tAdded subscriber method " + method.getName());
 		composite.add(
 				this.bus.ofType(eventClass)
-					    .doOnError(error -> {
-					    	this.exceptionHandlers.keySet().stream()
-					    		.filter(exClazz -> exClazz.isAssignableFrom(error.getClass()))
-					    		.flatMap(exClazz -> this.exceptionHandlers.get(exClazz).stream())
-					    		.forEach(exHandler -> exHandler.accept(error));
-					    })
-						.subscribe(new AnnotatedSubscriber(method, object, null, null))
+						.doOnNext(ev -> System.out.println("ON NEXT " + ev.getClass().getSimpleName()))
+						.subscribe(
+								new AnnotatedSubscriber(method, object, compositeInterceptor, compositeInterceptor),
+								error -> {
+							    	this.exceptionHandlers.keySet().stream()
+							    		.filter(exClazz -> exClazz.isAssignableFrom(error.getClass()))
+							    		.flatMap(exClazz -> this.exceptionHandlers.get(exClazz).stream())
+							    		.forEach(exHandler -> exHandler.accept(error));
+							    }
+						)
 		);
+		
 	}
 	
 	private void searchPreInterceptors(final Method method, final Object object) {
 		if (!method.isAnnotationPresent(PreIntercept.class)) {
 			return;
 		}
+		
 		if (!Modifier.isPublic(method.getModifiers())) {
 			throw new IllegalArgumentException("Method " + method.getName() + " for pre-interception is not public.");
 		}
 		
 		final PreInterceptor preInterceptor = new PreInterceptor(method, object);
 		
-		this.preInterceptors.computeIfAbsent(preInterceptor.forEvent(), event -> new CompositePreInterceptor())
-							.add(preInterceptor);
+		this.compositeInterceptor.add(preInterceptor.forEvent(), preInterceptor);
 	}
 	
 	private void searchPostInterceptors(final Method method, final Object object) {
@@ -165,8 +192,7 @@ public final class BusImplementation implements Bus {
 			throw new IllegalArgumentException("Method " + method.getName() + " for post-interception is not public.");
 		}
 		final PostInterceptor postInterceptor = new PostInterceptor(method, object);
-		this.postInterceptors.computeIfAbsent(postInterceptor.forEvent(), event -> new CompositePostInterceptor())
-						     .add(postInterceptor);
+		this.compositeInterceptor.add(postInterceptor.forEvent(), postInterceptor);
 	}
 	
 	private void searchExceptionHandlers(final Method method, final Object target) {
@@ -207,5 +233,10 @@ public final class BusImplementation implements Bus {
 		
 		this.exceptionHandlers.computeIfAbsent(params[0], eventType -> new HashSet<>())
 							  .add(onException);
+	}
+	
+	public void closeRegistration() {
+		this.registrationOpened = false;
+		this.invocationOpened = true;
 	}
 }

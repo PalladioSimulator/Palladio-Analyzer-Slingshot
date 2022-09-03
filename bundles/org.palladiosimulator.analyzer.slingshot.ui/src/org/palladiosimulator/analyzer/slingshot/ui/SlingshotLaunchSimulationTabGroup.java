@@ -3,6 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.ui;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTabGroup;
 import org.eclipse.debug.ui.ILaunchConfigurationDialog;
 import org.eclipse.debug.ui.ILaunchConfigurationTab;
+import org.palladiosimulator.analyzer.slingshot.ui.tabs.SimulationArchitectureModelsTab;
 
 import de.uka.ipd.sdq.codegen.simucontroller.runconfig.SimuComConfigurationTab;
 import de.uka.ipd.sdq.codegen.simucontroller.runconfig.SimuConfigurationTab;
@@ -13,14 +14,14 @@ public class SlingshotLaunchSimulationTabGroup extends AbstractLaunchConfigurati
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		final ILaunchConfigurationTab[] tabs = new ILaunchConfigurationTab[] {
+				new SimulationArchitectureModelsTab(),
 				new SimuComConfigurationTab(),
 				new SimuConfigurationTab(),
 				new DebugEnabledCommonTab()
 		};
 		
-		System.out.println("Now the tabs");
-		
 		super.setTabs(tabs);
 	}
 
+	
 }

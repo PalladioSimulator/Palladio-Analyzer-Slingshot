@@ -6,15 +6,18 @@ import com.google.inject.AbstractModule;
 
 public final class BehaviorContainer extends AbstractModule {
 
-	private final List<Class<? extends SimulationBehaviorExtension>> extensions;
+	private AbstractSlingshotExtension extension;
 	
 	public BehaviorContainer(final AbstractSlingshotExtension extension) {
-		this.extensions = extension.getBehaviorExtensions();
+		this.extension = extension;
 	}
 	
 	@Override
 	public void configure() {
-		this.extensions.forEach(this::bind);
+		this.extension.getBehaviorExtensions().forEach(this::bind);
 	}
 	
+	public List<Class<? extends SimulationBehaviorExtension>> getExtensions() {
+		return this.extension.getBehaviorExtensions();
+	}
 }

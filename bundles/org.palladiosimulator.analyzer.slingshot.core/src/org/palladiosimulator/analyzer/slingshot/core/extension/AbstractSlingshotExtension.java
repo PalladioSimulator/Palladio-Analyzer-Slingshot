@@ -1,6 +1,9 @@
 package org.palladiosimulator.analyzer.slingshot.core.extension;
 
 import java.util.List;
+
+
+import org.eclipse.emf.ecore.EObject;
 import java.util.Collections;
 import java.util.LinkedList;
 
@@ -15,7 +18,12 @@ public abstract class AbstractSlingshotExtension extends AbstractModule {
 			this.behaviorExtensions = new LinkedList<>();
 		}
 		
+		System.out.println("Installing " + behaviorExtension.getSimpleName());
 		this.behaviorExtensions.add(behaviorExtension);
+	}
+	
+	protected final <T extends EObject> void provideModel(final Class<T> model, final Class<? extends ModelProvider<T>> provider) {
+		bind(model).toProvider(provider);
 	}
 	
 	@Override

@@ -1,0 +1,45 @@
+#!/bin/bash
+
+echo "Starting compilation"
+echo "Get Java version"
+
+if [[ -n "$JAVA_HOME" ]] && [[ -x "$JAVA_HOME/bin/java" ]]; then
+    echo "Found Java executable in JAVA_HOME"
+    _java="$JAVA_HOME/bin/java"
+elif type -p java; then
+    echo "Found Java executable in PATH"
+    _java=java
+else
+    echo "no_java"
+    exit 1
+fi
+
+if [[ "$_java" ]]; then
+    version=$("$_java" -version 2>&1 | sed -n ';s/.* version "\(.*\)\.\(.*\)\..*".*/\1\2/p;')
+    echo version "$version"
+    if [[ "$version" -eq 110 ]]; then
+        echo "ok, java is 11"
+    else
+        echo "you should use 11.."
+        exit 1
+    fi
+fi
+
+"$_java" -Dorg.eclipse.swt.graphics.Resource.reportNonDisposed=true \
+    -Declipse.pde.launch=true \
+    --add-modules=ALL-SYSTEM \
+    -Dfile.encoding=UTF-8 \
+    -classpath /home/julijan/eclipse-palladio-2/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/plugins/org.eclipse.equinox.launcher_1.6.400.v20210924-0641.jar \
+    org.eclipse.equinox.launcher.Main \
+    -launcher /home/julijan/eclipse-palladio-2/.metadata/.plugins/org.eclipse.pde.core/.bundle_pool/eclipse \
+    -name Eclipse \
+    -showsplash 300 \
+    -product org.eclipse.sdk.ide \
+    -data /home/julijan/git/slingshot-plugins/ \
+    -configuration file:/home/julijan/eclipse-palladio-2/.metadata/.plugins/org.eclipse.pde.core/New_configuration/ \
+    -dev file:/home/julijan/eclipse-palladio-2/.metadata/.plugins/org.eclipse.pde.core/New_configuration/dev.properties \
+    -os linux \
+    -ws gtk \
+    -arch x86_64 \
+    -nl en_US \
+    -consoleLog

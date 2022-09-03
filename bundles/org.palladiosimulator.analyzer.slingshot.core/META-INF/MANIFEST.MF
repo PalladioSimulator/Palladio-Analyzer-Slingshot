@@ -5,15 +5,22 @@ Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.core;singleton:=tr
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.core
 Bundle-RequiredExecutionEnvironment: JavaSE-11
-Require-Bundle: com.google.inject;bundle-version="5.0.1",
+Require-Bundle: com.google.inject;bundle-version="5.0.1";visibility:=reexport,
  com.google.guava;bundle-version="30.1.0",
  ca.umontreal.iro.simul.ssj;bundle-version="3.3.1",
  org.apache.log4j;bundle-version="1.2.15",
  org.palladiosimulator.commons;bundle-version="5.1.0",
- org.palladiosimulator.analyzer.slingshot.common;bundle-version="1.0.0",
+ org.palladiosimulator.analyzer.slingshot.common;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.osgi,
  org.eclipse.core.runtime,
- org.palladiosimulator.analyzer.slingshot.eventdriver
+ org.palladiosimulator.analyzer.slingshot.eventdriver;visibility:=reexport,
+ org.eclipse.jdt.annotation;bundle-version="1.2.0";resolution:=optional,
+ org.eclipse.emf.ecore,
+ javax.inject;bundle-version="1.0.0";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.palladiosimulator.analyzer.slingshot.core.Slingshot
-Export-Package: org.palladiosimulator.analyzer.slingshot.core
+Export-Package: org.palladiosimulator.analyzer.slingshot.core,
+ org.palladiosimulator.analyzer.slingshot.core.annotations,
+ org.palladiosimulator.analyzer.slingshot.core.api,
+ org.palladiosimulator.analyzer.slingshot.core.events,
+ org.palladiosimulator.analyzer.slingshot.core.extension

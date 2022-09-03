@@ -1,8 +1,8 @@
 package org.palladiosimulator.analyzer.slingshot.core.engine;
 
+import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationEngine;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationInformation;
-import org.palladiosimulator.analyzer.slingshot.core.events.DESEvent;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
 
@@ -14,7 +14,7 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 	private final Bus eventBus = Bus.instance();
 	private final Simulator simulator = new Simulator();
 	
-	private int cumutativeEvents = 0;
+	private int cumulativeEvents = 0;
 	
 	@Override
 	public void init() {
@@ -66,7 +66,7 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 
 	@Override
 	public int consumedEvents() {
-		return this.cumutativeEvents;
+		return this.cumulativeEvents;
 	}
 	
 	private final class SSJEvent extends Event {
@@ -82,7 +82,7 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 		public void actions() {
 			this.event.setTime(this.time());
 			eventBus.post(this.event);
-			cumutativeEvents++;
+			cumulativeEvents++;
 		}
 		
 	}

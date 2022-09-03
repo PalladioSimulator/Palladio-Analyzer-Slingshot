@@ -4,17 +4,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.palladiosimulator.analyzer.slingshot.core.extension.BehaviorContainer;
+
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.Module;
 
-public class SlingshotModule {
+public final class SlingshotModule {
 	
 	private final Injector injector;
 	
-	public SlingshotModule(final Collection<Module> modules) {
-		final List<Module> copied = new ArrayList<>(modules);
+	SlingshotModule() {
+		final List<Module> copied = new ArrayList<>(Slingshot.getInstance().getExtensions());
 		copied.add(new SlingshotSystem());
 		this.injector = Guice.createInjector(copied);
 	}

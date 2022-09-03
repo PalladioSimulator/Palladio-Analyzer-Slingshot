@@ -7,5 +7,9 @@ Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.eventdriver
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ClassPath: lib/rxjava-3.1.5.jar,
  .
-Require-Bundle: org.reactivestreams;bundle-version="1.0.2"
-Export-Package: org.palladiosimulator.analyzer.slingshot.eventdriver
+Require-Bundle: org.reactivestreams;bundle-version="1.0.2",
+ org.apache.log4j
+Export-Package: org.palladiosimulator.analyzer.slingshot.eventdriver,
+ org.palladiosimulator.analyzer.slingshot.eventdriver.annotations,
+ org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.eventcontract,
+ org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes

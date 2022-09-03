@@ -20,12 +20,8 @@ public abstract class AbstractSubscriber<T> implements Consumer<T>, Disposable, 
 	}
 	
 	@Override
-	public void accept(final T event) {
-		try {
-			this.acceptEvent(event);
-		} catch (final Exception e) {
-			throw new RuntimeException("Could not dispose event", e);
-		}
+	public void accept(final T event) throws Exception {
+		this.acceptEvent(event);
 	}
 	
 	@Override

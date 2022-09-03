@@ -16,5 +16,9 @@ public interface Bus {
 		return new BusImplementation();
 	}
 	
-	
+	public static Bus instance(final String name) {
+		return new BusImplementation(name);
+	}
+
+	public void closeRegistration();
 }

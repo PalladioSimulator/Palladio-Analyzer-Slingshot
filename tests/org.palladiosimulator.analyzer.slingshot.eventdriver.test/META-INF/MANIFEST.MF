@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: EventDriver Test
+Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.eventdriver.test
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.eventdriver.test
+Bundle-RequiredExecutionEnvironment: JavaSE-11
+Fragment-Host: org.palladiosimulator.analyzer.slingshot.eventdriver
+Require-Bundle: org.junit.jupiter.api;bundle-version="5.8.1",
+ org.hamcrest.core;bundle-version="1.3.0",
+ org.mockito;bundle-version="2.23.0"

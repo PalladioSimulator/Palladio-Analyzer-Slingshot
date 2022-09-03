@@ -1,5 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.eventdriver.entity;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
@@ -47,13 +48,22 @@ public final class AnnotatedSubscriber extends AbstractSubscriber<Object> {
 		
 		final Result result;
 		if (preInterceptionResult.wasSuccessful()) {
-			if (resultType.equals(void.class) || resultType.equals(Void.class)) {
-				// Return type void is equivalent to Result.empty()
-				result = Result.empty();
-				this.method.invoke(target, event);
-			} else {
-				result = (Result) this.method.invoke(target, event);
+			
+			try {
+				if (resultType.equals(void.class) || resultType.equals(Void.class)) {
+					// Return type void is equivalent to Result.empty()
+					result = Result.empty();
+					this.method.invoke(target, event);
+				} else {
+					result = (Result) this.method.invoke(target, event);
+				}
+			} catch (final InvocationTargetException ex) {
+				if (ex.getCause() != null && ex.getCause() instanceof Exception) {
+					throw (Exception) ex.getCause();
+				}
+				return;
 			}
+			
 		} else {
 			result = Result.empty();
 		}
@@ -61,6 +71,7 @@ public final class AnnotatedSubscriber extends AbstractSubscriber<Object> {
 		final InterceptionResult postInterceptionResult = this.postInterceptor
 				.map(postInterceptor -> postInterceptor.apply(preInterceptionInformation, event, result))
 				.orElseGet(() -> InterceptionResult.success());
+		
 	}
 
 	@Override
