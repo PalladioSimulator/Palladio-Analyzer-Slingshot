@@ -9,6 +9,9 @@ xtend-gen/
 *.war
 *.ear
 
+!aopalliance-alpha1.jar
+!guice-grapher-5.1.0.jar
+
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 
