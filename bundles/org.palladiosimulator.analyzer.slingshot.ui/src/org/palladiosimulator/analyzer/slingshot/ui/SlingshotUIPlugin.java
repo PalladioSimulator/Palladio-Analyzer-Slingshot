@@ -5,10 +5,14 @@ import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.palladiosimulator.analyzer.slingshot.core.Slingshot;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
+import org.palladiosimulator.analyzer.slingshot.workflow.SimulationWorkflowPlugin;
 
 public class SlingshotUIPlugin extends Plugin implements BundleActivator {
 
 	private static SlingshotUIPlugin instance = null;
+
+	// Activate the workflow as well
+	private SimulationWorkflowPlugin workflowPlugin = null;
 	
 	private Slingshot slingshot = null;
 
@@ -16,6 +20,7 @@ public class SlingshotUIPlugin extends Plugin implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		instance = this;
 		slingshot = Slingshot.getInstance();
+		workflowPlugin = SimulationWorkflowPlugin.getInstance();
 		super.start(context);
 	}
 

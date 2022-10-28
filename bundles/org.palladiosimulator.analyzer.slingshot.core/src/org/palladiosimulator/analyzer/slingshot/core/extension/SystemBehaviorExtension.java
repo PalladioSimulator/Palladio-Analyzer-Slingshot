@@ -1,5 +1,5 @@
 package org.palladiosimulator.analyzer.slingshot.core.extension;
 
-public interface SystemBehaviorExtension extends SimulationBehaviorExtension {
+public interface SystemBehaviorExtension {
 
 }

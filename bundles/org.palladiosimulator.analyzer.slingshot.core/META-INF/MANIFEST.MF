@@ -16,7 +16,11 @@ Require-Bundle: com.google.inject;bundle-version="5.0.1";visibility:=reexport,
  org.palladiosimulator.analyzer.slingshot.eventdriver;visibility:=reexport,
  org.eclipse.jdt.annotation;bundle-version="1.2.0";resolution:=optional,
  org.eclipse.emf.ecore,
- javax.inject;bundle-version="1.0.0";visibility:=reexport
+ javax.inject;bundle-version="1.0.0";visibility:=reexport,
+ org.palladiosimulator.analyzer.workflow;bundle-version="5.1.0",
+ de.uka.ipd.sdq.workflow.mdsd.blackboard;bundle-version="5.1.0",
+ org.palladiosimulator.pcm,
+ de.uka.ipd.sdq.simucomframework
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: org.palladiosimulator.analyzer.slingshot.core.Slingshot
 Export-Package: org.palladiosimulator.analyzer.slingshot.core,
@@ -24,3 +28,5 @@ Export-Package: org.palladiosimulator.analyzer.slingshot.core,
  org.palladiosimulator.analyzer.slingshot.core.api,
  org.palladiosimulator.analyzer.slingshot.core.events,
  org.palladiosimulator.analyzer.slingshot.core.extension
+Bundle-ClassPath: lib/guice-grapher-5.1.0.jar,
+ .

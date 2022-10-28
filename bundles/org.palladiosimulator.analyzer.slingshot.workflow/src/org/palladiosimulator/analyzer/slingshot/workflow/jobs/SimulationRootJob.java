@@ -16,7 +16,7 @@ public class SimulationRootJob extends SequentialBlackboardInteractingJob<MDSDBl
 		
 		this.addJob(new PreparePCMBlackboardPartitionJob());
 		config.getPCMModelFiles().forEach(modelFile -> LoadModelIntoBlackboardJob.parseUriAndAddModelLoadJob(modelFile, this));
-		this.addJob(new SimulationJob());
+		this.addJob(new SimulationJob(config.getSimuComConfig()));
 	}
 
 }

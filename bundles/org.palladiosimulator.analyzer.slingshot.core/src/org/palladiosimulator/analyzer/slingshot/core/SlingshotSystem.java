@@ -7,14 +7,20 @@ import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
 
-import org.palladiosimulator.analyzer.slingshot.core.annotations.BehaviorExtensions;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.palladiosimulator.analyzer.slingshot.core.annotations.SimulationBehaviorExtensions;
+import org.palladiosimulator.analyzer.slingshot.core.annotations.SystemBehaviorExtensions;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationEngine;
 import org.palladiosimulator.analyzer.slingshot.core.api.SystemDriver;
+import org.palladiosimulator.analyzer.slingshot.core.behavior.CoreBehavior;
 import org.palladiosimulator.analyzer.slingshot.core.driver.SlingshotSimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.driver.SlingshotSystemDriver;
 import org.palladiosimulator.analyzer.slingshot.core.engine.SimulationEngineSSJ;
-import org.palladiosimulator.analyzer.slingshot.core.extension.BehaviorContainer;
+import org.palladiosimulator.analyzer.slingshot.core.extension.PCMResourceSetPartitionProvider;
+import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorContainer;
+import org.palladiosimulator.analyzer.slingshot.core.extension.SystemBehaviorContainer;
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -27,18 +33,24 @@ import com.google.inject.Provides;
  *
  */
 public class SlingshotSystem extends AbstractModule {
+	
+	private final Logger LOGGER = LogManager.getLogger(SlingshotSystem.class);
 
-	private final List<BehaviorContainer> behaviors;
+	private final List<SystemBehaviorContainer> systemContainers;
+	private final List<SimulationBehaviorContainer> simulationContainers;
 	
 	public SlingshotSystem() {
-		this.behaviors = Slingshot.getInstance().getExtensions().stream()
-				.map(extension -> new BehaviorContainer(extension))
+		this.systemContainers = Slingshot.getInstance().getExtensions().stream()
+				.map(extension -> new SystemBehaviorContainer(extension))
 				.collect(Collectors.toList());
+		this.simulationContainers = Slingshot.getInstance().getExtensions().stream()
+				.map(SimulationBehaviorContainer::new)
+				.collect(Collectors.toList());		
 	}
 	
 	@Override
 	protected void configure() {
-		//bind(List.class).annotatedWith(BehaviorExtensions.class).toInstance(behaviors);
+		bind(PCMResourceSetPartitionProvider.class);
 		bind(SimulationDriver.class).to(SlingshotSimulationDriver.class);
 		bind(SimulationEngine.class).to(SimulationEngineSSJ.class);
 		bind(SystemDriver.class).to(SlingshotSystemDriver.class);
@@ -46,8 +58,15 @@ public class SlingshotSystem extends AbstractModule {
 	
 	@Singleton
 	@Provides
-	@BehaviorExtensions
-	public List<BehaviorContainer> getBehaviors() {
-		return this.behaviors;
+	@SystemBehaviorExtensions
+	public List<SystemBehaviorContainer> getSystemBehaviorContainers() {
+		return this.systemContainers;
+	}
+	
+	@Singleton
+	@Provides
+	@SimulationBehaviorExtensions
+	public List<SimulationBehaviorContainer> getSimulationBehaviorContainer() {
+		return this.simulationContainers;
 	}
 }

@@ -12,7 +12,7 @@
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
       <launchConfigurationType
-            delegate="de.uka.ipd.sdq.codegen.simucontroller.runconfig.SimulationWorkflowLauncher"
+            delegate="org.palladiosimulator.analyzer.slingshot.workflow.SimulationLauncher"
             id="org.palladiosimulator.analyzer.slingshot.ui.launchConfigurationType1"
             modes="run, debug"
             name="Slingshot Simulation"

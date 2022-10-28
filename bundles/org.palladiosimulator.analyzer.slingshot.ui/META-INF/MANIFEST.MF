@@ -11,6 +11,7 @@ Require-Bundle: org.eclipse.debug.ui;bundle-version="3.15.200",
  org.eclipse.osgi,
  org.palladiosimulator.analyzer.slingshot.core;bundle-version="1.0.0",
  org.apache.commons.logging;bundle-version="1.2.0",
- org.palladiosimulator.analyzer.slingshot.ui.events
+ org.palladiosimulator.analyzer.slingshot.ui.events,
+ org.palladiosimulator.analyzer.slingshot.workflow;bundle-version="1.0.0"
 Bundle-Activator: org.palladiosimulator.analyzer.slingshot.ui.SlingshotUIPlugin
 Bundle-ActivationPolicy: lazy

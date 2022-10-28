@@ -3,7 +3,15 @@ package org.palladiosimulator.analyzer.slingshot.core;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Provider;
+
+import org.apache.log4j.Appender;
+import org.apache.log4j.ConsoleAppender;
+import org.apache.log4j.Layout;
+import org.apache.log4j.Level;
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.eclipse.core.runtime.Plugin;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -23,7 +31,7 @@ import com.google.inject.Injector;
 
 public class Slingshot extends Plugin {
 	
-	private static final Logger LOGGER = Logger.getLogger(Slingshot.class);
+	private static final Logger LOGGER = LogManager.getLogger(Slingshot.class);
 	
 	public static final String BUNDLE_ID = "";
 	
@@ -32,6 +40,9 @@ public class Slingshot extends Plugin {
 	
 	private SlingshotModule slingshotModule;
 	
+	static {
+		setupLoggingLevelToDebug();
+	}
 
 	@Override
 	public void start(BundleContext context) throws Exception {
@@ -65,5 +76,26 @@ public class Slingshot extends Plugin {
 	
 	public SystemDriver getSystemDriver() {
 		return slingshotModule.getInstance(SystemDriver.class); // TODO
+	}
+	
+	public SimulationDriver getSimulationDriver() {
+		return slingshotModule.getInstance(SimulationDriver.class);
+	}
+	
+	public <T> T getInstance(final Class<T> clazz) {
+		return this.slingshotModule.getInstance(clazz);
+	}
+	
+	public <T> Provider<T> getProvider(final Class<T> clazz) {
+		return this.slingshotModule.getProvider(clazz);
+	}
+	
+	private static void setupLoggingLevelToDebug() {
+		final Logger rootLogger = Logger.getRootLogger();
+		rootLogger.removeAllAppenders();
+		final Layout layout = new PatternLayout("%n\tat %C.%M(%F:%L)%n\t%-5p %d [%t] - %m%n");
+		final Appender app = new ConsoleAppender(layout);
+		rootLogger.addAppender(app);
+		rootLogger.setLevel(Level.DEBUG);
 	}
 }

@@ -160,6 +160,7 @@ public final class BusImplementation implements Bus {
 						.subscribe(
 								new AnnotatedSubscriber(method, object, compositeInterceptor, compositeInterceptor),
 								error -> {
+									System.out.println("Error happened: " + error.getClass().getSimpleName() + ":: " + error.getMessage());
 							    	this.exceptionHandlers.keySet().stream()
 							    		.filter(exClazz -> exClazz.isAssignableFrom(error.getClass()))
 							    		.flatMap(exClazz -> this.exceptionHandlers.get(exClazz).stream())
@@ -238,5 +239,12 @@ public final class BusImplementation implements Bus {
 	public void closeRegistration() {
 		this.registrationOpened = false;
 		this.invocationOpened = true;
+	}
+	
+	public void acceptEvents(final boolean accept) {
+		if (this.registrationOpened) {
+			return;
+		}
+		this.invocationOpened = accept;
 	}
 }

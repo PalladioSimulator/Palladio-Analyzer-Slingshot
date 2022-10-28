@@ -40,9 +40,7 @@ public class SimulationArchitectureModelsTab extends AbstractLaunchConfiguration
 		
 		final ArchitectureModelsTabBuilderStarted event = new ArchitectureModelsTabBuilderStarted();
 		systemDriver.postEventAndThen(event, () -> {
-			System.out.println("Post Event !");
 			iterator = event.iterator();
-			System.out.println("POST EVENT !!!");
 		});
 		
 		this.modifyListener = modifyEvent -> {

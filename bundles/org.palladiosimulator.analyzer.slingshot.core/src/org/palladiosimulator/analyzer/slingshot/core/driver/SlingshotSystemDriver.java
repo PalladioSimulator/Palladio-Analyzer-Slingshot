@@ -3,29 +3,32 @@ package org.palladiosimulator.analyzer.slingshot.core.driver;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.palladiosimulator.analyzer.slingshot.common.events.SystemEvent;
-import org.palladiosimulator.analyzer.slingshot.core.annotations.BehaviorExtensions;
+import org.palladiosimulator.analyzer.slingshot.core.annotations.SystemBehaviorExtensions;
 import org.palladiosimulator.analyzer.slingshot.core.api.SystemDriver;
-import org.palladiosimulator.analyzer.slingshot.core.extension.BehaviorContainer;
+import org.palladiosimulator.analyzer.slingshot.core.behavior.CoreBehavior;
+import org.palladiosimulator.analyzer.slingshot.core.extension.SystemBehaviorContainer;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SystemBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
 
 import com.google.inject.Injector;
 
+@Singleton
 public class SlingshotSystemDriver implements SystemDriver {
 	
 	private final Bus systemBus;
 	private final Injector parentInjector;
-	private final List<BehaviorContainer> behaviorContainers;
+	private final List<SystemBehaviorContainer> behaviorContainers;
 	
 	private boolean running = false;
 	
 	@Inject
 	public SlingshotSystemDriver(
 			final Injector parentInjector,
-			@BehaviorExtensions final List<BehaviorContainer> behaviorContainer) {
+			@SystemBehaviorExtensions final List<SystemBehaviorContainer> behaviorContainer) {
 		this.systemBus = Bus.instance("System");
 		this.parentInjector = parentInjector;
 		this.behaviorContainers = behaviorContainer;

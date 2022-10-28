@@ -10,7 +10,7 @@ public final class Result {
 	
 	private Set<Object> resultEvents;
 	
-	private Result(final Collection<Object> resultEvents) {
+	private Result(final Collection<?> resultEvents) {
 		if (resultEvents != null) {
 			this.resultEvents = new HashSet<>(resultEvents);
 		} else {
@@ -26,7 +26,7 @@ public final class Result {
 		return Result.of(Arrays.asList(events));
 	}
 	
-	public static Result of(final Collection<Object> resultEvents) {
+	public static Result from(final Collection<?> resultEvents) {
 		return new Result(resultEvents);
 	}
 	

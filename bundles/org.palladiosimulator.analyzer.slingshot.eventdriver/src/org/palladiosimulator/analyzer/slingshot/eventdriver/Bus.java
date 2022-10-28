@@ -21,4 +21,6 @@ public interface Bus {
 	}
 
 	public void closeRegistration();
+	
+	public void acceptEvents(final boolean accept);
 }
