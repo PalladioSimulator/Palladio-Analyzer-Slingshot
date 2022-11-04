@@ -14,4 +14,6 @@ public @interface Subscribe {
 	
 	public int priority() default 0;
 	
+	public Class<?>[] reified() default {};
+
 }

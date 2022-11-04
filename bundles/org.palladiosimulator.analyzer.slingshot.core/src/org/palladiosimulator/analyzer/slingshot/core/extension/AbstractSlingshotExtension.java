@@ -7,6 +7,7 @@ import java.util.function.Function;
 import javax.inject.Provider;
 
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.Switch;
 import org.palladiosimulator.analyzer.workflow.blackboard.PCMResourceSetPartition;
 
 import java.util.Collections;
@@ -17,7 +18,6 @@ import com.google.inject.AbstractModule;
 public abstract class AbstractSlingshotExtension extends AbstractModule {
 	
 	private List<Class<?>> behaviorExtensions;
-	private List<Consumer<AbstractModelModule>> modelProviders;
 	
 	protected final void install(final Class<?> behaviorExtension) {
 		if (this.behaviorExtensions == null) {
@@ -30,24 +30,7 @@ public abstract class AbstractSlingshotExtension extends AbstractModule {
 	
 	protected final <T extends EObject> void provideModel(final Class<T> model, final Class<? extends ModelProvider<T>> provider) {
 		bind(model).toProvider(provider);
-		//if (modelProviders == null) {
-		//	modelProviders = new LinkedList<>();
-		//}
-		
-		//this.modelProviders.add(module -> module.bind(model).toProvider(provider));
 	}
-	
-//	protected final <T extends EObject> void provideModel(final Class<T> model, final Function<PCMResourceSetPartition, T> provider) {
-//		bind(model).toProvider(new Provider<T>() {
-//
-//			@Override
-//			public T get() {
-//				// TODO Auto-generated method stub
-//				return null;
-//			}
-//			
-//		});
-//	}
 	
 	@Override
 	protected abstract void configure();
@@ -60,6 +43,8 @@ public abstract class AbstractSlingshotExtension extends AbstractModule {
 		}
 	}
 	
-	public abstract String getName();
+	public String getName() {
+		return getClass().getSimpleName();
+	}
 	
 }
