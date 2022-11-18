@@ -23,7 +23,7 @@ public final class Result {
 	}
 	
 	public static Result of(final Object... events) {
-		return Result.of(Arrays.asList(events));
+		return Result.from(Arrays.asList(events));
 	}
 	
 	public static Result from(final Collection<?> resultEvents) {
