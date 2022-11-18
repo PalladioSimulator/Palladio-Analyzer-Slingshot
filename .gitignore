@@ -16,3 +16,6 @@ xtend-gen/
 hs_err_pid*
 
 **/.polyglot.*
+
+*.dot
+output.txt

@@ -37,6 +37,7 @@ public class SimulationLauncher extends AbstractPCMLaunchConfigurationDelegate<S
 		final WorkflowLaunchConfigurationBuilderInitialized builderEvent = new WorkflowLaunchConfigurationBuilderInitialized(configuration, simulationWorkflowConfiguration);
 		systemDriver.postEvent(builderEvent);
 		
+		WorkflowConfigurationModule.simuComConfigProvider.set(config);
 		return simulationWorkflowConfiguration;
 	}
 

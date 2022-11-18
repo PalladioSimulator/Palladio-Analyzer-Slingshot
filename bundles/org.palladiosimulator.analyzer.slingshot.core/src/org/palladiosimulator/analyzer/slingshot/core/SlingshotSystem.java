@@ -13,6 +13,7 @@ import org.palladiosimulator.analyzer.slingshot.core.annotations.SimulationBehav
 import org.palladiosimulator.analyzer.slingshot.core.annotations.SystemBehaviorExtensions;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationEngine;
+import org.palladiosimulator.analyzer.slingshot.core.api.SimulationScheduling;
 import org.palladiosimulator.analyzer.slingshot.core.api.SystemDriver;
 import org.palladiosimulator.analyzer.slingshot.core.behavior.CoreBehavior;
 import org.palladiosimulator.analyzer.slingshot.core.driver.SlingshotSimulationDriver;
@@ -52,6 +53,7 @@ public class SlingshotSystem extends AbstractModule {
 	protected void configure() {
 		bind(PCMResourceSetPartitionProvider.class);
 		bind(SimulationDriver.class).to(SlingshotSimulationDriver.class);
+		bind(SimulationScheduling.class).to(SlingshotSimulationDriver.class);
 		bind(SimulationEngine.class).to(SimulationEngineSSJ.class);
 		bind(SystemDriver.class).to(SlingshotSystemDriver.class);
 	}

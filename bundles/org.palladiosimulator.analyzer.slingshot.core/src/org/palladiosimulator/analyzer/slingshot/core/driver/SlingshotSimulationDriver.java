@@ -66,7 +66,7 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		
 		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
 		
-		partitionIncludedStream.add(new SimulationDriverSubModule(monitor));
+		partitionIncludedStream.add(new SimulationDriverSubModule(monitor, config));
 		
 		partitionIncludedStream.addAll(behaviorContainers);
 		
@@ -135,20 +135,27 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		this.engine.scheduleEventAt(event, simulationTime);
 	}
 	
-	public static class SimulationDriverSubModule extends AbstractModule {
+	private static class SimulationDriverSubModule extends AbstractModule {
 		
 		private final IProgressMonitor monitor;
+		private final SimuComConfig config;
 		
-		public SimulationDriverSubModule(final IProgressMonitor monitor) {
+		public SimulationDriverSubModule(final IProgressMonitor monitor,
+										 final SimuComConfig config) {
 		//	this.partition = partition;
 			this.monitor = monitor;
+			this.config = config;
 		}
 		
 		
 		@Provides
 		public IProgressMonitor monitor() {
-			return monitor;
+			return this.monitor;
 		}
 		
+		//@Provides
+		//public SimuComConfig config() {
+		//	return this.config;
+		//}
 	}
 }
