@@ -1,8 +1,8 @@
-build/
-bin/
-target/
-src-gen/
-xtend-gen/
+**/build/
+**/bin/
+**/target/
+**/src-gen/
+**/xtend-gen/
 
 # Package Files #
 *.jar

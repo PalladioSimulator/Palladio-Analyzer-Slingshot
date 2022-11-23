@@ -13,6 +13,8 @@ public final class Result {
 	private Result(final Collection<?> resultEvents) {
 		if (resultEvents != null) {
 			this.resultEvents = new HashSet<>(resultEvents);
+			// Remove potentially nulls
+			this.resultEvents.remove(null);
 		} else {
 			this.resultEvents = Collections.emptySet();
 		}

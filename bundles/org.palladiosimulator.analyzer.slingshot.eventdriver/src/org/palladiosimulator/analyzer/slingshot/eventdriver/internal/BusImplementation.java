@@ -146,7 +146,7 @@ public final class BusImplementation implements Bus {
 		final EventType eventType = new EventType(eventClass, subscribeAnnotation.reified());
 		
 		if (!events.add(eventType)) {
-			throw new IllegalArgumentException("Subscriber for " + eventClass.getSimpleName() + " has already been registered.");
+			throw new IllegalArgumentException("Subscriber for " + eventType.toString() + " has already been registered.");
 		}
 		
 		EventContractChecker.checkEventContract(method, object, eventClass);
