@@ -1,5 +1,7 @@
 package org.palladiosimulator.analyzer.slingshot.eventdriver.entity;
 
+import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.Subscribe;
+
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
 
@@ -7,16 +9,11 @@ public abstract class AbstractSubscriber<T> implements Consumer<T>, Disposable, 
 	
 	private boolean disposed = false;
 	private final int priority;
+	private final Class<?>[] reifiedClasses;
 	
-	public AbstractSubscriber() {
-		this(0);
-	}
-	
-	public AbstractSubscriber(final int priority) {
-		if (priority < 0) {
-			throw new IllegalArgumentException("Priority of a subscribe must be 0 or positive");
-		}
-		this.priority = priority;
+	public AbstractSubscriber(final Subscribe subscriberAnnotation) {
+		this.priority = subscriberAnnotation.priority();
+		this.reifiedClasses = subscriberAnnotation.reified();
 	}
 	
 	@Override
@@ -46,5 +43,11 @@ public abstract class AbstractSubscriber<T> implements Consumer<T>, Disposable, 
 		return Integer.compare(other.priority, priority);
 	}
 	
+	public int getPriority() {
+		return this.priority;
+	}
 	
+	public Class<?>[] getReifiedClasses() {
+		return this.reifiedClasses;
+	}
 }

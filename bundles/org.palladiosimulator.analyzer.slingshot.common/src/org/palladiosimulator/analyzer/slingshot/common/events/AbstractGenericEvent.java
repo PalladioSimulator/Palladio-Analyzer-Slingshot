@@ -1,6 +1,7 @@
 package org.palladiosimulator.analyzer.slingshot.common.events;
 
 import com.google.common.reflect.TypeToken;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.ReifiedEvent;
 
 /**
  * This abstract event is used for the special case that an event uses generics
@@ -26,7 +27,7 @@ import com.google.common.reflect.TypeToken;
  * @param <G> The generic type of the event onto which to distinguish
  * @param <T> The entity type for {@link AbstractEntityChangedEvent}.
  */
-public abstract class AbstractGenericEvent<G, T> extends AbstractEntityChangedEvent<T> {
+public abstract class AbstractGenericEvent<G, T> extends AbstractEntityChangedEvent<T> implements ReifiedEvent<G> {
 	
 	private final TypeToken<G> genericTypeToken;
 
@@ -70,7 +71,7 @@ public abstract class AbstractGenericEvent<G, T> extends AbstractEntityChangedEv
 		this.genericTypeToken = TypeToken.of(concreteClass);
 	}
 
-	public TypeToken<?> getTypeToken() {
+	public TypeToken<G> getTypeToken() {
 		return this.genericTypeToken;
 	}
 

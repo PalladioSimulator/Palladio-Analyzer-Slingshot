@@ -8,9 +8,11 @@ Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ClassPath: lib/rxjava-3.1.5.jar,
  .
 Require-Bundle: org.reactivestreams;bundle-version="1.0.2",
- org.apache.log4j
+ org.apache.log4j,
+ com.google.guava
 Export-Package: org.palladiosimulator.analyzer.slingshot.eventdriver,
  org.palladiosimulator.analyzer.slingshot.eventdriver.annotations,
  org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.eventcontract,
+ org.palladiosimulator.analyzer.slingshot.eventdriver.entity,
  org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors,
  org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes

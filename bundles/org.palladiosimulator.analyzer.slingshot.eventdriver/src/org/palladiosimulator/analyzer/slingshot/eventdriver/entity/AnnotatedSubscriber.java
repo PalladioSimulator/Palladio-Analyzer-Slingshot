@@ -6,6 +6,7 @@ import java.lang.reflect.Modifier;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.Subscribe;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.IPostInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.IPreInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.InterceptorInformation;
@@ -20,17 +21,11 @@ public final class AnnotatedSubscriber extends AbstractSubscriber<Object> {
 	private final Optional<IPostInterceptor> postInterceptor;
 	private final Class<?> resultType;
 	
-	public AnnotatedSubscriber(final Method method, 
-			final Object target, 
-			final IPreInterceptor preInterceptor,
-			final IPostInterceptor postInterceptor) {
-		this(method, target, preInterceptor, postInterceptor, 0);
-	}
-	
 	public AnnotatedSubscriber(final Method method, final Object target, 
 			final IPreInterceptor preInterceptor,
-			final IPostInterceptor postInterceptor, final int priority) {
-		super(priority);
+			final IPostInterceptor postInterceptor,
+			final Subscribe subscriberAnnotation) {
+		super(subscriberAnnotation);
 		this.method = Objects.requireNonNull(method);
 		this.target = Objects.requireNonNull(target);
 		this.preInterceptor = Optional.ofNullable(preInterceptor);
@@ -45,6 +40,10 @@ public final class AnnotatedSubscriber extends AbstractSubscriber<Object> {
 		final InterceptionResult preInterceptionResult = this.preInterceptor
 				.map(preInterceptor -> preInterceptor.apply(preInterceptionInformation, event))
 				.orElseGet(() -> InterceptionResult.success());
+		
+		if (!this.checkIfCorrectlyReified(event)) {
+			return;
+		}
 		
 		final Result result;
 		if (preInterceptionResult.wasSuccessful()) {
@@ -72,6 +71,20 @@ public final class AnnotatedSubscriber extends AbstractSubscriber<Object> {
 				.map(postInterceptor -> postInterceptor.apply(preInterceptionInformation, event, result))
 				.orElseGet(() -> InterceptionResult.success());
 		
+	}
+	
+	private boolean checkIfCorrectlyReified(final Object event) {
+		if (event instanceof ReifiedEvent<?>) {
+			if (this.getReifiedClasses() == null || this.getReifiedClasses().length == 0) {
+				// We always accept then
+				return true;
+			}
+			
+			final ReifiedEvent<?> reifiedEvent = (ReifiedEvent<?>) event;
+			return this.getReifiedClasses()[0].isAssignableFrom(reifiedEvent.getTypeToken().getRawType());
+		}
+		// Since it's not a reified event, check is not needed.
+		return true;
 	}
 
 	@Override

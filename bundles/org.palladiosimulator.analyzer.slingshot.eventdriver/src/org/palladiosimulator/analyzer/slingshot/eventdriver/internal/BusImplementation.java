@@ -3,6 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.eventdriver.internal;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -87,7 +88,7 @@ public final class BusImplementation implements Bus {
 		
 		final CompositeDisposable composite = observers.get(observerClass);
 		
-		final Set<Class<?>> events = new HashSet<>();
+		final Set<EventType> events = new HashSet<>();
 		
 		System.out.println("Register " + object.getClass().getSimpleName());
 		
@@ -126,11 +127,13 @@ public final class BusImplementation implements Bus {
 	}
 
 	private void searchForSubscribers(final CompositeDisposable composite, 
-			final Set<Class<?>> events, final Method method, final Object object) {
+			final Set<EventType> events, final Method method, final Object object) {
 		if (!method.isAnnotationPresent(Subscribe.class)) {
 			return;
 		}
 		final int modifiers = method.getModifiers();
+		final Subscribe subscribeAnnotation = method.getAnnotation(Subscribe.class);
+		
 		if (Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers)) {
 			throw new IllegalArgumentException("Method " + method.getName() + " has @Subscribe annotation, but is static or is not public.");
 		}
@@ -140,8 +143,9 @@ public final class BusImplementation implements Bus {
 			throw new IllegalArgumentException("Method " + method.getName() + " has @Subscribe annotation, but has either 0 or more than one parameters.");
 		}
 		final Class<?> eventClass = parameterTypes[0];
+		final EventType eventType = new EventType(eventClass, subscribeAnnotation.reified());
 		
-		if (!events.add(eventClass)) {
+		if (!events.add(eventType)) {
 			throw new IllegalArgumentException("Subscriber for " + eventClass.getSimpleName() + " has already been registered.");
 		}
 		
@@ -158,7 +162,7 @@ public final class BusImplementation implements Bus {
 				this.bus.ofType(eventClass)
 						.doOnNext(ev -> System.out.println("ON NEXT " + ev.getClass().getSimpleName()))
 						.subscribe(
-								new AnnotatedSubscriber(method, object, compositeInterceptor, compositeInterceptor),
+								new AnnotatedSubscriber(method, object, compositeInterceptor, compositeInterceptor, subscribeAnnotation),
 								error -> {
 									System.out.println("Error happened: " + error.getClass().getSimpleName() + ":: " + error.getMessage());
 							    	this.exceptionHandlers.keySet().stream()
@@ -246,5 +250,56 @@ public final class BusImplementation implements Bus {
 			return;
 		}
 		this.invocationOpened = accept;
+	}
+	
+	public static class EventType {
+		private Class<?> eventClass;
+		private Class<?>[] reification;
+		
+		public EventType(final Class<?> eventClass, final Class<?>[] reification) {
+			this.eventClass = eventClass;
+			this.reification = reification;
+			if (this.reification == null) {
+				this.reification = new Class<?>[] {};
+			}
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + Arrays.hashCode(reification);
+			result = prime * result + Objects.hash(eventClass);
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			EventType other = (EventType) obj;
+			return Objects.equals(eventClass, other.eventClass) && Arrays.equals(reification, other.reification);
+		}
+		
+		@Override
+		public String toString() {
+			final StringBuilder stringBuilder = new StringBuilder();
+			stringBuilder.append("EventType[event = <");
+			stringBuilder.append(eventClass.getName());
+			stringBuilder.append(">, reified = {");
+			
+			for (final Class<?> clazz : this.reification) {
+				stringBuilder.append("<");
+				stringBuilder.append(clazz.getName());
+				stringBuilder.append(">");
+			}
+			
+			stringBuilder.append("}]");
+			return stringBuilder.toString();
+		}
 	}
 }
