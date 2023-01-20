@@ -37,7 +37,10 @@ public class SimulationJob implements IBlackboardInteractingJob<MDSDBlackboard> 
 	public void execute(IProgressMonitor monitor) throws JobFailedException, UserCanceledException {
 		final PCMResourceSetPartition partition = (PCMResourceSetPartition) 
 				this.blackboard.getPartition(ConstantsContainer.DEFAULT_PCM_INSTANCE_PARTITION_ID);
-
+		
+		LOGGER.debug("Current partition: ");
+		partition.getResourceSet().getResources().forEach(resource -> LOGGER.debug("Resource: " + resource.getURI().path()));
+		
 		this.pcmResourceSetPartition.set(partition);
 		LOGGER.debug("monitor: " + monitor.getClass().getName());
 		monitor.beginTask("Start Simulation", 3);

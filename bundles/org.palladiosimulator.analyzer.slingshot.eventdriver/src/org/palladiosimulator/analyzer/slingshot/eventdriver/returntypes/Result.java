@@ -6,11 +6,22 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public final class Result {
+/**
+ * A result is a container that holds any type of information of an event handler's result.
+ * This could be, for example, new events that should be scheduled afterwards, especially
+ * within the simulation phase.
+ * 
+ * The container itself is a set, that means there is no guarantee of order.
+ * 
+ * @author Julijan Katic
+ *
+ * @param <T> The containers type
+ */
+public final class Result<T> {
 	
-	private Set<Object> resultEvents;
+	private Set<T> resultEvents;
 	
-	private Result(final Collection<?> resultEvents) {
+	private Result(final Collection<T> resultEvents) {
 		if (resultEvents != null) {
 			this.resultEvents = new HashSet<>(resultEvents);
 			// Remove potentially nulls
@@ -24,15 +35,15 @@ public final class Result {
 		return Collections.unmodifiableSet(this.resultEvents);
 	}
 	
-	public static Result of(final Object... events) {
+	public static <T> Result<T> of(final T... events) {
 		return Result.from(Arrays.asList(events));
 	}
 	
-	public static Result from(final Collection<?> resultEvents) {
-		return new Result(resultEvents);
+	public static <T> Result<T> from(final Collection<T> resultEvents) {
+		return new Result<>(resultEvents);
 	}
 	
-	public static Result empty() {
-		return new Result(null);
+	public static Result<?> empty() {
+		return new Result<>(null);
 	}
 }

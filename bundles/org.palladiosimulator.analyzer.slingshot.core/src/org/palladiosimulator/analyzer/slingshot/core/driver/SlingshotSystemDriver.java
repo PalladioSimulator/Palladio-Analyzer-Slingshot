@@ -37,19 +37,19 @@ public class SlingshotSystemDriver implements SystemDriver {
 	
 	private void init() {
 		final Injector childInjector = this.parentInjector.createChildInjector(behaviorContainers);
-		System.out.println("Initialize System extensions");
-		System.out.println("Numbers of containers " + this.behaviorContainers.size());
+		//System.out.println("Initialize System extensions");
+		//System.out.println("Numbers of containers " + this.behaviorContainers.size());
 		
 		behaviorContainers.stream()
 			.flatMap(extensions -> extensions.getExtensions().stream())
-			.peek(simExtension -> System.out.println("Check " + simExtension.getSimpleName()))
+		//	.peek(simExtension -> System.out.println("Check " + simExtension.getSimpleName()))
 			.forEach(simExtension -> {
 				final Object e = childInjector.getInstance(simExtension);
 				if (!(e instanceof SystemBehaviorExtension)) {
-					return;
+					return; // Ignore extensions that don't explicitly declare that they have SystemBehaviorExtensions
 				}
 				systemBus.register(e);
-				System.out.println("Registered " + e.getClass().getSimpleName());
+		//		System.out.println("Registered " + e.getClass().getSimpleName());
 			});
 	}
 

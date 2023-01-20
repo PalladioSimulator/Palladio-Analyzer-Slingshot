@@ -37,6 +37,14 @@ public class SimulationLauncher extends AbstractPCMLaunchConfigurationDelegate<S
 		final WorkflowLaunchConfigurationBuilderInitialized builderEvent = new WorkflowLaunchConfigurationBuilderInitialized(configuration, simulationWorkflowConfiguration);
 		systemDriver.postEvent(builderEvent);
 		
+		if (LOGGER.isDebugEnabled()) {
+			LOGGER.debug("The workfloww launch configurations are:");
+			builderEvent.forEach().forEach((key, obj) -> {
+				LOGGER.debug("Key: " + key + ", Object: " + obj + "<" + obj.getClass().getName() + ">");
+			});
+		}
+		
+		// Currently, this is the only way I found to set the SimuComConfig. Maybe there is a better way?
 		WorkflowConfigurationModule.simuComConfigProvider.set(config);
 		return simulationWorkflowConfiguration;
 	}

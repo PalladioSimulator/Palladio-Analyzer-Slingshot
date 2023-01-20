@@ -7,6 +7,7 @@ import org.apache.log4j.Logger;
 import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationFinished;
+import org.palladiosimulator.analyzer.slingshot.core.exceptions.IllegalResultException;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SystemBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.OnException;
@@ -41,6 +42,10 @@ public class CoreBehavior implements SimulationBehaviorExtension {
 			LOGGER.debug("Result is " + nextEvent.getClass().getName());
 			if (nextEvent instanceof DESEvent) {
 				simulationDriver.scheduleEvent((DESEvent) nextEvent);
+			} else {
+				/* Within the simulation, we only allow results that have DESEvents */
+				throw new IllegalResultException("The result container contains objects that are not DESEvents"
+						+ ", but instead " + nextEvent.getClass().getName() + ".");
 			}
 		});
 		

@@ -28,7 +28,7 @@ public final class EventContractChecker {
 	}
 	
 	@PostIntercept
-	public InterceptionResult postEventContractChecker(final InterceptorInformation information, final Object event, final Result result) {
+	public InterceptionResult postEventContractChecker(final InterceptorInformation information, final Object event, final Result<?> result) {
 		return getOnEventContract(information.getTarget(), event.getClass())
 			.flatMap(ctr -> Arrays.stream(ctr.then()))
 			.filter(cls -> result.getResultEvents().stream()

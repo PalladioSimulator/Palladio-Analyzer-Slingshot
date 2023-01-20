@@ -1,5 +1,7 @@
 package org.palladiosimulator.analyzer.slingshot.workflow.events;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -29,5 +31,12 @@ public final class WorkflowLaunchConfigurationBuilderInitialized extends Abstrac
 		}
 	}
 	
-	
+	public Map<String, Object> forEach() {
+		try {
+			return launchConfiguration.getAttributes();
+		} catch (CoreException e) {
+			e.printStackTrace();
+			return Collections.emptyMap();
+		}
+	}
 }
