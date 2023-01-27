@@ -10,7 +10,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
+import org.apache.log4j.Logger;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.OnException;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.PostIntercept;
@@ -18,6 +20,7 @@ import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.PreInter
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.Subscribe;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.AbstractSubscriber;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.AnnotatedSubscriber;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.LambdaBasedSubscriber;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.CompositeInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.CompositePostInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.CompositePreInterceptor;
@@ -35,6 +38,8 @@ import io.reactivex.rxjava3.subjects.Subject;
 
 public final class BusImplementation implements Bus {
 	
+	private static final Logger LOGGER = Logger.getLogger(BusImplementation.class);
+	
 	private final Subject<Object> bus;
 	
 	/** Maps events (event classes) to handlers */
@@ -43,7 +48,7 @@ public final class BusImplementation implements Bus {
 	private final CompositeInterceptor compositeInterceptor = new CompositeInterceptor();
 	
 	/** Maps exception classes to set of exception handlers */
-	private final Map<Class<?>, Set<Consumer<? super Throwable>>> exceptionHandlers = new HashMap<>();
+	private final Map<Class<?>, Set<Consumer<Throwable>>> exceptionHandlers = new HashMap<>();
 	
 	
 	private final Map<Class<?>, Set<AbstractSubscriber<?>>> subscribers = new HashMap<>();
@@ -72,6 +77,16 @@ public final class BusImplementation implements Bus {
 	public String getIdentifier() {
 		return this.identifier;
 	}
+	
+	public <T> void registerSubscriber(final Class<T> forEvent, final AbstractSubscriber<T> subscriber) {
+		if (!this.registrationOpened) {
+			throw new IllegalStateException("This bus does not allow new handlers");
+		}
+		
+		final CompositeDisposable disposable = observers.computeIfAbsent(forEvent, ev -> new CompositeDisposable());
+		disposable.add(this.bus.ofType(forEvent)
+							   .subscribe(subscriber, this::doOnError));
+	}
 
 	@Override
 	public void register(final Object object) {
@@ -83,7 +98,8 @@ public final class BusImplementation implements Bus {
 		final Class<?> observerClass = object.getClass();
 		
 		if (observers.putIfAbsent(observerClass, new CompositeDisposable()) != null) {
-			throw new IllegalArgumentException("Observer has already been registered.");
+			//throw new IllegalArgumentException("Observer has already been registered.");
+			LOGGER.warn("Observer has already been registered: " + observerClass.getName()); // Do we actually need a warning?
 		}
 		
 		final CompositeDisposable composite = observers.get(observerClass);
@@ -102,6 +118,18 @@ public final class BusImplementation implements Bus {
 			this.searchPreInterceptors(method, object);
 			this.searchPostInterceptors(method, object);
 		}
+	}
+	
+	@Override
+	public <T> void registerHandler(final Class<T> forEvent, final Function<T, ? extends Result<?>> handler) {
+		this.registerSubscriber(forEvent, new LambdaBasedSubscriber<>(0, null, compositeInterceptor, compositeInterceptor, handler));
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T extends Throwable> void addExceptionHandler(final Class<T> onException, final Consumer<T> exceptionHandler) {
+		this.exceptionHandlers.computeIfAbsent(onException, ex -> new HashSet<>())
+							  .add((Consumer<Throwable>) exceptionHandler);
 	}
 
 	@Override
@@ -126,6 +154,7 @@ public final class BusImplementation implements Bus {
 		this.bus.onNext(Objects.requireNonNull(event));
 	}
 
+	@SuppressWarnings("unchecked")
 	private void searchForSubscribers(final CompositeDisposable composite, 
 			final Set<EventType> events, final Method method, final Object object) {
 		if (!method.isAnnotationPresent(Subscribe.class)) {
@@ -157,22 +186,15 @@ public final class BusImplementation implements Bus {
 		}
 		
 		
-		System.out.println("\tAdded subscriber method " + method.getName());
-		composite.add(
-				this.bus.ofType(eventClass)
-						.doOnNext(ev -> System.out.println("ON NEXT " + ev.getClass().getSimpleName()))
-						.subscribe(
-								new AnnotatedSubscriber(method, object, compositeInterceptor, compositeInterceptor, subscribeAnnotation),
-								error -> {
-									System.out.println("Error happened: " + error.getClass().getSimpleName() + ":: " + error.getMessage());
-							    	this.exceptionHandlers.keySet().stream()
-							    		.filter(exClazz -> exClazz.isAssignableFrom(error.getClass()))
-							    		.flatMap(exClazz -> this.exceptionHandlers.get(exClazz).stream())
-							    		.forEach(exHandler -> exHandler.accept(error));
-							    }
-						)
-		);
-		
+		this.registerSubscriber((Class<Object>) eventClass, new AnnotatedSubscriber(method, object, compositeInterceptor, compositeInterceptor, subscribeAnnotation));
+	}
+	
+	private void doOnError(final Throwable error) {
+		LOGGER.warn("Error happened: " + error.getClass().getSimpleName() + ":: " + error.getMessage());
+		this.exceptionHandlers.keySet().stream()
+			.filter(exClazz -> exClazz.isAssignableFrom(error.getClass()))
+			.flatMap(exClazz -> this.exceptionHandlers.get(exClazz).stream())
+			.forEach(exHandler -> exHandler.accept(error));
 	}
 	
 	private void searchPreInterceptors(final Method method, final Object object) {
@@ -206,7 +228,7 @@ public final class BusImplementation implements Bus {
 		}
 		final Class<?>[] params = method.getParameterTypes();
 		
-		final Consumer<? super Throwable> onException;
+		final Consumer<Throwable> onException;
 		
 		if (params.length == 1) {
 			if (!Throwable.class.isAssignableFrom(params[0])) {
@@ -236,8 +258,7 @@ public final class BusImplementation implements Bus {
 			throw new IllegalArgumentException("");
 		}
 		
-		this.exceptionHandlers.computeIfAbsent(params[0], eventType -> new HashSet<>())
-							  .add(onException);
+		this.addExceptionHandler((Class<Throwable>) params[0], onException);
 	}
 	
 	public void closeRegistration() {
@@ -250,6 +271,22 @@ public final class BusImplementation implements Bus {
 			return;
 		}
 		this.invocationOpened = accept;
+	}
+	
+	@Override
+	public void clear() {
+		this.observers.clear();
+		//this.compositeInterceptor.clear();
+	}
+	
+	@Override
+	public void addPreInterceptor(final Class<?> forEvent, IPreInterceptor preInterceptor) {
+		this.compositeInterceptor.add(forEvent, preInterceptor);
+	}
+
+	@Override
+	public void addPostInterceptor(final Class<?> forEvent, IPostInterceptor postInterceptor) {
+		this.compositeInterceptor.add(forEvent, postInterceptor);
 	}
 	
 	public static class EventType {
@@ -302,4 +339,6 @@ public final class BusImplementation implements Bus {
 			return stringBuilder.toString();
 		}
 	}
+
+	
 }

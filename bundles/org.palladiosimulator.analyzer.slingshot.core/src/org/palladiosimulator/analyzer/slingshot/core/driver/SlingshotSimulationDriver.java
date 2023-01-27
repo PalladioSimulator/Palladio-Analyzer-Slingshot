@@ -2,6 +2,7 @@ package org.palladiosimulator.analyzer.slingshot.core.driver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.inject.Singleton;
@@ -19,6 +20,7 @@ import org.palladiosimulator.analyzer.slingshot.core.events.SimulationFinished;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationStarted;
 import org.palladiosimulator.analyzer.slingshot.core.extension.AbstractSlingshotExtension;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SystemBehaviorContainer;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 import org.palladiosimulator.analyzer.slingshot.core.extension.ExtensionIds;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorContainer;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
@@ -135,6 +137,16 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		this.engine.scheduleEventAt(event, simulationTime);
 	}
 	
+	@Override
+	public void registerHandlers(SimulationBehaviorExtension handlers) {
+		this.engine.registerEventListener(handlers);
+	}
+
+	@Override
+	public <T> void registerHandler(String id, Class<T> forEvent, Function<T, Result<?>> handler) {
+		this.engine.registerEventListener(forEvent, handler);
+	}
+	
 	private static class SimulationDriverSubModule extends AbstractModule {
 		
 		private final IProgressMonitor monitor;
@@ -158,4 +170,5 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		//	return this.config;
 		//}
 	}
+
 }

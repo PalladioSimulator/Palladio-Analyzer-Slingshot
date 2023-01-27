@@ -1,6 +1,7 @@
 package org.palladiosimulator.analyzer.slingshot.core.driver;
 
 import java.util.List;
+import java.util.function.Function;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -13,6 +14,7 @@ import org.palladiosimulator.analyzer.slingshot.core.extension.SystemBehaviorCon
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SystemBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 
 import com.google.inject.Injector;
 
@@ -67,6 +69,16 @@ public class SlingshotSystemDriver implements SystemDriver {
 	@Override
 	public boolean isRunning() {
 		return this.running;
+	}
+
+	@Override
+	public void registerHandlers(SimulationBehaviorExtension handlers) {
+		this.systemBus.register(handlers);
+	}
+
+	@Override
+	public <T> void registerHandler(String id, Class<T> forEvent, Function<T, Result<?>> handler) {
+		this.systemBus.registerHandler(forEvent, handler);
 	}
 	
 }
