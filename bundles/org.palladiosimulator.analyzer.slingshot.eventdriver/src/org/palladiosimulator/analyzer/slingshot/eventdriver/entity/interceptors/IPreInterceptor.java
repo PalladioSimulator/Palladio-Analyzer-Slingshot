@@ -4,6 +4,7 @@ import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Intercep
 
 import io.reactivex.rxjava3.functions.BiFunction;
 
+@FunctionalInterface
 public interface IPreInterceptor {
 	
 	public InterceptionResult apply(final InterceptorInformation preInterceptorInformation, final Object event);

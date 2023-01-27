@@ -2,6 +2,8 @@ package org.palladiosimulator.analyzer.slingshot.core.engine;
 
 import org.apache.log4j.Logger;
 
+import java.util.function.Function;
+
 import javax.inject.Singleton;
 
 import org.apache.log4j.LogManager;
@@ -10,6 +12,7 @@ import org.palladiosimulator.analyzer.slingshot.core.api.SimulationEngine;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationInformation;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 
 import umontreal.ssj.simevents.Event;
 import umontreal.ssj.simevents.Simulator;
@@ -120,4 +123,8 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 		this.eventBus.register(guavaEventClass);
 	}
 
+	@Override
+	public <T> void registerEventListener(final Class<T> forEvent, final Function<T, Result<?>> handler) {
+		this.eventBus.registerHandler(forEvent, handler);
+	}
 }

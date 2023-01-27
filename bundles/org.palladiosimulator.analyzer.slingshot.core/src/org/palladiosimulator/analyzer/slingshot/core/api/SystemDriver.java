@@ -5,7 +5,7 @@ import java.util.function.Consumer;
 import org.palladiosimulator.analyzer.slingshot.common.events.SystemEvent;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 
-public interface SystemDriver {
+public interface SystemDriver extends BusBasedDriver {
 
 	void postEvent(final SystemEvent systemEvent);
 	
