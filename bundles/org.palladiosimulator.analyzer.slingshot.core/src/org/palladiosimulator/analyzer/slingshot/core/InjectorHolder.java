@@ -30,12 +30,6 @@ public final class InjectorHolder {
 		copied.add(new SlingshotModule());
 		copied.forEach(module -> LOGGER.debug("Following module added: " + module.getClass().getName()));
 		this.injector = Guice.createInjector(copied);
-	
-		try {
-			this.outputDependecyGraph("/home/julijan/git/slingshot-framework/graph.dot");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public <T> T getInstance(final Class<T> clazz) {
