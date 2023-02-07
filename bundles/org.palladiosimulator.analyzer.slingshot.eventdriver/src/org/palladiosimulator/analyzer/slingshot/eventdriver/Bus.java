@@ -35,10 +35,15 @@ public interface Bus {
 	 * The most generic registration of an event handler, where an own type of subscriber can be added.
 	 * 
 	 * @param <T> The type of the event.
+	 * @param id An object that can be used as an Identifier, for example a unique string or the object
+	 * 			 itself containing subscribers.
 	 * @param forEvent
 	 * @param subscriber
 	 */
-	public <T> void registerSubscriber(final Class<T> forEvent, final AbstractSubscriber<T> subscriber);
+	public <T> void registerSubscriber(
+			final Object id,
+			final Class<T> forEvent,
+			final AbstractSubscriber<T> subscriber);
 	
 	/**
 	 * Registers a new object as an {@link AnnotatedSubscriber} and adds the possibility to register
@@ -55,10 +60,15 @@ public interface Bus {
 	 * Registers a new event handler directly to the system as a {@link LambdaBasedSubscriber}.
 	 * 
 	 * @param <T> The type of the event to listen to.
+	 * @param id An identifier for this handler.
 	 * @param forEvent The event type as a {@code Class}.
 	 * @param handler The function to register as the event's subscriber.
+	 * @see #registerSubscriber(Object, Class, AbstractSubscriber)
 	 */
-	public <T> void registerHandler(final Class<T> forEvent, final Function<T, ? extends Result<?>> handler);
+	public <T> void registerHandler(
+			final Object id,
+			final Class<T> forEvent, 
+			final Function<T, ? extends Result<?>> handler);
 	
 	/**
 	 * Unregisters an object containing subscribers. Every subscriber inside will be ignored from now on.
