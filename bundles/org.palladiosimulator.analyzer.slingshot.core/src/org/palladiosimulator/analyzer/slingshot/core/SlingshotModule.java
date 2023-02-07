@@ -1,62 +1,74 @@
 package org.palladiosimulator.analyzer.slingshot.core;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collection;
+
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-import javax.inject.Provider;
+import javax.inject.Singleton;
 
+import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.palladiosimulator.analyzer.slingshot.core.annotations.SimulationBehaviorExtensions;
+import org.palladiosimulator.analyzer.slingshot.core.annotations.SystemBehaviorExtensions;
+import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
+import org.palladiosimulator.analyzer.slingshot.core.api.SimulationEngine;
+import org.palladiosimulator.analyzer.slingshot.core.api.SimulationScheduling;
+import org.palladiosimulator.analyzer.slingshot.core.api.SystemDriver;
+import org.palladiosimulator.analyzer.slingshot.core.behavior.CoreBehavior;
+import org.palladiosimulator.analyzer.slingshot.core.driver.SlingshotSimulationDriver;
+import org.palladiosimulator.analyzer.slingshot.core.driver.SlingshotSystemDriver;
+import org.palladiosimulator.analyzer.slingshot.core.engine.SimulationEngineSSJ;
+import org.palladiosimulator.analyzer.slingshot.core.extension.PCMResourceSetPartitionProvider;
+import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorContainer;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SystemBehaviorContainer;
 
-import com.google.inject.Guice;
-import com.google.inject.Injector;
-import com.google.inject.Key;
-import com.google.inject.Module;
-import com.google.inject.grapher.graphviz.GraphvizGrapher;
-import com.google.inject.grapher.graphviz.GraphvizModule;
+import com.google.inject.AbstractModule;
+import com.google.inject.Provides;
 
-public final class SlingshotModule {
+/**
+ * This is the central class where all the Slingshot modules are defined, and where
+ * the initial {@link Injector} is defined.
+ * 
+ * @author Julijan Katic
+ *
+ */
+public class SlingshotSystem extends AbstractModule {
 	
-	private static final Logger LOGGER = Logger.getLogger(SlingshotModule.class);
-	
-	private final Injector injector;
-	
-	SlingshotModule() {
-		final List<Module> copied = new ArrayList<>(Slingshot.getInstance().getExtensions());
-		copied.add(new SlingshotSystem());
-		copied.forEach(module -> LOGGER.debug("Following module added: " + module.getClass().getName()));
-		this.injector = Guice.createInjector(copied);
-	
-		try {
-			this.outputDependecyGraph("/home/julijan/git/slingshot-framework/graph.dot");
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	private final Logger LOGGER = LogManager.getLogger(SlingshotSystem.class);
 
-	public <T> T getInstance(final Class<T> clazz) {
-		return this.injector.getInstance(clazz);
+	private final List<SystemBehaviorContainer> systemContainers;
+	private final List<SimulationBehaviorContainer> simulationContainers;
+	
+	public SlingshotSystem() {
+		this.systemContainers = Slingshot.getInstance().getExtensions().stream()
+				.map(extension -> new SystemBehaviorContainer(extension))
+				.collect(Collectors.toList());
+		this.simulationContainers = Slingshot.getInstance().getExtensions().stream()
+				.map(SimulationBehaviorContainer::new)
+				.collect(Collectors.toList());		
 	}
 	
-	public <T> T getInstance(final Key<T> key) {
-		return this.injector.getInstance(key);
+	@Override
+	protected void configure() {
+		bind(PCMResourceSetPartitionProvider.class);
+		bind(SimulationDriver.class).to(SlingshotSimulationDriver.class);
+		bind(SimulationScheduling.class).to(SlingshotSimulationDriver.class);
+		bind(SimulationEngine.class).to(SimulationEngineSSJ.class);
+		bind(SystemDriver.class).to(SlingshotSystemDriver.class);
 	}
 	
-	public <T> Provider<T> getProvider(final Class<T> clazz) {
-		return this.injector.getProvider(clazz);
+	@Singleton
+	@Provides
+	@SystemBehaviorExtensions
+	public List<SystemBehaviorContainer> getSystemBehaviorContainers() {
+		return this.systemContainers;
 	}
 	
-	public void outputDependecyGraph(final String fileName) throws IOException {
-		final PrintWriter out = new PrintWriter(new File(fileName), "UTF-8");
-		
-		final Injector graphInjector = Guice.createInjector(new GraphvizModule());
-		final GraphvizGrapher renderer = graphInjector.getInstance(GraphvizGrapher.class);
-		renderer.setOut(out);
-		renderer.setRankdir("TB");
-		renderer.graph(this.injector);
+	@Singleton
+	@Provides
+	@SimulationBehaviorExtensions
+	public List<SimulationBehaviorContainer> getSimulationBehaviorContainer() {
+		return this.simulationContainers;
 	}
 }
