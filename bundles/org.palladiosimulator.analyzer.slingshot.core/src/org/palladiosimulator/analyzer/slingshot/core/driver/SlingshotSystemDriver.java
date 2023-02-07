@@ -78,7 +78,7 @@ public class SlingshotSystemDriver implements SystemDriver {
 
 	@Override
 	public <T> void registerHandler(String id, Class<T> forEvent, Function<T, Result<?>> handler) {
-		this.systemBus.registerHandler(forEvent, handler);
+		this.systemBus.registerHandler(id, forEvent, handler);
 	}
 	
 }

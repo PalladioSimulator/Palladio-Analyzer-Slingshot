@@ -20,7 +20,7 @@ public class BusTestDynamicHandlers {
 	
 	@Test
 	public void testCheckIfHandlerExist() {
-		bus.registerHandler(SomeEvent.class, event -> {
+		bus.registerHandler("test", SomeEvent.class, event -> {
 			hasWorked = true;
 			return Result.empty();
 		});

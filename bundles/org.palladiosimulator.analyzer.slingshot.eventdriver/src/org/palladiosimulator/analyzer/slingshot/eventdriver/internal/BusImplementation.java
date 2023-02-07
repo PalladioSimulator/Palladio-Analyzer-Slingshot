@@ -42,15 +42,15 @@ public final class BusImplementation implements Bus {
 	
 	private final Subject<Object> bus;
 	
-	/** Maps events (event classes) to handlers */
-	private final Map<Class<?>, CompositeDisposable> observers = new HashMap<>();
+	/* Maps ids to disposables */
+	private final Map<Object, CompositeDisposable> observers = new HashMap<>();
 	
 	private final CompositeInterceptor compositeInterceptor = new CompositeInterceptor();
 	
-	/** Maps exception classes to set of exception handlers */
+	/* Maps exception classes to set of exception handlers */
 	private final Map<Class<?>, Set<Consumer<Throwable>>> exceptionHandlers = new HashMap<>();
 	
-	
+	/* Maps event to subscriber */
 	private final Map<Class<?>, Set<AbstractSubscriber<?>>> subscribers = new HashMap<>();
 	
 	private boolean registrationOpened = true;
@@ -78,14 +78,21 @@ public final class BusImplementation implements Bus {
 		return this.identifier;
 	}
 	
-	public <T> void registerSubscriber(final Class<T> forEvent, final AbstractSubscriber<T> subscriber) {
+	@Override
+	public <T> void registerSubscriber(
+			final Object id,
+			final Class<T> forEvent, 
+			final AbstractSubscriber<T> subscriber) {
 		if (!this.registrationOpened) {
 			throw new IllegalStateException("This bus does not allow new handlers");
 		}
 		
-		final CompositeDisposable disposable = observers.computeIfAbsent(forEvent, ev -> new CompositeDisposable());
-		disposable.add(this.bus.ofType(forEvent)
-							   .subscribe(subscriber, this::doOnError));
+		this.observers.computeIfAbsent(id, i -> new CompositeDisposable())
+				      .add(this.bus.ofType(forEvent)
+							       .subscribe(subscriber, this::doOnError));
+		
+		this.subscribers.computeIfAbsent(forEvent, e -> new HashSet<>())
+						.add(subscriber);
 	}
 
 	@Override
@@ -121,8 +128,8 @@ public final class BusImplementation implements Bus {
 	}
 	
 	@Override
-	public <T> void registerHandler(final Class<T> forEvent, final Function<T, ? extends Result<?>> handler) {
-		this.registerSubscriber(forEvent, new LambdaBasedSubscriber<>(0, null, compositeInterceptor, compositeInterceptor, handler));
+	public <T> void registerHandler(final Object id, final Class<T> forEvent, final Function<T, ? extends Result<?>> handler) {
+		this.registerSubscriber(id, forEvent, new LambdaBasedSubscriber<>(0, null, compositeInterceptor, compositeInterceptor, handler));
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -135,7 +142,7 @@ public final class BusImplementation implements Bus {
 	@Override
 	public void unregister(final Object object) {
 		Objects.requireNonNull(object, "Observer to unregister must not be null.");
-		final CompositeDisposable composite = this.observers.remove(object.getClass());
+		final CompositeDisposable composite = this.observers.remove(object);
 		Objects.requireNonNull(composite, "Missing observer; it was not registered before.");
 		composite.dispose();
 		
@@ -186,7 +193,7 @@ public final class BusImplementation implements Bus {
 		}
 		
 		
-		this.registerSubscriber((Class<Object>) eventClass, new AnnotatedSubscriber(method, object, compositeInterceptor, compositeInterceptor, subscribeAnnotation));
+		this.registerSubscriber(object, (Class<Object>) eventClass, new AnnotatedSubscriber(method, object, compositeInterceptor, compositeInterceptor, subscribeAnnotation));
 	}
 	
 	private void doOnError(final Throwable error) {
