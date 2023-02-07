@@ -38,7 +38,7 @@ public class Slingshot extends Plugin {
 	private static Slingshot bundle = null;
 	private List<AbstractSlingshotExtension> extensions = null;
 	
-	private SlingshotModule slingshotModule;
+	private InjectorHolder slingshotModule;
 	
 	static {
 		setupLoggingLevelToDebug();
@@ -47,7 +47,7 @@ public class Slingshot extends Plugin {
 	@Override
 	public void start(BundleContext context) throws Exception {
 		bundle = this;
-		this.slingshotModule = new SlingshotModule();
+		this.slingshotModule = new InjectorHolder();
 		LOGGER.debug("Slingshot started");
 		super.start(context);
 	}

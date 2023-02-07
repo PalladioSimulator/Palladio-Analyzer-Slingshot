@@ -19,15 +19,15 @@ import com.google.inject.Module;
 import com.google.inject.grapher.graphviz.GraphvizGrapher;
 import com.google.inject.grapher.graphviz.GraphvizModule;
 
-public final class SlingshotModule {
+public final class InjectorHolder {
 	
-	private static final Logger LOGGER = Logger.getLogger(SlingshotModule.class);
+	private static final Logger LOGGER = Logger.getLogger(InjectorHolder.class);
 	
 	private final Injector injector;
 	
-	SlingshotModule() {
+	InjectorHolder() {
 		final List<Module> copied = new ArrayList<>(Slingshot.getInstance().getExtensions());
-		copied.add(new SlingshotSystem());
+		copied.add(new SlingshotModule());
 		copied.forEach(module -> LOGGER.debug("Following module added: " + module.getClass().getName()));
 		this.injector = Guice.createInjector(copied);
 	

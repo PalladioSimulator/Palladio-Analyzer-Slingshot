@@ -33,14 +33,14 @@ import com.google.inject.Provides;
  * @author Julijan Katic
  *
  */
-public class SlingshotSystem extends AbstractModule {
+public class SlingshotModule extends AbstractModule {
 	
-	private final Logger LOGGER = LogManager.getLogger(SlingshotSystem.class);
+	private final Logger LOGGER = LogManager.getLogger(SlingshotModule.class);
 
 	private final List<SystemBehaviorContainer> systemContainers;
 	private final List<SimulationBehaviorContainer> simulationContainers;
 	
-	public SlingshotSystem() {
+	public SlingshotModule() {
 		this.systemContainers = Slingshot.getInstance().getExtensions().stream()
 				.map(extension -> new SystemBehaviorContainer(extension))
 				.collect(Collectors.toList());
