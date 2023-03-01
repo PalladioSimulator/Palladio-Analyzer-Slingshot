@@ -36,10 +36,10 @@ public class SimulationJob implements IBlackboardInteractingJob<MDSDBlackboard> 
 		final PCMResourceSetPartition partition = (PCMResourceSetPartition)
 				this.blackboard.getPartition(ConstantsContainer.DEFAULT_PCM_INSTANCE_PARTITION_ID);
 
+		this.pcmResourceSetPartition.set(partition);
 		LOGGER.debug("Current partition: ");
 		partition.getResourceSet().getResources().forEach(resource -> LOGGER.debug("Resource: " + resource.getURI().path()));
 
-		this.pcmResourceSetPartition.set(partition);
 		LOGGER.debug("monitor: " + monitor.getClass().getName());
 		monitor.beginTask("Start Simulation", 3);
 

@@ -39,6 +39,8 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 	private IProgressMonitor monitor;
 	private SimuComConfig config;
 
+	private Injector childInjector;
+
 	@Inject
 	public SlingshotSimulationDriver(final SimulationEngine engine,
 			final Injector injector,
@@ -50,19 +52,19 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 	@Override
 	public void init(final SimuComConfig config, final IProgressMonitor monitor) {
-		if (this.initialized) {
-			return;
+		if (!this.initialized) {
+
+			this.monitor = monitor;
+			this.config = config;
+
+			final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
+
+			partitionIncludedStream.add(new SimulationDriverSubModule(monitor, config));
+
+			partitionIncludedStream.addAll(behaviorContainers);
+
+			childInjector = this.parentInjector.createChildInjector(partitionIncludedStream);
 		}
-		this.monitor = monitor;
-		this.config = config;
-
-		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
-
-		partitionIncludedStream.add(new SimulationDriverSubModule(monitor, config));
-
-		partitionIncludedStream.addAll(behaviorContainers);
-
-		final Injector childInjector = this.parentInjector.createChildInjector(partitionIncludedStream);
 
 		behaviorContainers.stream()
 			.flatMap(extensions -> extensions.getExtensions().stream())

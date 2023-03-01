@@ -20,6 +20,4 @@ public interface SimulationEngine {
 	public void scheduleEventAt(final DESEvent event, final double simulationTime);
 
 	public void registerEventListener(final SimulationBehaviorExtension guavaEventClass);
-
-
 }
