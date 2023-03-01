@@ -38,10 +38,10 @@ public class SlingshotModule extends AbstractModule {
 	private final List<SimulationBehaviorContainer> simulationContainers;
 
 	public SlingshotModule() {
-		this.systemContainers = Slingshot.getInstance().getExtensions().stream()
+		this.systemContainers = Slingshot.getInstance().getSystemExtensions().stream()
 				.map(extension -> new SystemBehaviorContainer(extension))
 				.collect(Collectors.toList());
-		this.simulationContainers = Slingshot.getInstance().getExtensions().stream()
+		this.simulationContainers = Slingshot.getInstance().getSimulationExtensions().stream()
 				.map(SimulationBehaviorContainer::new)
 				.collect(Collectors.toList());
 	}

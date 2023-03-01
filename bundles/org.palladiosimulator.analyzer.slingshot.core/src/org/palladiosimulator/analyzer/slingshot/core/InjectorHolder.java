@@ -24,7 +24,7 @@ public final class InjectorHolder {
 	private final Injector injector;
 
 	InjectorHolder() {
-		final List<Module> copied = new ArrayList<>(Slingshot.getInstance().getExtensions());
+		final List<Module> copied = new ArrayList<>(Slingshot.getInstance().getSystemExtensions());
 		copied.add(new SlingshotModule());
 		copied.forEach(module -> LOGGER.debug("Following module added: " + module.getClass().getName()));
 		this.injector = Guice.createInjector(copied);

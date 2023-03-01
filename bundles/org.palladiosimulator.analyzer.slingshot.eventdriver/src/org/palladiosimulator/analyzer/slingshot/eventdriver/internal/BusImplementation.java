@@ -79,7 +79,7 @@ public final class BusImplementation implements Bus {
 		final Class<?> observerClass = object.getClass();
 
 		if (observers.putIfAbsent(observerClass, new CompositeDisposable()) != null) {
-			throw new IllegalArgumentException("Observer has already been registered.");
+			throw new IllegalArgumentException(String.format("Cannot register observer %s : Observer has already been registered. ", observerClass.getSimpleName()));
 		}
 
 		final CompositeDisposable composite = observers.get(observerClass);

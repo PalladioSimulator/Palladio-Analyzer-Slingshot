@@ -3,8 +3,5 @@
 <plugin>
 	<extension
          point="org.palladiosimulator.analyzer.slingshot">
-      <slingshot-extension
-            module="org.palladiosimulator.analyzer.slingshot.workflow.WorkflowConfigurationModule">
-      </slingshot-extension>
    </extension>
 </plugin>

@@ -17,8 +17,10 @@ public abstract class AbstractSlingshotExtension extends AbstractModule {
 			this.behaviorExtensions = new LinkedList<>();
 		}
 
-		System.out.println("Installing " + behaviorExtension.getSimpleName());
-		this.behaviorExtensions.add(behaviorExtension);
+		if (!this.behaviorExtensions.contains(behaviorExtension)) {
+			System.out.println("Installing " + behaviorExtension.getSimpleName());
+			this.behaviorExtensions.add(behaviorExtension);
+		}
 	}
 
 	protected final <T extends EObject> void provideModel(final Class<T> model, final Class<? extends ModelProvider<T>> provider) {

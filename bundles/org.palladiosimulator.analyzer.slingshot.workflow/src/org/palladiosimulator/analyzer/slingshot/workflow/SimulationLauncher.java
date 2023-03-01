@@ -20,32 +20,30 @@ import de.uka.ipd.sdq.workflow.logging.console.LoggerAppenderStruct;
 public class SimulationLauncher extends AbstractPCMLaunchConfigurationDelegate<SimulationWorkflowConfiguration> {
 
 	private static final Logger LOGGER = Logger.getLogger(SimulationLauncher.class);
-	
+
 	private final SystemDriver systemDriver = Slingshot.getInstance().getSystemDriver();
-	
+
 	@Override
-	protected IJob createWorkflowJob(SimulationWorkflowConfiguration config, ILaunch launch) throws CoreException {
+	protected IJob createWorkflowJob(final SimulationWorkflowConfiguration config, final ILaunch launch) throws CoreException {
 		return new SimulationRootJob(config, launch);
 	}
 
 	@Override
-	protected SimulationWorkflowConfiguration deriveConfiguration(ILaunchConfiguration configuration, String mode)
+	protected SimulationWorkflowConfiguration deriveConfiguration(final ILaunchConfiguration configuration, final String mode)
 			throws CoreException {
 		final SimuComConfig config = new SimuComConfig(configuration.getAttributes(), true);
 		final SimulationWorkflowConfiguration simulationWorkflowConfiguration = new SimulationWorkflowConfiguration(config);
-		
+
 		final WorkflowLaunchConfigurationBuilderInitialized builderEvent = new WorkflowLaunchConfigurationBuilderInitialized(configuration, simulationWorkflowConfiguration);
 		systemDriver.postEvent(builderEvent);
-		
+
 		if (LOGGER.isDebugEnabled()) {
 			LOGGER.debug("The workfloww launch configurations are:");
 			builderEvent.forEach().forEach((key, obj) -> {
 				LOGGER.debug("Key: " + key + ", Object: " + obj + "<" + obj.getClass().getName() + ">");
 			});
 		}
-		
-		// Currently, this is the only way I found to set the SimuComConfig. Maybe there is a better way?
-		WorkflowConfigurationModule.simuComConfigProvider.set(config);
+
 		return simulationWorkflowConfiguration;
 	}
 

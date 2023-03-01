@@ -2,5 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension-point id="org.palladiosimulator.analyzer.slingshot" name="SlingshotExtension" schema="schema/org.palladiosimulator.analyzer.slingshot.exsd"/>
+   <extension-point id="org.palladiosimulator.analyzer.slingshot.system" name="SlingshotSystemExtension" schema="schema/org.palladiosimulator.analyzer.slingshot.system.exsd"/>
 
 </plugin>

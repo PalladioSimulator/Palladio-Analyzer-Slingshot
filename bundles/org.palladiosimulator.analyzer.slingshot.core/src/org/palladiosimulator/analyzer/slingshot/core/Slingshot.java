@@ -2,7 +2,6 @@ package org.palladiosimulator.analyzer.slingshot.core;
 
 import java.util.Collections;
 import java.util.List;
-
 import javax.inject.Provider;
 
 import org.apache.log4j.Appender;
@@ -27,7 +26,8 @@ public class Slingshot extends Plugin {
 	public static final String BUNDLE_ID = "";
 
 	private static Slingshot bundle = null;
-	private List<AbstractSlingshotExtension> extensions = null;
+	private List<AbstractSlingshotExtension> simulationExtensions = null;
+	private List<AbstractSlingshotExtension> systemExtensions = null;
 
 	private InjectorHolder injectionHolder;
 
@@ -46,18 +46,25 @@ public class Slingshot extends Plugin {
 	@Override
 	public void stop(final BundleContext context) throws Exception {
 		bundle = null;
-		this.extensions = null;
+		this.simulationExtensions = null;
+		this.systemExtensions = null;
 		this.injectionHolder = null;
 		LOGGER.debug("Slingshot ended");
 		super.stop(context);
 	}
 
-	public List<AbstractSlingshotExtension> getExtensions() {
-		if (this.extensions == null) {
-			this.extensions = ExtensionHelper.getExecutableExtensions(ExtensionIds.EXTENSION_POINT_ID, ExtensionIds.EXTENSION_ATTRIBUTE_NAME);
+	public List<AbstractSlingshotExtension> getSystemExtensions() {
+		if (this.systemExtensions == null) {
+			this.systemExtensions = ExtensionHelper.getExecutableExtensions(ExtensionIds.SYSTEM_EXTENSION_POINT_ID, ExtensionIds.SYSTEM_EXTENSION_ATTRIBUTE_NAME);
 		}
+		return Collections.unmodifiableList(systemExtensions);
+	}
 
-		return Collections.unmodifiableList(this.extensions);
+	public List<AbstractSlingshotExtension> getSimulationExtensions() {
+		if (this.simulationExtensions == null) {
+			this.simulationExtensions = ExtensionHelper.getExecutableExtensions(ExtensionIds.EXTENSION_POINT_ID, ExtensionIds.EXTENSION_ATTRIBUTE_NAME);
+		}
+		return Collections.unmodifiableList(simulationExtensions);
 	}
 
 	public static Slingshot getInstance() {

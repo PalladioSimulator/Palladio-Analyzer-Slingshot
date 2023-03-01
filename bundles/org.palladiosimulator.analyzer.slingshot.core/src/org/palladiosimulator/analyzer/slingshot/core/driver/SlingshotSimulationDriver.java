@@ -2,11 +2,11 @@ package org.palladiosimulator.analyzer.slingshot.core.driver;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;
+import org.palladiosimulator.analyzer.slingshot.core.Slingshot;
 import org.palladiosimulator.analyzer.slingshot.core.annotations.SimulationBehaviorExtensions;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationEngine;
@@ -16,7 +16,6 @@ import org.palladiosimulator.analyzer.slingshot.core.events.SimulationFinished;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationStarted;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorContainer;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
@@ -39,11 +38,10 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 	private IProgressMonitor monitor;
 	private SimuComConfig config;
 
-	private Injector childInjector;
+
 
 	@Inject
-	public SlingshotSimulationDriver(final SimulationEngine engine,
-			final Injector injector,
+	public SlingshotSimulationDriver(final SimulationEngine engine, final Injector injector,
 			@SimulationBehaviorExtensions final List<SimulationBehaviorContainer> behaviorContainers) {
 		this.engine = engine;
 		this.parentInjector = injector;
@@ -52,29 +50,24 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 	@Override
 	public void init(final SimuComConfig config, final IProgressMonitor monitor) {
-		if (!this.initialized) {
 
-			this.monitor = monitor;
-			this.config = config;
+		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
+		partitionIncludedStream.add(new SimulationDriverSubModule(monitor, config));
+		//partitionIncludedStream.addAll(behaviorContainers); // TODO for some reason, this does not configure.
+		partitionIncludedStream.addAll(Slingshot.getInstance().getSimulationExtensions());
 
-			final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
+		final Injector childInjector = this.parentInjector.createChildInjector(partitionIncludedStream);
 
-			partitionIncludedStream.add(new SimulationDriverSubModule(monitor, config));
+		this.monitor = monitor;
+		this.config = config;
 
-			partitionIncludedStream.addAll(behaviorContainers);
-
-			childInjector = this.parentInjector.createChildInjector(partitionIncludedStream);
-		}
-
-		behaviorContainers.stream()
-			.flatMap(extensions -> extensions.getExtensions().stream())
-			.forEach(simExtension -> {
-				final Object e = childInjector.getInstance(simExtension);
-				if (!(e instanceof SimulationBehaviorExtension)) {
-					return;
-				}
-				engine.registerEventListener((SimulationBehaviorExtension) e);
-			});
+		behaviorContainers.stream().flatMap(extensions -> extensions.getExtensions().stream()).forEach(simExtension -> {
+			final Object e = childInjector.getInstance(simExtension);
+			if (!(e instanceof SimulationBehaviorExtension)) {
+				return;
+			}
+			engine.registerEventListener((SimulationBehaviorExtension) e);
+		});
 
 		engine.registerEventListener(new CoreBehavior(this));
 		this.initialized = true;
@@ -82,7 +75,7 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 	@Override
 	public void start() {
-		if (this.isRunning()  || !this.initialized) {
+		if (this.isRunning() || !this.initialized) {
 			return;
 		}
 
@@ -110,7 +103,6 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		return this.running;
 	}
 
-
 	@Override
 	public void scheduleEvent(final DESEvent event) {
 		if (!this.isRunning()) {
@@ -129,27 +121,25 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		this.engine.scheduleEventAt(event, simulationTime);
 	}
 
-	private static class SimulationDriverSubModule extends AbstractModule {
+	private class SimulationDriverSubModule extends AbstractModule {
 
 		private final IProgressMonitor monitor;
-		private final SimuComConfig config;
+//		private final SimuComConfig config;
 
-		public SimulationDriverSubModule(final IProgressMonitor monitor,
-										 final SimuComConfig config) {
-		//	this.partition = partition;
+		public SimulationDriverSubModule(final IProgressMonitor monitor, final SimuComConfig config) {
+			// this.partition = partition;
 			this.monitor = monitor;
-			this.config = config;
+//			this.config = config;
 		}
-
 
 		@Provides
 		public IProgressMonitor monitor() {
 			return this.monitor;
 		}
 
-		//@Provides
-		//public SimuComConfig config() {
-		//	return this.config;
-		//}
+		@Provides
+		public SimuComConfig config() {
+			return config;
+		}
 	}
 }
