@@ -19,7 +19,7 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 
 	private final Logger LOGGER = LogManager.getLogger(SimulationEngineSSJ.class);
 
-	private Bus eventBus = Bus.instance();
+	private final Bus eventBus = Bus.instance();
 	private final Simulator simulator = new Simulator();
 
 	private int cumulativeEvents = 0;
@@ -74,7 +74,6 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 		simulator.stop();
 		this.eventBus.acceptEvents(false);
 		this.isAcceptingEvents = false;
-		eventBus = Bus.instance(); // reset bus
 	}
 
 	@Override

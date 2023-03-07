@@ -19,6 +19,8 @@ import org.palladiosimulator.analyzer.slingshot.core.extension.AbstractSlingshot
 import org.palladiosimulator.analyzer.slingshot.core.extension.ExtensionIds;
 import org.palladiosimulator.commons.eclipseutils.ExtensionHelper;
 
+import com.google.inject.Injector;
+
 public class Slingshot extends Plugin {
 
 	private static final Logger LOGGER = LogManager.getLogger(Slingshot.class);
@@ -76,7 +78,10 @@ public class Slingshot extends Plugin {
 	}
 
 	public SimulationDriver getSimulationDriver() {
-		return injectionHolder.getInstance(SimulationDriver.class);
+		final Injector parent = this.injectionHolder.getInstance(Injector.class);
+		final Injector child = parent.createChildInjector(List.of(new SimulationModule()));
+
+		return child.getInstance(SimulationDriver.class);
 	}
 
 	public <T> T getInstance(final Class<T> clazz) {

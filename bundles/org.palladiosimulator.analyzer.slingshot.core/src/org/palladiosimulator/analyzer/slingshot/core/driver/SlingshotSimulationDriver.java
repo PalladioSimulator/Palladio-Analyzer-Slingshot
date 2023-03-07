@@ -38,22 +38,20 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 	private IProgressMonitor monitor;
 	private SimuComConfig config;
 
-
-
 	@Inject
-	public SlingshotSimulationDriver(final SimulationEngine engine, final Injector injector,
+	public SlingshotSimulationDriver(final Injector injector, final SimulationEngine engine,
 			@SimulationBehaviorExtensions final List<SimulationBehaviorContainer> behaviorContainers) {
-		this.engine = engine;
 		this.parentInjector = injector;
 		this.behaviorContainers = behaviorContainers;
+		this.engine = engine;
 	}
 
 	@Override
 	public void init(final SimuComConfig config, final IProgressMonitor monitor) {
 
 		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
-		partitionIncludedStream.add(new SimulationDriverSubModule(monitor, config));
-		//partitionIncludedStream.addAll(behaviorContainers); // TODO for some reason, this does not configure.
+		partitionIncludedStream.add(new SimulationDriverSubModule(monitor));
+		// partitionIncludedStream.addAll(behaviorContainers); // TODO for some reason, this does not configure.
 		partitionIncludedStream.addAll(Slingshot.getInstance().getSimulationExtensions());
 
 		final Injector childInjector = this.parentInjector.createChildInjector(partitionIncludedStream);
@@ -121,15 +119,17 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		this.engine.scheduleEventAt(event, simulationTime);
 	}
 
+	/**
+	 * Module to provide Simulation Run Specific Instances, that already exist, such
+	 * as the simuCom config and the progress monitor.
+	 *
+	 */
 	private class SimulationDriverSubModule extends AbstractModule {
 
 		private final IProgressMonitor monitor;
-//		private final SimuComConfig config;
 
-		public SimulationDriverSubModule(final IProgressMonitor monitor, final SimuComConfig config) {
-			// this.partition = partition;
+		public SimulationDriverSubModule(final IProgressMonitor monitor) {
 			this.monitor = monitor;
-//			this.config = config;
 		}
 
 		@Provides
