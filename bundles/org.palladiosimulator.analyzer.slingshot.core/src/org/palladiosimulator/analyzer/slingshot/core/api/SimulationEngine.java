@@ -1,5 +1,7 @@
 package org.palladiosimulator.analyzer.slingshot.core.api;
 
+import java.util.Set;
+
 import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.Subscriber;
@@ -23,5 +25,7 @@ public interface SimulationEngine {
 	public void registerEventListener(final SimulationBehaviorExtension guavaEventClass);
 
 	public <T> void registerEventListener(final Subscriber<T> subscriber);
+
+    public Set<DESEvent> getScheduledEvents();
 
 }

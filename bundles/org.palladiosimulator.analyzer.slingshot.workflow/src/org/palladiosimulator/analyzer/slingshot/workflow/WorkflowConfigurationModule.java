@@ -6,7 +6,7 @@ import de.uka.ipd.sdq.simucomframework.SimuComConfig;
 
 public class WorkflowConfigurationModule extends AbstractSlingshotExtension {
 
-	static final SimuComConfigProvider simuComConfigProvider = new SimuComConfigProvider();
+	public static final SimuComConfigProvider simuComConfigProvider = new SimuComConfigProvider();
 
 	public WorkflowConfigurationModule() {
 	}

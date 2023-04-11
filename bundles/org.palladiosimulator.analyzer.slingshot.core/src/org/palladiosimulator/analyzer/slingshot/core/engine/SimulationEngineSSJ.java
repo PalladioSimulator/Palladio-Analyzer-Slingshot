@@ -2,6 +2,10 @@ package org.palladiosimulator.analyzer.slingshot.core.engine;
 
 import org.apache.log4j.Logger;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.inject.Singleton;
 
 import org.apache.log4j.LogManager;
@@ -114,6 +118,10 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 			cumulativeEvents++;
 		}
 
+		private DESEvent getDESEvent() {
+			return this.event;
+		}
+
 	}
 
 	@Override
@@ -121,10 +129,25 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 		this.eventBus.register(guavaEventClass);
 	}
 
-	
+
 	@Override
 	public <T> void registerEventListener(final Subscriber<T> subscriber) {
 		this.eventBus.register(subscriber);
 	}
 
+    @Override
+    public Set<DESEvent> getScheduledEvents() {
+            final Iterator<Event> events = simulator.getEventList().iterator();
+            final Set<DESEvent> desevents = new HashSet<>();
+
+            // Actually, i should copy the events right here, before handling them out.
+            // But sadly, that would create dependencies to all behaviour modules  :(
+            while(events.hasNext()) {
+                    final SSJEvent ssjEvent = (SSJEvent) events.next();
+                    final DESEvent desevent = ssjEvent.getDESEvent();
+                    desevent.setTime(ssjEvent.time());
+                    desevents.add(desevent);
+            }
+            return desevents;
+    }
 }

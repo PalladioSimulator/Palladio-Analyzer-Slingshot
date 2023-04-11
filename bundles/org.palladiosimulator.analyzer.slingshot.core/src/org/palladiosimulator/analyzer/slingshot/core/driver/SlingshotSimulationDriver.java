@@ -1,7 +1,10 @@
 package org.palladiosimulator.analyzer.slingshot.core.driver;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -48,10 +51,19 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		this.behaviorContainers = behaviorContainers;
 	}
 
+
 	@Override
 	public void init(final SimuComConfig config, final IProgressMonitor monitor) {
-		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
+		this.init(config, monitor, Set.of());
+
+	}
+
+	@Override
+	public void init(final SimuComConfig config, final IProgressMonitor monitor, final Collection<AbstractModule> additionalModules) {
+
+		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1 + additionalModules.size());
 		partitionIncludedStream.add(new SimulationDriverSubModule(monitor));
+		partitionIncludedStream.addAll(additionalModules);
 		partitionIncludedStream.addAll(behaviorContainers);
 
 		final Injector childInjector = this.parentInjector.createChildInjector(partitionIncludedStream);
