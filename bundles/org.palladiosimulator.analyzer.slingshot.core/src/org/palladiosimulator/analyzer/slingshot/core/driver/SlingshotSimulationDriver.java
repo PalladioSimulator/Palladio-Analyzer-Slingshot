@@ -73,11 +73,14 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 		behaviorContainers.stream().flatMap(behaviorContainer -> behaviorContainer.getExtensions().stream())
 				.forEach(simExtensionClass -> {
-					final Object simExtension = childInjector.getInstance(simExtensionClass);
-					if (!(simExtension instanceof SimulationBehaviorExtension)) {
+					final Object extension = childInjector.getInstance(simExtensionClass);
+					if (!(extension instanceof SimulationBehaviorExtension)) {
 						return;
 					}
-					engine.registerEventListener((SimulationBehaviorExtension) simExtension);
+					final SimulationBehaviorExtension simExtension = (SimulationBehaviorExtension) extension;
+					if (simExtension.isActive()) {
+						engine.registerEventListener(simExtension);
+					}
 				});
 
 		engine.registerEventListener(new CoreBehavior(this));
