@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.palladiosimulator.analyzer.slingshot.core.Slingshot;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.extension.PCMResourceSetPartitionProvider;
+import org.palladiosimulator.analyzer.slingshot.workflow.WorkflowConfigurationModule;
 import org.palladiosimulator.analyzer.workflow.ConstantsContainer;
 import org.palladiosimulator.analyzer.workflow.blackboard.PCMResourceSetPartition;
 
@@ -36,6 +37,7 @@ public class SimulationJob implements IBlackboardInteractingJob<MDSDBlackboard> 
 		final PCMResourceSetPartition partition = (PCMResourceSetPartition)
 				this.blackboard.getPartition(ConstantsContainer.DEFAULT_PCM_INSTANCE_PARTITION_ID);
 
+		WorkflowConfigurationModule.blackboardProvider.set(blackboard);
 		this.pcmResourceSetPartition.set(partition);
 		LOGGER.debug("Current partition: ");
 		partition.getResourceSet().getResources().forEach(resource -> LOGGER.debug("Resource: " + resource.getURI().path()));
