@@ -8,7 +8,7 @@ public class MDSDBlackboardProvider implements Provider<MDSDBlackboard> {
 
 	private MDSDBlackboard blackboard;
 	
-	void set(final MDSDBlackboard blackboard) {
+	public void set(final MDSDBlackboard blackboard) {
 		this.blackboard = blackboard;
 	}
 	
