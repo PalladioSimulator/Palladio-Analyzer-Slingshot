@@ -6,6 +6,8 @@ import java.lang.reflect.Modifier;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -52,7 +54,7 @@ public final class BusImplementation implements Bus {
 
 
 	private final Map<Class<?>, Set<Subscriber<?>>> subscribers = new HashMap<>();
-
+	private final List<Consumer<Object>> eventListeners = new LinkedList<>();
 
 	private boolean registrationOpened = true;
 	private boolean invocationOpened = true;
@@ -62,7 +64,7 @@ public final class BusImplementation implements Bus {
 
 	public BusImplementation(final String identifier) {
 		this.identifier = Objects.requireNonNull(identifier);
-		this.bus = PublishSubject.create();
+		bus = PublishSubject.create();
 		this.init();
 	}
 
@@ -76,12 +78,12 @@ public final class BusImplementation implements Bus {
 
 	@Override
 	public String getIdentifier() {
-		return this.identifier;
+		return identifier;
 	}
 
 	@Override
 	public <T> void register(final Subscriber<T> subscriber) {
-		if (!this.registrationOpened) {
+		if (!registrationOpened) {
 			throw new IllegalStateException("This bus has closed registration for new subscribers");
 		}
 		Objects.requireNonNull(subscriber, "Subscriber must not be null!");
@@ -92,14 +94,14 @@ public final class BusImplementation implements Bus {
 		observers.computeIfAbsent(subscriber.getEnclosingType()
 											.map(Class::getName)
 											.orElseGet(subscriber::getName), id -> new CompositeDisposable())
-				 .add(this.bus.ofType(subscriber.getEventType())
+				 .add(bus.ofType(subscriber.getEventType())
 						 	  .doOnNext(this::doOnNext)
-						 	  .subscribe(subscriber, this::doError));
+						.subscribe(subscriber, this::doError));
 	}
 
 	@Override
 	public void register(final Object object) {
-		if (!this.registrationOpened) {
+		if (!registrationOpened) {
 			throw new IllegalStateException("This bus does not income new objects.");
 		}
 
@@ -124,15 +126,20 @@ public final class BusImplementation implements Bus {
 			this.searchPostInterceptors(method, object);
 		}
 	}
+	
+	@Override
+	public void addEventListener(final Consumer<Object> eventListener) {
+		eventListeners.add(Objects.requireNonNull(eventListener));
+	}
 
 	@Override
 	public void unregister(final Object object) {
 		Objects.requireNonNull(object, "Observer to unregister must not be null.");
 		final CompositeDisposable composite;
 		if (object instanceof String) {
-			composite = this.observers.remove((String) object);
+			composite = observers.remove(object);
 		} else {
-			composite = this.observers.remove(object.getClass().getName());
+			composite = observers.remove(object.getClass().getName());
 		}
 		Objects.requireNonNull(composite, "Missing observer; it was not registered before.");
 		composite.dispose();
@@ -144,11 +151,12 @@ public final class BusImplementation implements Bus {
 
 	@Override
 	public void post(final Object event) {
-		if (!this.invocationOpened) {
+		if (!invocationOpened) {
 			throw new IllegalStateException("The bus is not currently allowing posting of events.");
 		}
 		System.out.println("Now post " + event.getClass().getSimpleName());
-		this.bus.onNext(Objects.requireNonNull(event));
+		eventListeners.forEach(listener -> listener.accept(event));
+		bus.onNext(Objects.requireNonNull(event));
 	}
 
 	private void searchForSubscribers(final CompositeDisposable composite,
@@ -187,9 +195,9 @@ public final class BusImplementation implements Bus {
 
 	private void doError(final Throwable error) {
 		LOGGER.error("An error occurred: " + error.getClass().getSimpleName() + ":: " + error.getMessage(), error);
-		this.exceptionHandlers.keySet().stream()
+		exceptionHandlers.keySet().stream()
 				.filter(exClazz -> exClazz.isAssignableFrom(error.getClass()))
-				.flatMap(exClazz -> this.exceptionHandlers.get(exClazz).stream())
+				.flatMap(exClazz -> exceptionHandlers.get(exClazz).stream())
 				.forEach(exHandler -> exHandler.accept(error));
 	}
 
@@ -200,7 +208,7 @@ public final class BusImplementation implements Bus {
 	 * @param event The event that happened
 	 */
 	private void doOnNext(final Object event) {
-		LOGGER.debug("About to call the subscribers for the following events: " + event.getClass().getSimpleName());
+		// this.eventListeners.forEach(listener -> listener.accept(event));
 	}
 
 	private void searchPreInterceptors(final Method method, final Object object) {
@@ -214,7 +222,7 @@ public final class BusImplementation implements Bus {
 
 		final PreInterceptor preInterceptor = new PreInterceptor(method, object);
 
-		this.compositeInterceptor.add(preInterceptor.forEvent(), preInterceptor);
+		compositeInterceptor.add(preInterceptor.forEvent(), preInterceptor);
 	}
 
 	private void searchPostInterceptors(final Method method, final Object object) {
@@ -225,7 +233,7 @@ public final class BusImplementation implements Bus {
 			throw new IllegalArgumentException("Method " + method.getName() + " for post-interception is not public.");
 		}
 		final PostInterceptor postInterceptor = new PostInterceptor(method, object);
-		this.compositeInterceptor.add(postInterceptor.forEvent(), postInterceptor);
+		compositeInterceptor.add(postInterceptor.forEvent(), postInterceptor);
 	}
 
 	private void searchExceptionHandlers(final Method method, final Object target) {
@@ -252,22 +260,22 @@ public final class BusImplementation implements Bus {
 		};
 
 
-		this.exceptionHandlers.computeIfAbsent(params[0], eventType -> new HashSet<>())
+		exceptionHandlers.computeIfAbsent(params[0], eventType -> new HashSet<>())
 							  .add(onException);
 	}
 
 	@Override
 	public void closeRegistration() {
-		this.registrationOpened = false;
-		this.invocationOpened = true;
+		registrationOpened = false;
+		invocationOpened = true;
 	}
 
 	@Override
 	public void acceptEvents(final boolean accept) {
-		if (this.registrationOpened) {
+		if (registrationOpened) {
 			return;
 		}
-		this.invocationOpened = accept;
+		invocationOpened = accept;
 	}
 
 	public static class EventType {
@@ -296,10 +304,7 @@ public final class BusImplementation implements Bus {
 			if (this == obj) {
 				return true;
 			}
-			if (obj == null) {
-				return false;
-			}
-			if (getClass() != obj.getClass()) {
+			if ((obj == null) || (getClass() != obj.getClass())) {
 				return false;
 			}
 			final EventType other = (EventType) obj;
@@ -313,7 +318,7 @@ public final class BusImplementation implements Bus {
 			stringBuilder.append(eventClass.getName());
 			stringBuilder.append(">, reified = {");
 
-			for (final Class<?> clazz : this.reification) {
+			for (final Class<?> clazz : reification) {
 				stringBuilder.append("<");
 				stringBuilder.append(clazz.getName());
 				stringBuilder.append(">");

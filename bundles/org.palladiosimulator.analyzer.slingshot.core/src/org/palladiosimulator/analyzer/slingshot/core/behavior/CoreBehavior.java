@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.palladiosimulator.analyzer.slingshot.common.constants.MetaKeys;
 import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationFinished;
@@ -40,7 +41,9 @@ public class CoreBehavior implements SimulationBehaviorExtension {
 		result.getResultEvents().forEach(nextEvent -> {
 			LOGGER.debug("Result is " + nextEvent.getClass().getName());
 			if (nextEvent instanceof DESEvent) {
-				simulationDriver.scheduleEvent((DESEvent) nextEvent);
+				final DESEvent desEvent = (DESEvent) nextEvent;
+				desEvent.setMetaInformation(MetaKeys.META_PARENT_EVENT, event);
+				simulationDriver.scheduleEvent(desEvent);
 			} else {
 				/* Within the simulation, we only allow results that have DESEvents */
 				throw new IllegalResultException("The result container contains objects that are not DESEvents"

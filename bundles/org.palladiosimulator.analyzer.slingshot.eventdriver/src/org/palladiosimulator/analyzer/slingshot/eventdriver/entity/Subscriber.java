@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.log4j.Logger;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.IPostInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.IPreInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.InterceptorInformation;
@@ -13,8 +14,6 @@ import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
-
-import org.apache.log4j.Logger;
 
 /**
  * A subscriber to an event of type {@code T} that should be activated upon the event.
@@ -54,23 +53,23 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 	private final List<SubscriberContract> associatedContracts;
 
 	private Subscriber(final Builder<T> builder) {
-		this.priority = builder.priority;
-		this.reifiedClasses = builder.reifiedClasses;
-		this.name = builder.name;
-		this.handler = builder.handler;
-		this.handlerType = builder.handlerType;
-		this.enclosingType = builder.enclosingType;
-		this.forEvent = builder.forEvent;
-		this.preInterceptor = builder.preInterceptor;
-		this.postInterceptor = builder.postInterceptor;
-		this.associatedContracts = builder.associatedContracts;
+		priority = builder.priority;
+		reifiedClasses = builder.reifiedClasses;
+		name = builder.name;
+		handler = builder.handler;
+		handlerType = builder.handlerType;
+		enclosingType = builder.enclosingType;
+		forEvent = builder.forEvent;
+		preInterceptor = builder.preInterceptor;
+		postInterceptor = builder.postInterceptor;
+		associatedContracts = builder.associatedContracts;
 	}
 
 	@Override
 	public void accept(final T event) throws Exception {
 		final InterceptorInformation preInterceptionInformation = this;
 
-		final InterceptionResult preInterceptionResult = this.preInterceptor
+		final InterceptionResult preInterceptionResult = preInterceptor
 				.map(preInterceptor -> preInterceptor.apply(preInterceptionInformation, event))
 				.orElseGet(InterceptionResult::success);
 
@@ -78,11 +77,15 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 			return;
 		}
 
-		final Result<?> result = this.handler.acceptEvent(event);
-
+		final Result<?> result;
+		try {
+			result = handler.acceptEvent(event);
+		} catch (final Throwable t) {
+			throw new EventHandlerException(event, enclosingType, name, t);
+		}
 
 		// TODO: What to do with that?
-		final InterceptionResult postInterceptionResult = this.postInterceptor
+		final InterceptionResult postInterceptionResult = postInterceptor
 				.map(postInterceptor -> postInterceptor.apply(preInterceptionInformation, event, result))
 				.orElseGet(InterceptionResult::success);
 		
@@ -92,13 +95,13 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 	@Override
 	public void dispose() {
 		if (!disposed) {
-			this.disposed = true;
+			disposed = true;
 		}
 	}
 
 	@Override
 	public boolean isDisposed() {
-		return this.disposed;
+		return disposed;
 	}
 
 	@Override
@@ -138,11 +141,11 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 	}
 
 	public int getPriority() {
-		return this.priority;
+		return priority;
 	}
 
 	public List<Class<?>> getReifiedClasses() {
-		return this.reifiedClasses;
+		return reifiedClasses;
 	}
 
 	@Override
@@ -152,7 +155,7 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 
 	@Override
 	public Class<?> getHandlerType() {
-		return this.handlerType;
+		return handlerType;
 	}
 
 	@Override
@@ -178,7 +181,7 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 			}
 
 			final ReifiedEvent<?> reifiedEvent = (ReifiedEvent<?>) event;
-			return this.reifiedClasses.stream().anyMatch(type -> type.isAssignableFrom(reifiedEvent.getTypeToken().getRawType()));
+			return reifiedClasses.stream().anyMatch(type -> type.isAssignableFrom(reifiedEvent.getTypeToken().getRawType()));
 		}
 		// Since it's not a reified event, check is not needed.
 		return true;
@@ -256,5 +259,11 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 		public Subscriber<T> build() {
 			return new Subscriber<>(this);
 		}
+	}
+
+	public Consumer<? super Throwable> onError() {
+		return throwable -> {
+
+		};
 	}
 }

@@ -1,5 +1,7 @@
 package org.palladiosimulator.analyzer.slingshot.eventdriver;
 
+import java.util.function.Consumer;
+
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.Subscriber;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.internal.BusImplementation;
 
@@ -77,6 +79,17 @@ public interface Bus {
 	 * 				 here until it is opened again.
 	 */
 	public void acceptEvents(final boolean accept);
+	
+	/**
+	 * This adds a listener every time an event has been posted.
+	 * Unlike normal event handlers, these functions are called 
+	 * just before the handlers. Furthermore, the listeners are
+	 * called always, regardless of the event type.
+	 * 
+	 * @param eventListener A listener that should be executed 
+	 * 						before the handlers.
+	 */
+	public void addEventListener(final Consumer<Object> eventListener);
 	
 	/**
 	 * Returns a new instance of this bus with a default identifier.

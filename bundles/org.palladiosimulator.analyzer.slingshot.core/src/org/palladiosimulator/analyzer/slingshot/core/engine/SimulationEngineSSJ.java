@@ -1,14 +1,15 @@
 package org.palladiosimulator.analyzer.slingshot.core.engine;
 
-import org.apache.log4j.Logger;
-
 import javax.inject.Singleton;
 
 import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+import org.palladiosimulator.addon.slingshot.debuggereventsystems.EventDebugSystem;
 import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationEngine;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationInformation;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
+import org.palladiosimulator.analyzer.slingshot.debugger.translator.DebuggingEnabledEventBusFactory;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.Subscriber;
 
@@ -20,21 +21,30 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 
 	private final Logger LOGGER = LogManager.getLogger(SimulationEngineSSJ.class);
 
-	private final Bus eventBus = Bus.instance();
+	private final Bus eventBus;
 	private final Simulator simulator = new Simulator();
 
 	private int cumulativeEvents = 0;
 	private boolean isAcceptingEvents = false;
+	
+	public SimulationEngineSSJ() {
+		final String eventBusName = "SSJ-Eventbus";
+		if (EventDebugSystem.isDebugEnabled()) {
+			eventBus = DebuggingEnabledEventBusFactory.createBus(eventBusName);
+		} else {
+			eventBus = Bus.instance(eventBusName);
+		}
+	}
 
 	@Override
 	public void init() {
 		simulator.init();
-		this.isAcceptingEvents = true;
+		isAcceptingEvents = true;
 	}
 
 	@Override
 	public void scheduleEvent(final DESEvent event) {
-		if (!this.isAcceptingEvents) {
+		if (!isAcceptingEvents) {
 			return;
 		}
 
@@ -50,13 +60,13 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 
 	@Override
 	public void scheduleEventAt(final DESEvent event, final double simulationTime) {
-		if (!this.isAcceptingEvents) {
+		if (!isAcceptingEvents) {
 			return;
 		}
 
 		final Event simulationEvent = new SSJEvent(event);
 		simulationEvent.setTime(simulationTime + event.delay());
-		this.simulator.getEventList().add(simulationEvent);
+		simulator.getEventList().add(simulationEvent);
 	}
 
 	@Override
@@ -67,29 +77,40 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 	@Override
 	public void start() {
 		simulator.start();
-		this.eventBus.acceptEvents(true);
+		eventBus.acceptEvents(true);
 	}
 
 	@Override
 	public void stop() {
 		simulator.stop();
-		this.eventBus.acceptEvents(false);
-		this.isAcceptingEvents = false;
+		eventBus.acceptEvents(false);
+		isAcceptingEvents = false;
 	}
 
 	@Override
 	public boolean isRunning() {
-		return this.simulator.isSimulating();
+		return simulator.isSimulating();
 	}
 
 	@Override
 	public double currentSimulationTime() {
-		return this.simulator.time();
+		return simulator.time();
 	}
 
 	@Override
 	public int consumedEvents() {
-		return this.cumulativeEvents;
+		return cumulativeEvents;
+	}
+
+	@Override
+	public void registerEventListener(final SimulationBehaviorExtension guavaEventClass) {
+		eventBus.register(guavaEventClass);
+	}
+
+	
+	@Override
+	public <T> void registerEventListener(final Subscriber<T> subscriber) {
+		eventBus.register(subscriber);
 	}
 
 	private final class SSJEvent extends Event {
@@ -98,7 +119,7 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 
 		private SSJEvent(final DESEvent correspondingEvent) {
 			super(simulator);
-			this.event = correspondingEvent;
+			event = correspondingEvent;
 		}
 
 		@Override
@@ -107,24 +128,13 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 				return;
 			}
 
-			LOGGER.info("Even dispatched at " + this.simulator().time() + ": " + this.event.getName() + "(" + this.event.getId() + ")");
+			LOGGER.info("Even dispatched at " + this.simulator().time() + ": " + event.getName() + "(" + event.getId() + ")");
 
-			this.event.setTime(this.simulator().time());
-			eventBus.post(this.event);
+			event.setTime(this.simulator().time());
+			eventBus.post(event);
 			cumulativeEvents++;
 		}
 
 	}
-
-	@Override
-	public void registerEventListener(final SimulationBehaviorExtension guavaEventClass) {
-		this.eventBus.register(guavaEventClass);
-	}
-
 	
-	@Override
-	public <T> void registerEventListener(final Subscriber<T> subscriber) {
-		this.eventBus.register(subscriber);
-	}
-
 }
