@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.apache.log4j.Logger;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.IPostInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.IPreInterceptor;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.interceptors.InterceptorInformation;
@@ -13,8 +14,6 @@ import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 
 import io.reactivex.rxjava3.disposables.Disposable;
 import io.reactivex.rxjava3.functions.Consumer;
-
-import org.apache.log4j.Logger;
 
 /**
  * A subscriber to an event of type {@code T} that should be activated upon the event.
@@ -37,7 +36,7 @@ import org.apache.log4j.Logger;
  * @param <T> The event type
  */
 public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscriber<T>>, InterceptorInformation {
-		
+
 	private static final Logger LOGGER = Logger.getLogger(Subscriber.class);
 
 	private boolean disposed = false;
@@ -67,7 +66,7 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 	}
 
 	@Override
-	public void accept(final T event) throws Exception {
+	public void accept(final T event) throws Throwable {
 		final InterceptorInformation preInterceptionInformation = this;
 
 		final InterceptionResult preInterceptionResult = this.preInterceptor
@@ -85,7 +84,7 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 		final InterceptionResult postInterceptionResult = this.postInterceptor
 				.map(postInterceptor -> postInterceptor.apply(preInterceptionInformation, event, result))
 				.orElseGet(InterceptionResult::success);
-		
+
 		LOGGER.info("Post interception result was successful: " + postInterceptionResult.wasSuccessful());
 	}
 
