@@ -1,9 +1,7 @@
 package org.palladiosimulator.analyzer.slingshot.core.driver;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import javax.inject.Singleton;
 
@@ -19,7 +17,6 @@ import org.palladiosimulator.analyzer.slingshot.core.events.SimulationStarted;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorContainer;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.Subscriber;
-
 
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
@@ -54,16 +51,8 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 	@Override
 	public void init(final SimuComConfig config, final IProgressMonitor monitor) {
-		this.init(config, monitor, Set.of());
-
-	}
-
-	@Override
-	public void init(final SimuComConfig config, final IProgressMonitor monitor, final Collection<AbstractModule> additionalModules) {
-
-		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1 + additionalModules.size());
+		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
 		partitionIncludedStream.add(new SimulationDriverSubModule(monitor));
-		partitionIncludedStream.addAll(additionalModules);
 		partitionIncludedStream.addAll(behaviorContainers);
 
 		final Injector childInjector = this.parentInjector.createChildInjector(partitionIncludedStream);
@@ -72,19 +61,20 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		this.config = config;
 
 		behaviorContainers.stream().flatMap(behaviorContainer -> behaviorContainer.getExtensions().stream())
-				.forEach(simExtensionClass -> {
-					final Object extension = childInjector.getInstance(simExtensionClass);
-					if (!(extension instanceof SimulationBehaviorExtension)) {
-						return;
-					}
-					final SimulationBehaviorExtension simExtension = (SimulationBehaviorExtension) extension;
-					if (simExtension.isActive()) {
-						engine.registerEventListener(simExtension);
-					}
-				});
+		.forEach(simExtensionClass -> {
+			final Object extension = childInjector.getInstance(simExtensionClass);
+			if (!(extension instanceof SimulationBehaviorExtension)) {
+				return;
+			}
+			final SimulationBehaviorExtension simExtension = (SimulationBehaviorExtension) extension;
+			if (simExtension.isActive()) {
+				engine.registerEventListener(simExtension);
+			}
+		});
 
 		engine.registerEventListener(new CoreBehavior(this));
 		this.initialized = true;
+
 	}
 
 	@Override
@@ -155,10 +145,10 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		}
 
 
-//		@Provides
-//		public SimuComConfig config() {
-//			return config;
-//		}
+		//		@Provides
+		//		public SimuComConfig config() {
+		//			return config;
+		//		}
 
 	}
 
