@@ -3,6 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.eventdriver.entity;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.log4j.Logger;
@@ -64,6 +65,7 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 		this.postInterceptor = builder.postInterceptor;
 		this.associatedContracts = builder.associatedContracts;
 	}
+
 
 	@Override
 	public void accept(final T event) throws Throwable {
@@ -255,5 +257,28 @@ public class Subscriber<T> implements Consumer<T>, Disposable, Comparable<Subscr
 		public Subscriber<T> build() {
 			return new Subscriber<>(this);
 		}
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(associatedContracts, disposed, enclosingType, forEvent, handler, handlerType, name,
+				postInterceptor, preInterceptor, priority, reifiedClasses);
+	}
+
+	@Override
+	public boolean equals(final Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		final Subscriber other = (Subscriber) obj;
+		return Objects.equals(associatedContracts, other.associatedContracts) && disposed == other.disposed
+				&& Objects.equals(enclosingType, other.enclosingType) && Objects.equals(forEvent, other.forEvent)
+				&& Objects.equals(handler, other.handler) && Objects.equals(handlerType, other.handlerType)
+				&& Objects.equals(name, other.name) && Objects.equals(postInterceptor, other.postInterceptor)
+				&& Objects.equals(preInterceptor, other.preInterceptor) && priority == other.priority
+				&& Objects.equals(reifiedClasses, other.reifiedClasses);
 	}
 }
