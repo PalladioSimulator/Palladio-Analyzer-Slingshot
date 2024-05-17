@@ -4,16 +4,16 @@
    <extension
          point="org.palladiosimulator.addon.slingshot.debuggereventsystem.eventhandlerfinder">
       <handlerfinder
-            class="org.palladiosimulator.analyzer.slingshot.debugger.SlingshotEventHandlerFinder"
+            class="org.palladiosimulator.analyzer.slingshot.debugger.descriptor.SlingshotEventHandlerFinder"
             javaEventType="org.eclipse.jdt.core.IType"
-            javaMethodType="org.palladiosimulator.analyzer.slingshot.debugger.EclipseEventHandler">
+            javaMethodType="org.palladiosimulator.analyzer.slingshot.debugger.descriptor.EclipseEventHandler">
       </handlerfinder>
    </extension>
    <extension
          point="org.palladiosimulator.addon.slingshot.debuggereventsystem.listener">
       <listener
       		eventType="org.palladiosimulator.addon.slingshot.debuggereventsystems.listener.events.BreakpointEvent"
-            class="org.palladiosimulator.analyzer.slingshot.debugger.EclipseEventDebugObserver">
+            class="org.palladiosimulator.analyzer.slingshot.debugger.descriptor.EclipseEventDebugObserver">
       </listener>
    </extension>
 

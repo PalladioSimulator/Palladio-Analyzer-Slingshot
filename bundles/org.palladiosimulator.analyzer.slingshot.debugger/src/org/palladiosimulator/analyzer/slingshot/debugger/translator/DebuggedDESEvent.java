@@ -1,11 +1,12 @@
 package org.palladiosimulator.analyzer.slingshot.debugger.translator;
 
-import java.util.Collections;
+import java.lang.reflect.Field;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import org.palladiosimulator.addon.slingshot.debuggereventsystems.EventDebugSystem;
-import org.palladiosimulator.addon.slingshot.debuggereventsystems.cache.EventTreeNode;
+import org.palladiosimulator.addon.slingshot.debuggereventsystems.cache.EventTreeEdge;
 import org.palladiosimulator.addon.slingshot.debuggereventsystems.model.DebugEventId;
 import org.palladiosimulator.addon.slingshot.debuggereventsystems.model.IDebugEvent;
 import org.palladiosimulator.addon.slingshot.debuggereventsystems.model.TimeInformation;
@@ -19,8 +20,9 @@ public final class DebuggedDESEvent implements IDebugEvent, TimeInformation {
 	private static final long serialVersionUID = 1L;
 	private transient final DESEvent actualEvent;
 
-	private final EventTreeNode parent;
+	private final EventTreeEdge parent;
 	private final DebugEventId id;
+	private final Map<String, Object> metaInformation;
 
 	public DebuggedDESEvent(final DESEvent actualEvent) {
 		this.actualEvent = actualEvent;
@@ -29,6 +31,29 @@ public final class DebuggedDESEvent implements IDebugEvent, TimeInformation {
 
 		if (parent != null) {
 			EventDebugSystem.getEventTree().removeParent(id);
+		}
+
+		metaInformation = new HashMap<>();
+		retrieveFieldValues();
+	}
+
+	private void retrieveFieldValues() {
+		Class<?> tmpClass = actualEvent.getClass();
+
+		while (tmpClass != null) {
+			final Field[] fields = tmpClass.getDeclaredFields();
+
+			for (final Field field : fields) {
+				field.setAccessible(true);
+
+				try {
+					metaInformation.put(field.getName(), field.get(actualEvent).toString());
+				} catch (final IllegalAccessException e) {
+					// ...
+				}
+			}
+
+			tmpClass = null;// tmpClass.getSuperclass();
 		}
 	}
 
@@ -49,7 +74,7 @@ public final class DebuggedDESEvent implements IDebugEvent, TimeInformation {
 
 	@Override
 	public Map<String, Object> getMetaInformation() {
-		return Collections.emptyMap();
+		return metaInformation;
 	}
 
 	@Override
@@ -63,7 +88,7 @@ public final class DebuggedDESEvent implements IDebugEvent, TimeInformation {
 	}
 
 	@Override
-	public Optional<EventTreeNode> getParentEvent() {
+	public Optional<EventTreeEdge> getParentEvent() {
 		return Optional.ofNullable(parent);
 	}
 

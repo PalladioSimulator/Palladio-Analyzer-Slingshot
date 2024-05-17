@@ -6,16 +6,16 @@ Bundle-Version: 1.0.0.qualifier
 Export-Package: org.palladiosimulator.analyzer.slingshot.debugger.translator
 Bundle-Activator: org.palladiosimulator.analyzer.slingshot.debugger.Activator
 Require-Bundle: org.eclipse.core.runtime,
- org.palladiosimulator.addon.slingshot.debuggereventsystems;bundle-version="1.0.0",
  org.eclipse.jdt.core,
- org.palladiosimulator.addon.slingshot.debuggereventsystems.common;bundle-version="1.0.0",
+ org.palladiosimulator.addon.slingshot.debuggereventsystems.common;bundle-version="1.0.0";visibility:=reexport,
  org.palladiosimulator.analyzer.slingshot.eventdriver;bundle-version="1.0.0",
  org.eclipse.jdt.debug;bundle-version="3.19.0",
  org.eclipse.debug.core;bundle-version="3.18.300",
- org.palladiosimulator.addon.slingshot.debuggereventsystem.eclipse,
- org.palladiosimulator.addon.slingshot.debuggereventsystem.ui,
+ org.palladiosimulator.addon.slingshot.debuggereventsystem.eclipse;visibility:=reexport,
+ org.palladiosimulator.addon.slingshot.debuggereventsystem.ui;visibility:=reexport,
  org.eclipse.core.jobs,
- org.palladiosimulator.analyzer.slingshot.common
+ org.palladiosimulator.analyzer.slingshot.common;visibility:=reexport,
+ org.palladiosimulator.addon.slingshot.debuggereventsystems;bundle-version="1.0.0";visibility:=reexport
 Bundle-RequiredExecutionEnvironment: JavaSE-17
 Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.debugger
 Bundle-ActivationPolicy: lazy

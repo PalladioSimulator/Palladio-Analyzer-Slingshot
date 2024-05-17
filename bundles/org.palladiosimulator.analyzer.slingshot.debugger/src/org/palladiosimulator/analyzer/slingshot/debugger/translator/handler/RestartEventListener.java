@@ -28,7 +28,7 @@ public class RestartEventListener implements StartEventFromHereListener {
 				.getCachedEvent(listenerEvent.getEventId()).map(ev -> (DESEvent) ev.getEvent());
 		if (debugEvent.isPresent()) {
 			System.out.println("Post this event again: " + debugEvent.get().getId());
-			eventBus.post(debugEvent);
+			eventBus.post(debugEvent.get());
 		}
 	}
 

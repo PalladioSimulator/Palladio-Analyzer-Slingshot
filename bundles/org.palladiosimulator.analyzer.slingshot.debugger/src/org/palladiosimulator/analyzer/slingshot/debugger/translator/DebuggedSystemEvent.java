@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-import org.palladiosimulator.addon.slingshot.debuggereventsystems.cache.EventTreeNode;
+import org.palladiosimulator.addon.slingshot.debuggereventsystems.cache.EventTreeEdge;
 import org.palladiosimulator.addon.slingshot.debuggereventsystems.model.DebugEventId;
 import org.palladiosimulator.addon.slingshot.debuggereventsystems.model.IDebugEvent;
 import org.palladiosimulator.addon.slingshot.debuggereventsystems.model.TimeInformation;
@@ -41,7 +41,7 @@ public class DebuggedSystemEvent implements IDebugEvent, TimeInformation {
 	}
 
 	@Override
-	public Optional<EventTreeNode> getParentEvent() {
+	public Optional<EventTreeEdge> getParentEvent() {
 		// TODO Auto-generated method stub
 		return Optional.empty();
 	}
