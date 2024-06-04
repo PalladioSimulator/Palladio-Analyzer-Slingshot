@@ -4,7 +4,7 @@ Bundle-Name: Workflow
 Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.workflow;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.workflow
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.palladiosimulator.analyzer.workflow;bundle-version="5.1.0";visibility:=reexport,
  de.uka.ipd.sdq.workflow.mdsd;bundle-version="5.1.0";visibility:=reexport,
  org.palladiosimulator.analyzer.slingshot.workflow.events,

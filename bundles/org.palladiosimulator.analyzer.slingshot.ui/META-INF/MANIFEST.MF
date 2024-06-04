@@ -4,7 +4,7 @@ Bundle-Name: Ui
 Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.ui;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.ui
-Bundle-RequiredExecutionEnvironment: JavaSE-11
+Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.eclipse.debug.ui;bundle-version="3.15.200",
  de.uka.ipd.sdq.codegen.simucontroller;bundle-version="5.1.0",
  org.palladiosimulator.analyzer.workflow;bundle-version="5.1.0",
