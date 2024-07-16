@@ -111,7 +111,7 @@ public final class BusImplementation implements Bus {
 
 		final Set<EventType> events = new HashSet<>();
 
-		System.out.println("Register " + object.getClass().getSimpleName());
+		LOGGER.info("Register " + object.getClass().getSimpleName());
 
 		for (final Method method : observerClass.getDeclaredMethods()) {
 			if (method.isBridge() || method.isSynthetic()) {
@@ -130,7 +130,7 @@ public final class BusImplementation implements Bus {
 		Objects.requireNonNull(object, "Observer to unregister must not be null.");
 		final CompositeDisposable composite;
 		if (object instanceof String) {
-			composite = this.observers.remove((String) object);
+			composite = this.observers.remove(object);
 		} else {
 			composite = this.observers.remove(object.getClass().getName());
 		}
@@ -147,7 +147,7 @@ public final class BusImplementation implements Bus {
 		if (!this.invocationOpened) {
 			throw new IllegalStateException("The bus is not currently allowing posting of events.");
 		}
-		System.out.println("Now post " + event.getClass().getSimpleName());
+		LOGGER.debug("Now post " + event.getClass().getSimpleName());
 		this.bus.onNext(Objects.requireNonNull(event));
 	}
 

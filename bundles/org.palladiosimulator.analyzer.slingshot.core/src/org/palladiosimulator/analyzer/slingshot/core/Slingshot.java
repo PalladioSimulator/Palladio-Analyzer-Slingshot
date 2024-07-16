@@ -8,7 +8,6 @@ import javax.inject.Provider;
 import org.apache.log4j.Appender;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Layout;
-import org.apache.log4j.Level;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
@@ -34,7 +33,7 @@ public class Slingshot extends Plugin {
 	private InjectorHolder injectionHolder;
 
 	static {
-		setupLoggingLevelToDebug();
+		setupLoggingLevel();
 	}
 
 	@Override
@@ -56,7 +55,8 @@ public class Slingshot extends Plugin {
 
 	public List<AbstractSlingshotExtension> getExtensions() {
 		if (this.extensions == null) {
-			this.extensions = ExtensionHelper.getExecutableExtensions(ExtensionIds.EXTENSION_POINT_ID, ExtensionIds.EXTENSION_ATTRIBUTE_NAME);
+			this.extensions = ExtensionHelper.getExecutableExtensions(ExtensionIds.EXTENSION_POINT_ID,
+					ExtensionIds.EXTENSION_ATTRIBUTE_NAME);
 		}
 
 		return Collections.unmodifiableList(this.extensions);
@@ -85,12 +85,17 @@ public class Slingshot extends Plugin {
 		return this.injectionHolder.getProvider(clazz);
 	}
 
-	private static void setupLoggingLevelToDebug() {
+	/**
+	 * Default log level is DEBUG. To provide another log level, specify a
+	 * properties file and pass it as VM argument, e.g. as
+	 * {@code -Dlog4j.configuration=file:///absolute/path/to/file/log4j.properties}.
+	 *
+	 */
+	private static void setupLoggingLevel() {
 		final Logger rootLogger = Logger.getRootLogger();
 		rootLogger.removeAllAppenders();
 		final Layout layout = new PatternLayout("%n\tat %C.%M(%F:%L)%n\t%-5p %d [%t] - %m%n");
 		final Appender app = new ConsoleAppender(layout);
 		rootLogger.addAppender(app);
-		rootLogger.setLevel(Level.DEBUG);
 	}
 }

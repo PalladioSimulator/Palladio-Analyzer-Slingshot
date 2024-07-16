@@ -14,7 +14,7 @@ import de.uka.ipd.sdq.simucomframework.SimuComConfig;
 public class SimuComConfigProvider implements Provider<SimuComConfig> {
 
 	private SimuComConfig config;
-
+	
 	public void set(final SimuComConfig config) {
 		this.config = config;
 	}
