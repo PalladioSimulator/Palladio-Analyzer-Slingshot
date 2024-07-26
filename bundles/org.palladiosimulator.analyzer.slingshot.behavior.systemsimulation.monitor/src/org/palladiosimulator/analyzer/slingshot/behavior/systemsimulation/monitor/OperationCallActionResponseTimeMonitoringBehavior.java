@@ -25,6 +25,7 @@ import org.palladiosimulator.metricspec.constants.MetricDescriptionConstants;
 import org.palladiosimulator.monitorrepository.MeasurementSpecification;
 import org.palladiosimulator.pcm.repository.OperationProvidedRole;
 import org.palladiosimulator.pcm.repository.ProvidedRole;
+import org.palladiosimulator.pcm.seff.AbstractAction;
 import org.palladiosimulator.pcm.seff.StartAction;
 import org.palladiosimulator.pcm.seff.StopAction;
 import org.palladiosimulator.pcmmeasuringpoint.AssemblyOperationMeasuringPoint;
@@ -161,7 +162,9 @@ public class OperationCallActionResponseTimeMonitoringBehavior implements Simula
 				final SEFFModelPassedElement<?> el = (SEFFModelPassedElement<?>) desEvent;
 
 				if(el.getContext().getCaller().isPresent()) {
-					return new RequestContext(el.getContext().getRequestProcessingContext().getUser().getId()+el.getContext().getCaller().get().hashCode());
+					return new RequestContext(el.getContext().getRequestProcessingContext().getUser().getId() + ":"
+							+ ((AbstractAction) el.getModelElement())
+							.getResourceDemandingBehaviour_AbstractAction().getId());
 				} else {
 					return new RequestContext(el.getContext().getRequestProcessingContext().getUser().getId());
 				}
