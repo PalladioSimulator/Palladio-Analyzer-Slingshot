@@ -163,6 +163,7 @@ public class OperationCallActionResponseTimeMonitoringBehavior implements Simula
 
 				if(el.getContext().getCaller().isPresent()) {
 					return new RequestContext(el.getContext().getRequestProcessingContext().getUser().getId() + ":"
+							+ el.getContext().getAssemblyContext().getId() + ":"
 							+ ((AbstractAction) el.getModelElement())
 							.getResourceDemandingBehaviour_AbstractAction().getId());
 				} else {
