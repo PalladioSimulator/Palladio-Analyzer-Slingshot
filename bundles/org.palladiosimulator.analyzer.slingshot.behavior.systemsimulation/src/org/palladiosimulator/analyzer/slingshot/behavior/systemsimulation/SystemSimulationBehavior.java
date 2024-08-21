@@ -38,15 +38,15 @@ import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.Subscrib
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.eventcontract.OnEvent;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 import org.palladiosimulator.pcm.allocation.Allocation;
+import org.palladiosimulator.pcm.core.composition.AssemblyConnector;
 import org.palladiosimulator.pcm.core.composition.AssemblyContext;
 import org.palladiosimulator.pcm.core.composition.ProvidedDelegationConnector;
 import org.palladiosimulator.pcm.parameter.VariableUsage;
 import org.palladiosimulator.pcm.repository.OperationProvidedRole;
 import org.palladiosimulator.pcm.repository.OperationSignature;
+import org.palladiosimulator.pcm.repository.RequiredRole;
 import org.palladiosimulator.pcm.seff.AbstractAction;
 import org.palladiosimulator.pcm.seff.InternalAction;
-import org.palladiosimulator.pcm.seff.ResourceDemandingBehaviour;
-import org.palladiosimulator.pcm.seff.ServiceEffectSpecification;
 
 import de.uka.ipd.sdq.simucomframework.variables.stackframe.SimulatedStackframe;
 
@@ -60,7 +60,8 @@ import de.uka.ipd.sdq.simucomframework.variables.stackframe.SimulatedStackframe;
 @OnEvent(when = UserEntryRequested.class, then = SEFFInterpretationProgressed.class, cardinality = SINGLE)
 @OnEvent(when = RepositoryInterpretationInitiated.class, then = SEFFInterpretationProgressed.class, cardinality = MANY)
 @OnEvent(when = SEFFExternalActionCalled.class, then = CallOverWireRequested.class, cardinality = MANY)
-@OnEvent(when = CallOverWireSucceeded.class, then = {SEFFInterpretationProgressed.class, UserAborted.class}, cardinality = MANY)
+@OnEvent(when = CallOverWireSucceeded.class, then = { SEFFInterpretationProgressed.class,
+		UserAborted.class }, cardinality = MANY)
 @OnEvent(when = CallOverWireAborted.class, then = CallOverWireRequested.class, cardinality = MANY)
 @OnEvent(when = ActiveResourceFinished.class, then = SEFFInterpretationProgressed.class, cardinality = MANY)
 @OnEvent(when = SEFFInfrastructureCalled.class, then = SEFFInterpretationProgressed.class, cardinality = SINGLE)
@@ -102,31 +103,21 @@ public class SystemSimulationBehavior implements SimulationBehaviorExtension {
 			return Result.of();
 		}
 
-		final Optional<ServiceEffectSpecification> seffFromProvidedRole = this.systemRepository
-				.getDelegatedComponentSeff(connectedProvidedDelegationConnector.get(), operationSignature);
-		final Optional<AssemblyContext> assemblyContextByProvidedRole = this.systemRepository
-				.findAssemblyContextByProvidedRole(
-						connectedProvidedDelegationConnector.get().getInnerProvidedRole_ProvidedDelegationConnector());
+		final AssemblyContext assemblyContextByProvidedRole = connectedProvidedDelegationConnector.get()
+				.getAssemblyContext_ProvidedDelegationConnector();
 
-		LOGGER.debug("SEFF? " + seffFromProvidedRole.isPresent() + " | AssemblyContext? "
-				+ assemblyContextByProvidedRole.isPresent());
-
-		if (seffFromProvidedRole.isPresent() && assemblyContextByProvidedRole.isPresent()) {
+		if (assemblyContextByProvidedRole != null) {
 			SimulatedStackHelper.createAndPushNewStackFrame(request.getUser().getStack(), variableUsages);
 			// further stack frames are pushed inside the RepositoryInterpreter.
 
-
-			final ServiceEffectSpecification seff = seffFromProvidedRole.get();
-
-			assert seff instanceof ResourceDemandingBehaviour;
-
-			final RepositoryInterpreter interpreter = new RepositoryInterpreter(assemblyContextByProvidedRole.get(),
+			// TODO and here it should be the other provided role.
+			final RepositoryInterpreter interpreter = new RepositoryInterpreter(assemblyContextByProvidedRole,
 					operationSignature, operationProvidedRole, request.getUser(), systemRepository, Optional.empty(),
 					null, new SimulatedStackframe<Object>(), userEntryRequested.getUserInterpretationContext(),
 					request);
 
 			final Set<SEFFInterpretationProgressed> res = interpreter
-					.doSwitch(assemblyContextByProvidedRole.get().getEncapsulatedComponent__AssemblyContext());
+					.doSwitch(assemblyContextByProvidedRole.getEncapsulatedComponent__AssemblyContext());
 
 			return Result.of(res);
 
@@ -173,19 +164,30 @@ public class SystemSimulationBehavior implements SimulationBehaviorExtension {
 	 * @return
 	 */
 	private Result<?> requestCallOverWire(final GeneralEntryRequest entity) {
-		final Optional<AssemblyContext> assemblyContext = this.systemRepository
-				.findAssemblyContextFromRequiredRole(entity.getRequiredRole());
 
-		final Optional<OperationProvidedRole> providedRole = this.systemRepository
-				.findProvidedRoleFromRequiredRole(entity.getRequiredRole());
+		final AssemblyContext requiringContext = entity.getRequestFrom().getAssemblyContext();
+		final RequiredRole requiredRole = entity.getRequiredRole();
 
-		if (assemblyContext.isPresent() && providedRole.isPresent()) {
-		    
+		final Optional<AssemblyConnector> connector = this.systemRepository
+				.findOutgoingAssemblyConnector(requiredRole, requiringContext);
+
+		if (connector.isEmpty()) {
+			LOGGER.warn(String.format("No outgoing connector for role %s[%s] of requiring context %s[%s].",
+					requiredRole.getEntityName(), requiredRole.getId(),
+					requiringContext.getEntityName(), requiringContext.getId()));
+			return Result.of();
+		}
+
+		final AssemblyContext providingContext = connector.get().getProvidingAssemblyContext_AssemblyConnector();
+		final OperationProvidedRole providedRole = connector.get().getProvidedRole_AssemblyConnector();
+
+		if (providingContext != null && providedRole != null) {
+
 			final SimulatedStackframe<Object> inputStackframe = SimulatedStackHelper
 					.createAndPushNewStackFrame(entity.getUser().getStack(), entity.getInputVariableUsages());
-			
+
 			final CallOverWireRequest request = CallOverWireRequest.builder()
-					.from(entity.getRequestFrom().getAssemblyContext()).to(assemblyContext.get())
+					.from(requiringContext).to(providingContext)
 					.signature(entity.getSignature()).user(entity.getUser()).entryRequest(entity)
 					.variablesToConsider(inputStackframe).build();
 
@@ -239,20 +241,29 @@ public class SystemSimulationBehavior implements SimulationBehaviorExtension {
 			return Result.of(new SEFFInterpretationProgressed(seffInterpretationContext));
 		}
 
-		final Optional<AssemblyContext> assemblyContext = this.systemRepository
-				.findAssemblyContextFromRequiredRole(entity.getRequiredRole());
+		final AssemblyContext requiringContext = entity.getRequestFrom().getAssemblyContext();
+		final RequiredRole requiredRole = entity.getRequiredRole();
 
-		final Optional<OperationProvidedRole> providedRole = this.systemRepository
-				.findProvidedRoleFromRequiredRole(entity.getRequiredRole());
+		final Optional<AssemblyConnector> connector = this.systemRepository
+				.findOutgoingAssemblyConnector(requiredRole, requiringContext);
 
-		if (assemblyContext.isPresent() && providedRole.isPresent()) {
-			final RepositoryInterpreter interpreter = new RepositoryInterpreter(assemblyContext.get(),
-					entity.getSignature(), providedRole.get(), entity.getUser(), this.systemRepository,
+		if (connector.isEmpty()) {
+			LOGGER.warn(String.format("No outgoing connector for role %s[%s] of requiring context %s[%s].",
+					requiredRole.getEntityName(), requiredRole.getId(),
+					requiringContext.getEntityName(), requiringContext.getId()));
+		}
+
+		final AssemblyContext providingContext = connector.get().getProvidingAssemblyContext_AssemblyConnector();
+		final OperationProvidedRole providedRole = connector.get().getProvidedRole_AssemblyConnector();
+
+		if (providingContext != null && providedRole != null) {
+			final RepositoryInterpreter interpreter = new RepositoryInterpreter(providingContext,
+					entity.getSignature(), providedRole, entity.getUser(), this.systemRepository,
 					Optional.of(entity.getRequestFrom()), cowSucceeded.getRequest(), new SimulatedStackframe<Object>());
 
 			/* Interpret the Component of the system. */
 			final Set<SEFFInterpretationProgressed> appearedEvents = interpreter
-					.doSwitch(assemblyContext.get().getEncapsulatedComponent__AssemblyContext());
+					.doSwitch(providingContext.getEncapsulatedComponent__AssemblyContext());
 
 			return Result.of(appearedEvents);
 		}
@@ -324,7 +335,8 @@ public class SystemSimulationBehavior implements SimulationBehaviorExtension {
 		final GeneralEntryRequest entity = infraCall.getEntity();
 
 		final Optional<AssemblyContext> assemblyContext = this.systemRepository
-				.findInfrastructureAssemblyContextFromRequiredRole(entity.getRequiredRole());
+				.findInfrastructureAssemblyContextFromRequiredRole(entity.getRequiredRole(),
+						entity.getRequestFrom().getAssemblyContext());
 
 		if (assemblyContext.isPresent()) {
 			final RepositoryInterpreter interpreter = new RepositoryInterpreter(assemblyContext.get(),
