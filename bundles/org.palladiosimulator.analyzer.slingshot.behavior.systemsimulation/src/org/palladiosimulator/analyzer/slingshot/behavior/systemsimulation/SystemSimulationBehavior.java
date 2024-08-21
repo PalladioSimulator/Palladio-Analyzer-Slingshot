@@ -44,6 +44,7 @@ import org.palladiosimulator.pcm.core.composition.ProvidedDelegationConnector;
 import org.palladiosimulator.pcm.parameter.VariableUsage;
 import org.palladiosimulator.pcm.repository.OperationProvidedRole;
 import org.palladiosimulator.pcm.repository.OperationSignature;
+import org.palladiosimulator.pcm.repository.ProvidedRole;
 import org.palladiosimulator.pcm.repository.RequiredRole;
 import org.palladiosimulator.pcm.seff.AbstractAction;
 import org.palladiosimulator.pcm.seff.InternalAction;
@@ -110,9 +111,12 @@ public class SystemSimulationBehavior implements SimulationBehaviorExtension {
 			SimulatedStackHelper.createAndPushNewStackFrame(request.getUser().getStack(), variableUsages);
 			// further stack frames are pushed inside the RepositoryInterpreter.
 
+			final ProvidedRole innerRole = connectedProvidedDelegationConnector.get()
+					.getInnerProvidedRole_ProvidedDelegationConnector();
+
 			// TODO and here it should be the other provided role.
 			final RepositoryInterpreter interpreter = new RepositoryInterpreter(assemblyContextByProvidedRole,
-					operationSignature, operationProvidedRole, request.getUser(), systemRepository, Optional.empty(),
+					operationSignature, innerRole, request.getUser(), systemRepository, Optional.empty(),
 					null, new SimulatedStackframe<Object>(), userEntryRequested.getUserInterpretationContext(),
 					request);
 
