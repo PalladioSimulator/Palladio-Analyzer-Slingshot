@@ -9,7 +9,7 @@ Require-Bundle: org.palladiosimulator.analyzer.workflow;bundle-version="5.1.0";v
  de.uka.ipd.sdq.workflow.mdsd;bundle-version="5.1.0";visibility:=reexport,
  org.palladiosimulator.analyzer.slingshot.workflow.events,
  com.google.inject;bundle-version="5.0.1",
- org.palladiosimulator.analyzer.slingshot.core;bundle-version="1.0.0",
+ org.palladiosimulator.analyzer.slingshot.core,
  de.uka.ipd.sdq.simucomframework;bundle-version="5.1.0"
 Bundle-ActivationPolicy: lazy
 Export-Package: org.palladiosimulator.analyzer.slingshot.workflow,
