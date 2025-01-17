@@ -8,7 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Bundle-ClassPath: lib/rxjava-3.1.5.jar,
  .
 Require-Bundle: org.reactivestreams;bundle-version="1.0.2",
- org.apache.log4j,
+ org.apache.log4j;bundle-version="1.2.15",
  com.google.guava
 Export-Package: io.reactivex.rxjava3.disposables,
  io.reactivex.rxjava3.observables,

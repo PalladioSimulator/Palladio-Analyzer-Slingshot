@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.workflow.events
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.workflow.events
 Bundle-RequiredExecutionEnvironment: JavaSE-17
-Require-Bundle: org.palladiosimulator.analyzer.slingshot.common;bundle-version="1.0.0",
+Require-Bundle: org.palladiosimulator.analyzer.slingshot.common,
  org.eclipse.debug.core,
  de.uka.ipd.sdq.workflow;bundle-version="5.1.0",
  org.palladiosimulator.analyzer.workflow;bundle-version="5.1.0"
