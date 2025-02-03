@@ -40,6 +40,7 @@ public class SimulationWorkflowConfiguration extends AbstractPCMWorkflowRunConfi
 		if (this.otherFiles != null) {
 			files.addAll(this.otherFiles);
 		}
+		files.remove(null); // TODO delete
 		return files;
 	}
 	
