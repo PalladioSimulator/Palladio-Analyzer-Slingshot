@@ -16,22 +16,19 @@
       [Enter License Description here.]
    </license>
 
+   <requires>
+      <import plugin="org.eclipse.debug.ui" version="3.15.200" match="greaterOrEqual"/>
+      <import plugin="de.uka.ipd.sdq.codegen.simucontroller" version="5.1.0" match="greaterOrEqual"/>
+      <import plugin="org.palladiosimulator.analyzer.workflow" version="5.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.palladiosimulator.analyzer.slingshot.core"/>
+      <import plugin="org.apache.commons.logging" version="1.2.0" match="greaterOrEqual"/>
+      <import plugin="org.palladiosimulator.analyzer.slingshot.ui.events"/>
+      <import plugin="org.palladiosimulator.analyzer.slingshot.workflow"/>
+   </requires>
+
    <plugin
          id="org.palladiosimulator.analyzer.slingshot.ui"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.palladiosimulator.analyzer.slingshot.ui.events"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.palladiosimulator.analyzer.slingshot.workflow"
          download-size="0"
          install-size="0"
          version="0.0.0"
