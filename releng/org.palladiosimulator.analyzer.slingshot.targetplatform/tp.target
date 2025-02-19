@@ -4,101 +4,17 @@
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/releases/2023-03/202303151000/"/>
-			<unit id="org.eclipse.m2m.qvt.oml.sdk.feature.group" version="3.10.7.v20220605-1149"/>
-			<unit id="org.eclipse.m2m.qvt.oml.tools.coverage.feature.group" version="1.6.7.v20220605-1149"/>
-			<unit id="org.eclipse.qvtd.master.feature.group" version="0.29.0.v20221201-0624"/>
 			<unit id="org.eclipse.jdt.feature.group" version="3.19.0.v20230302-0300"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://updatesite.palladio-simulator.com/palladio-build-updatesite/releases/latest/"/>
-			<unit id="de.uka.ipd.sdq.dsexplore.feature.feature.group" version="5.2.1.202412151900"/>
-			<unit id="de.uka.ipd.sdq.dsexplore.feature.source.feature.group" version="5.2.1.202412151900"/>
-			<unit id="de.uka.ipd.sdq.featuremodel.feature.config.feature.group" version="5.2.1.202412151820"/>
-			<unit id="de.uka.ipd.sdq.featuremodel.feature.config.source.feature.group" version="5.2.1.202412151820"/>
-			<unit id="de.uka.ipd.sdq.featuremodel.feature.featureinstanceeditor.feature.group" version="5.2.1.202412151820"/>
-			<unit id="de.uka.ipd.sdq.featuremodel.feature.featureinstanceeditor.source.feature.group" version="5.2.1.202412151820"/>
-			<unit id="de.uka.ipd.sdq.featuremodel.feature.model.feature.group" version="5.2.1.202412151820"/>
-			<unit id="de.uka.ipd.sdq.featuremodel.feature.model.source.feature.group" version="5.2.1.202412151820"/>
-			<unit id="de.uka.ipd.sdq.sensorframework.feature.feature.group" version="5.2.1.202412151826"/>
-			<unit id="de.uka.ipd.sdq.sensorframework.feature.source.feature.group" version="5.2.1.202412151826"/>
-			<unit id="de.uka.ipd.sdq.sensorframework.visualisation.feature.feature.group" version="5.2.1.202412151826"/>
-			<unit id="de.uka.ipd.sdq.sensorframework.visualisation.feature.source.feature.group" version="5.2.1.202412151826"/>
-			<unit id="de.uka.ipd.sdq.workflow.feature.core.feature.group" version="5.2.1.202412151820"/>
-			<unit id="de.uka.ipd.sdq.workflow.feature.core.source.feature.group" version="5.2.1.202412151820"/>
+			<unit id="ca.umontreal.iro.ssj.feature.feature.group" version="3.3.1"/>
 			<unit id="de.uka.ipd.sdq.workflow.feature.mdsd.feature.group" version="5.2.1.202412151820"/>
-			<unit id="de.uka.ipd.sdq.workflow.feature.mdsd.source.feature.group" version="5.2.1.202412151820"/>
-			<unit id="edu.kit.ipd.sdq.pcm.simulation.scheduler.exact.feature.feature.group" version="5.2.1.202412151856"/>
-			<unit id="edu.kit.ipd.sdq.pcm.simulation.scheduler.exact.feature.source.feature.group" version="5.2.1.202412151856"/>
-			<unit id="org.palladiosimulator.architecturaltemplates.examples.feature.source.feature.group" version="5.2.1.202412151915"/>
-			<unit id="org.palladiosimulator.architecturaltemplates.feature.source.feature.group" version="5.2.1.202412151915"/>
-			<unit id="org.palladiosimulator.editors.commons.feature.feature.group" version="5.2.1.202412151835"/>
-			<unit id="org.palladiosimulator.editors.commons.feature.source.feature.group" version="5.2.1.202412151835"/>
-			<unit id="org.palladiosimulator.editors.sirius.feature.feature.group" version="5.2.1.202412151920"/>
-			<unit id="org.palladiosimulator.editors.sirius.feature.source.feature.group" version="5.2.1.202412151920"/>
-			<unit id="org.palladiosimulator.editors.tree.feature.feature.group" version="5.2.1.202412151847"/>
-			<unit id="org.palladiosimulator.editors.tree.feature.source.feature.group" version="5.2.1.202412151847"/>
-			<unit id="org.palladiosimulator.edp2.distancemetrics.feature.feature.group" version="5.2.1.202412151828"/>
-			<unit id="org.palladiosimulator.edp2.distancemetrics.feature.source.feature.group" version="5.2.1.202412151828"/>
-			<unit id="org.palladiosimulator.edp2.feature.feature.group" version="5.2.1.202412151828"/>
-			<unit id="org.palladiosimulator.edp2.feature.source.feature.group" version="5.2.1.202412151828"/>
-			<unit id="org.palladiosimulator.edp2.filter.additional.feature.feature.group" version="5.2.1.202412151828"/>
-			<unit id="org.palladiosimulator.edp2.filter.additional.feature.source.feature.group" version="5.2.1.202412151828"/>
 			<unit id="org.palladiosimulator.edp2.ui.feature.feature.group" version="5.2.1.202412151828"/>
-			<unit id="org.palladiosimulator.edp2.ui.feature.source.feature.group" version="5.2.1.202412151828"/>
-			<unit id="org.palladiosimulator.experimentautomation.application.feature.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.experimentautomation.application.feature.source.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.experimentautomation.application.tooladapter.simucom.feature.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.experimentautomation.application.tooladapter.simucom.feature.source.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.experimentautomation.application.tooladapter.simulizar.feature.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.experimentautomation.application.tooladapter.simulizar.feature.source.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.experimentautomation.examples.feature.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.experimentautomation.examples.feature.source.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.experimentautomation.feature.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.experimentautomation.feature.source.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.generator.fluent.feature.feature.group" version="5.2.1.202412151835"/>
-			<unit id="org.palladiosimulator.generator.fluent.feature.source.feature.group" version="5.2.1.202412151835"/>
-			<unit id="org.palladiosimulator.mdsdprofiles.feature.feature.group" version="5.2.1.202412151820"/>
-			<unit id="org.palladiosimulator.mdsdprofiles.feature.source.feature.group" version="5.2.1.202412151820"/>
-			<unit id="org.palladiosimulator.measurementframework.feature.feature.group" version="5.2.1.202412151826"/>
-			<unit id="org.palladiosimulator.measurementframework.feature.source.feature.group" version="5.2.1.202412151826"/>
-			<unit id="org.palladiosimulator.measurementsui.feature.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.measurementsui.feature.source.feature.group" version="5.2.1.202412151905"/>
-			<unit id="org.palladiosimulator.metricspec.feature.feature.group" version="5.2.1.202412151820"/>
-			<unit id="org.palladiosimulator.metricspec.feature.source.feature.group" version="5.2.1.202412151820"/>
-			<unit id="org.palladiosimulator.monitorrepository.feature.feature.group" version="5.2.1.202412151849"/>
-			<unit id="org.palladiosimulator.monitorrepository.feature.source.feature.group" version="5.2.1.202412151849"/>
 			<unit id="org.palladiosimulator.pcm.edp2.measuringpoint.feature.feature.group" version="5.2.1.202412151831"/>
-			<unit id="org.palladiosimulator.pcm.edp2.measuringpoint.feature.source.feature.group" version="5.2.1.202412151831"/>
 			<unit id="org.palladiosimulator.pcm.feature.feature.group" version="5.2.1.202412151831"/>
-			<unit id="org.palladiosimulator.pcm.feature.source.feature.group" version="5.2.1.202412151831"/>
-			<unit id="org.palladiosimulator.probeframework.feature.feature.group" version="5.2.1.202412151831"/>
-			<unit id="org.palladiosimulator.probeframework.feature.source.feature.group" version="5.2.1.202412151831"/>
-			<unit id="org.palladiosimulator.protocom.feature.feature.group" version="5.2.1.202412151856"/>
-			<unit id="org.palladiosimulator.protocom.feature.source.feature.group" version="5.2.1.202412151856"/>
-			<unit id="org.palladiosimulator.protocom.javaee.feature.feature.group" version="5.2.1.202412151856"/>
-			<unit id="org.palladiosimulator.protocom.javaee.feature.source.feature.group" version="5.2.1.202412151856"/>
-			<unit id="org.palladiosimulator.recorderframework.feature.feature.group" version="5.2.1.202412151835"/>
-			<unit id="org.palladiosimulator.recorderframework.feature.source.feature.group" version="5.2.1.202412151835"/>
-			<unit id="org.palladiosimulator.reliability.feature.feature.group" version="5.2.1.202412151847"/>
-			<unit id="org.palladiosimulator.reliability.feature.source.feature.group" version="5.2.1.202412151847"/>
-			<unit id="org.palladiosimulator.servicelevelobjective.feature.feature.group" version="5.2.1.202412151853"/>
-			<unit id="org.palladiosimulator.servicelevelobjective.feature.source.feature.group" version="5.2.1.202412151853"/>
 			<unit id="org.palladiosimulator.simucom.feature.feature.group" version="5.2.1.202412151853"/>
-			<unit id="org.palladiosimulator.simucom.feature.source.feature.group" version="5.2.1.202412151853"/>
-			<unit id="org.palladiosimulator.simulation.abstractsimengine.desmoj.feature.feature.group" version="5.2.1.202412151826"/>
-			<unit id="org.palladiosimulator.simulation.abstractsimengine.desmoj.feature.source.feature.group" version="5.2.1.202412151826"/>
-			<unit id="org.palladiosimulator.simulation.abstractsimengine.ssj.feature.feature.group" version="5.2.1.202412151826"/>
-			<unit id="org.palladiosimulator.simulation.abstractsimengine.ssj.feature.source.feature.group" version="5.2.1.202412151826"/>
-			<unit id="org.palladiosimulator.simulizar.feature.feature.group" version="5.2.1.202412161615"/>
-			<unit id="org.palladiosimulator.simulizar.feature.source.feature.group" version="5.2.1.202412161615"/>
-			<unit id="org.palladiosimulator.simulizar.reconfiguration.qvto.feature.feature.group" version="5.2.1.202412161615"/>
-			<unit id="org.palladiosimulator.simulizar.reconfiguration.qvto.feature.source.feature.group" version="5.2.1.202412161615"/>
-			<unit id="org.palladiosimulator.simulizar.reconfiguration.storydiagram.feature.feature.group" version="5.2.1.202412161615"/>
-			<unit id="org.palladiosimulator.simulizar.reconfiguration.storydiagram.feature.source.feature.group" version="5.2.1.202412161615"/>
-			<unit id="org.palladiosimulator.solver.feature.feature.group" version="5.2.1.202412151845"/>
-			<unit id="org.palladiosimulator.solver.feature.source.feature.group" version="5.2.1.202412151845"/>
-			<unit id="org.palladiosimulator.thirdpartywrapper.feature.feature.group" version="5.0.0.202412151822"/>
-			<unit id="org.scaledl.usageevolution.feature.feature.group" version="5.2.1.202412151850"/>
+			<unit id="org.palladiosimulator.monitorrepository.feature.feature.group" version="5.2.1.202412151849"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/2023-03/"/>
