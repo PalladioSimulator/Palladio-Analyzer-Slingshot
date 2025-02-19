@@ -7,7 +7,7 @@
 			<unit id="org.eclipse.m2m.qvt.oml.sdk.feature.group" version="3.10.7.v20220605-1149"/>
 			<unit id="org.eclipse.m2m.qvt.oml.tools.coverage.feature.group" version="1.6.7.v20220605-1149"/>
 			<unit id="org.eclipse.qvtd.master.feature.group" version="0.29.0.v20221201-0624"/>
-			<unit id="org.eclipse.sdk.feature.group" version="4.27.0.v20230302-0300"/>
+			<unit id="org.eclipse.jdt.feature.group" version="3.19.0.v20230302-0300"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
 			<repository location="https://updatesite.palladio-simulator.com/palladio-build-updatesite/releases/latest/"/>
