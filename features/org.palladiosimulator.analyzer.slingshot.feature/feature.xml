@@ -23,13 +23,11 @@
       <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
       <import plugin="org.palladiosimulator.commons" version="5.1.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.eclipse.core.runtime"/>
       <import plugin="org.eclipse.emf.ecore"/>
       <import plugin="javax.inject"/>
       <import plugin="org.palladiosimulator.analyzer.workflow" version="5.1.0" match="greaterOrEqual"/>
       <import plugin="de.uka.ipd.sdq.workflow.mdsd.blackboard" version="5.1.0" match="greaterOrEqual"/>
       <import plugin="org.palladiosimulator.pcm"/>
-      <import plugin="de.uka.ipd.sdq.simucomframework"/>
       <import plugin="org.eclipse.core.runtime" version="3.24.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.core.resources" version="3.16.0" match="greaterOrEqual"/>
       <import plugin="org.eclipse.jdt.annotation" version="2.2.600" match="greaterOrEqual"/>

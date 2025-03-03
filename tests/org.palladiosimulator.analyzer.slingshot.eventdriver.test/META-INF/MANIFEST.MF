@@ -8,4 +8,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Fragment-Host: org.palladiosimulator.analyzer.slingshot.eventdriver
 Require-Bundle: org.junit.jupiter.api;bundle-version="5.8.1",
  org.hamcrest.core;bundle-version="1.3.0",
- org.mockito;bundle-version="2.23.0"
+ org.mockito.mockito-core;bundle-version="4.8.1"
