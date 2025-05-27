@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.palladiosimulator.analyzer.slingshot.feature"
-      label="Feature"
+      label="Slingshot Core Feature"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -15,6 +15,31 @@
    <license url="http://www.example.com/license">
       [Enter License Description here.]
    </license>
+
+   <requires>
+      <import plugin="com.google.inject" version="5.0.1" match="greaterOrEqual"/>
+      <import plugin="com.google.guava" version="30.1.0" match="greaterOrEqual"/>
+      <import plugin="ca.umontreal.iro.simul.ssj" version="3.3.1" match="greaterOrEqual"/>
+      <import plugin="org.apache.log4j" version="1.2.15" match="greaterOrEqual"/>
+      <import plugin="org.palladiosimulator.commons" version="5.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.osgi"/>
+      <import plugin="org.eclipse.emf.ecore"/>
+      <import plugin="javax.inject"/>
+      <import plugin="org.palladiosimulator.analyzer.workflow" version="5.1.0" match="greaterOrEqual"/>
+      <import plugin="de.uka.ipd.sdq.workflow.mdsd.blackboard" version="5.1.0" match="greaterOrEqual"/>
+      <import plugin="org.palladiosimulator.pcm"/>
+      <import plugin="org.eclipse.core.runtime" version="3.24.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.core.resources" version="3.16.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.annotation" version="2.2.600" match="greaterOrEqual"/>
+      <import plugin="org.palladiosimulator.monitorrepository"/>
+      <import plugin="org.reactivestreams" version="1.0.2" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.apt.core" version="3.7.50" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.jdt.core" version="3.28.0" match="greaterOrEqual"/>
+      <import plugin="de.uka.ipd.sdq.workflow.mdsd" version="5.1.0" match="greaterOrEqual"/>
+      <import plugin="de.uka.ipd.sdq.simucomframework" version="5.1.0" match="greaterOrEqual"/>
+      <import plugin="org.eclipse.debug.core"/>
+      <import plugin="de.uka.ipd.sdq.workflow" version="5.1.0" match="greaterOrEqual"/>
+   </requires>
 
    <plugin
          id="org.palladiosimulator.analyzer.slingshot.core"
@@ -39,6 +64,27 @@
 
    <plugin
          id="org.palladiosimulator.analyzer.slingshot.eventdriver.annotationprocessor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.palladiosimulator.analyzer.slingshot.ui.events"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.palladiosimulator.analyzer.slingshot.workflow"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.palladiosimulator.analyzer.slingshot.workflow.events"
          download-size="0"
          install-size="0"
          version="0.0.0"
