@@ -34,8 +34,8 @@ public class SimulationJob implements IBlackboardInteractingJob<MDSDBlackboard> 
 
 	@Override
 	public void execute(final IProgressMonitor monitor) throws JobFailedException, UserCanceledException {
-		final PCMResourceSetPartition partition = (PCMResourceSetPartition) this.blackboard
-				.getPartition(ConstantsContainer.DEFAULT_PCM_INSTANCE_PARTITION_ID);
+		final PCMResourceSetPartition partition = (PCMResourceSetPartition)
+				this.blackboard.getPartition(ConstantsContainer.DEFAULT_PCM_INSTANCE_PARTITION_ID);
 
 		WorkflowConfigurationModule.simuComConfigProvider.set(simuComConfig);
 		WorkflowConfigurationModule.blackboardProvider.set(blackboard);
