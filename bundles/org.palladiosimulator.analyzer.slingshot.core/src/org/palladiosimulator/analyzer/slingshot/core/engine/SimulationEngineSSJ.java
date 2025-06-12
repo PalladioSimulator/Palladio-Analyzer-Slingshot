@@ -1,5 +1,9 @@
 package org.palladiosimulator.analyzer.slingshot.core.engine;
 
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.inject.Singleton;
 
 import org.apache.log4j.LogManager;
@@ -114,6 +118,10 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 			cumulativeEvents++;
 		}
 
+		private DESEvent getDESEvent() {
+			return this.event;
+		}
+
 	}
 
 	@Override
@@ -125,6 +133,20 @@ public class SimulationEngineSSJ implements SimulationEngine, SimulationInformat
 	@Override
 	public <T> void registerEventListener(final Subscriber<T> subscriber) {
 		this.eventBus.register(subscriber);
+	}
+
+	@Override
+	public Set<DESEvent> getScheduledEvents() {
+		final Iterator<Event> events = simulator.getEventList().iterator();
+		final Set<DESEvent> desevents = new HashSet<>();
+
+		while (events.hasNext()) {
+			final SSJEvent ssjEvent = (SSJEvent) events.next();
+			final DESEvent desevent = ssjEvent.getDESEvent();
+			desevent.setTime(ssjEvent.time());
+			desevents.add(desevent);
+		}
+		return desevents;
 	}
 
 }
