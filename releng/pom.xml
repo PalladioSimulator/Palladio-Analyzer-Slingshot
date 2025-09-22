@@ -9,6 +9,6 @@
   <packaging>pom</packaging>
   
   <modules>
-  	<module>org.palladiosimulator.slingshot.updatesite</module>
+  	<module>org.palladiosimulator.analyzer.slingshot.updatesite</module>
   </modules>
 </project>
