@@ -31,5 +31,12 @@
 		<module>org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation.monitor</module>
 		<module>org.palladiosimulator.analyzer.slingshot.behavior.usageevolution</module>
 		<module>org.palladiosimulator.analyzer.slingshot.common.utils</module>
+
+    <!-- Monitoring modules -->
+    <module>org.palladiosimulator.analyzer.slingshot.monitor</module>
+    <module>org.palladiosimulator.analyzer.slingshot.monitor.data</module>
+    <module>org.palladiosimulator.analyzer.slingshot.monitor.processingtype.aggregator</module>
+    <module>org.palladiosimulator.analyzer.slingshot.monitor.processingtype.feedthrough</module>
+    <module>org.palladiosimulator.analyzer.slingshot.monitor.utils</module>
   </modules>
 </project>
