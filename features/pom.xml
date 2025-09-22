@@ -15,6 +15,7 @@
         <module>org.palladiosimulator.analyzer.slingshot.ui.feature</module>
 		<module>org.palladiosimulator.analyzer.slingshot.extension.pcm.core</module>
 		<module>org.palladiosimulator.analyzer.slingshot.extension.monitoring.feature</module>
+		<module>org.palladiosimulator.analyzer.slingshot.extension.spd.interpreter</module>
 	</modules>
 	
 </project>

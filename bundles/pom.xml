@@ -38,5 +38,10 @@
     <module>org.palladiosimulator.analyzer.slingshot.monitor.processingtype.aggregator</module>
     <module>org.palladiosimulator.analyzer.slingshot.monitor.processingtype.feedthrough</module>
     <module>org.palladiosimulator.analyzer.slingshot.monitor.utils</module>
+
+    <!-- SPD modules -->
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd.adjustment</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd.data</module>
   </modules>
 </project>
