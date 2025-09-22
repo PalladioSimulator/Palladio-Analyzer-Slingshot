@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Monitor
+Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation.monitor;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation.monitor
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Bundle: org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation.data,
+ org.palladiosimulator.analyzer.slingshot.monitor,
+ org.palladiosimulator.analyzer.slingshot.core,
+ org.palladiosimulator.pcm.edp2.measuringpoint,
+ org.palladiosimulator.analyzer.slingshot.monitor.data,
+ org.palladiosimulator.monitorrepository;bundle-version="5.1.0",
+ org.palladiosimulator.analyzer.slingshot.monitor.utils,
+ org.palladiosimulator.edp2.util;bundle-version="5.1.0"
