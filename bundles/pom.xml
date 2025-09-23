@@ -10,6 +10,7 @@
   
   <modules>
     <!-- Palladio-Slingshot-Simulator core modules -->
+	<module>org.palladiosimulator.analyzer.slingshot.core</module>
   	<module>org.palladiosimulator.analyzer.slingshot.ui</module>
   	<module>org.palladiosimulator.analyzer.slingshot.workflow</module>
   	<module>org.palladiosimulator.analyzer.slingshot.common</module>
