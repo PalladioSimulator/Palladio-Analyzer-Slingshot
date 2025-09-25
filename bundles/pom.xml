@@ -9,7 +9,8 @@
   <packaging>pom</packaging>
   
   <modules>
-  	<module>org.palladiosimulator.analyzer.slingshot.core</module>
+    <!-- Palladio-Slingshot-Simulator core modules -->
+	<module>org.palladiosimulator.analyzer.slingshot.core</module>
   	<module>org.palladiosimulator.analyzer.slingshot.ui</module>
   	<module>org.palladiosimulator.analyzer.slingshot.workflow</module>
   	<module>org.palladiosimulator.analyzer.slingshot.common</module>
@@ -17,5 +18,31 @@
   	<module>org.palladiosimulator.analyzer.slingshot.eventdriver.annotationprocessor</module>
   	<module>org.palladiosimulator.analyzer.slingshot.ui.events</module>
   	<module>org.palladiosimulator.analyzer.slingshot.workflow.events</module>
+
+    <!-- PCM-Core modules -->
+    <module>org.palladiosimulator.analyzer.slingshot.behavior.generalsimulationconfiguration</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.data</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.monitor</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.systemsimulation</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.systemsimulation.data</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.systemsimulation.monitor</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation.data</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation.monitor</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.usageevolution</module>
+		<module>org.palladiosimulator.analyzer.slingshot.common.utils</module>
+
+    <!-- Monitoring modules -->
+    <module>org.palladiosimulator.analyzer.slingshot.monitor</module>
+    <module>org.palladiosimulator.analyzer.slingshot.monitor.data</module>
+    <module>org.palladiosimulator.analyzer.slingshot.monitor.processingtype.aggregator</module>
+    <module>org.palladiosimulator.analyzer.slingshot.monitor.processingtype.feedthrough</module>
+    <module>org.palladiosimulator.analyzer.slingshot.monitor.utils</module>
+
+    <!-- SPD modules -->
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd.adjustment</module>
+		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd.data</module>
   </modules>
 </project>

@@ -1,0 +1,14 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Data
+Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.monitor.data
+Bundle-Version: 1.0.0.qualifier
+Export-Package: org.palladiosimulator.analyzer.slingshot.monitor.data.entities,
+ org.palladiosimulator.analyzer.slingshot.monitor.data.events,
+ org.palladiosimulator.analyzer.slingshot.monitor.data.events.modelvisited
+Require-Bundle: org.palladiosimulator.measurementframework;visibility:=reexport,
+ org.palladiosimulator.probeframework,
+ org.palladiosimulator.monitorrepository,
+ org.palladiosimulator.analyzer.slingshot.core
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.monitor.data
