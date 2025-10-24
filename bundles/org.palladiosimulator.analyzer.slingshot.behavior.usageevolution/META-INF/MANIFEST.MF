@@ -15,4 +15,6 @@ Require-Bundle: org.palladiosimulator.analyzer.slingshot.common,
  org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation.data,
  org.palladiosimulator.analyzer.workflow,
  de.uka.ipd.sdq.workflow.mdsd.blackboard,
- de.uka.ipd.sdq.simucomframework
+ de.uka.ipd.sdq.simucomframework,
+ tools.descartes.dlim.source;bundle-version="6.0.0",
+ tools.descartes.dlim.generator;bundle-version="6.0.0"

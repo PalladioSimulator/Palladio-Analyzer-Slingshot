@@ -2,7 +2,7 @@ package org.palladiosimulator.analyzer.slingshot.core.extension;
 
 import javax.inject.Singleton;
 
-import org.palladiosimulator.analyzer.workflow.blackboard.PCMResourceSetPartition;
+import org.palladiosimulator.analyzer.workflow.core.blackboard.PCMResourceSetPartition;
 
 @Singleton
 public class PCMResourceSetPartitionProvider {

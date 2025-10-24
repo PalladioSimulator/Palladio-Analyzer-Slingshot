@@ -11,7 +11,7 @@ import org.palladiosimulator.pcm.resourceenvironment.ResourceContainer;
 import org.palladiosimulator.pcm.resourcetype.ProcessingResourceType;
 import org.palladiosimulator.pcm.resourcetype.SchedulingPolicy;
 
-import de.uka.ipd.sdq.simucomframework.resources.SchedulingStrategy;
+import de.uka.ipd.sdq.simucomframework.core.resources.SchedulingStrategy;
 
 /**
  * The resource table maps every provided resource to a specific resource

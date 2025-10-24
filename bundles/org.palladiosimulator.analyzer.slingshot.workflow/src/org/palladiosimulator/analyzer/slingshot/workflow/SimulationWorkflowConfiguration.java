@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationConfiguration;
 import org.palladiosimulator.analyzer.slingshot.workflow.events.PCMWorkflowConfiguration;
-import org.palladiosimulator.analyzer.workflow.configurations.AbstractPCMWorkflowRunConfiguration;
+import org.palladiosimulator.analyzer.workflow.core.configurations.AbstractPCMWorkflowRunConfiguration;
 
-import de.uka.ipd.sdq.simucomframework.SimuComConfig;
+import de.uka.ipd.sdq.simucomframework.core.SimuComConfig;
 
 public class SimulationWorkflowConfiguration extends AbstractPCMWorkflowRunConfiguration implements PCMWorkflowConfiguration, SimulationConfiguration {
 	

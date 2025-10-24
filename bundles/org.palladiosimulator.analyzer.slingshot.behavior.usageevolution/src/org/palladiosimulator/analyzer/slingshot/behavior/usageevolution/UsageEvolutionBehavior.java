@@ -26,7 +26,7 @@ import org.palladiosimulator.pcm.usagemodel.UsageModel;
 import org.scaledl.usageevolution.Usage;
 import org.scaledl.usageevolution.UsageEvolution;
 
-import de.uka.ipd.sdq.simucomframework.SimuComConfig;
+import de.uka.ipd.sdq.simucomframework.core.SimuComConfig;
 
 /**
  * The usage evolution behavior is a extension that interprets an
