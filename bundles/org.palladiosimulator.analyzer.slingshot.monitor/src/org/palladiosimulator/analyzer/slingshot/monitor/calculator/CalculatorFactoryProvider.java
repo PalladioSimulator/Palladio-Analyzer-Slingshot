@@ -1,6 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.monitor.calculator;
 
-import de.uka.ipd.sdq.simucomframework.SimuComConfig;
+import de.uka.ipd.sdq.simucomframework.core.SimuComConfig;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

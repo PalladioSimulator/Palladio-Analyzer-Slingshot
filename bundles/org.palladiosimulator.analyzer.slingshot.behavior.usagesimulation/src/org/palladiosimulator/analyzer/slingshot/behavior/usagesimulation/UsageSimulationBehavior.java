@@ -2,6 +2,7 @@ package org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation;
 
 import static org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.eventcontract.EventCardinality.MANY;
 
+import com.google.common.collect.ImmutableList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -53,7 +54,6 @@ import org.palladiosimulator.pcm.usagemodel.UsageModel;
 import org.palladiosimulator.pcm.usagemodel.UsageScenario;
 
 import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
 
 import de.uka.ipd.sdq.simucomframework.variables.stackframe.SimulatedStackframe;
 

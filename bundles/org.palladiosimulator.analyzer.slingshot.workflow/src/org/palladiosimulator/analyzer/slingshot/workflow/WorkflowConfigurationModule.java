@@ -3,7 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.workflow;
 import org.palladiosimulator.analyzer.slingshot.core.extension.AbstractSlingshotExtension;
 import org.palladiosimulator.analyzer.slingshot.workflow.jobs.MDSDBlackboardProvider;
 
-import de.uka.ipd.sdq.simucomframework.SimuComConfig;
+import de.uka.ipd.sdq.simucomframework.core.SimuComConfig;
 import de.uka.ipd.sdq.workflow.mdsd.blackboard.MDSDBlackboard;
 
 public class WorkflowConfigurationModule extends AbstractSlingshotExtension {

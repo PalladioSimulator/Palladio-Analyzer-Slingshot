@@ -8,11 +8,11 @@ import org.palladiosimulator.metricspec.MetricDescription;
 import org.palladiosimulator.probeframework.calculator.Calculator;
 import org.palladiosimulator.probeframework.calculator.CalculatorProbeSet;
 import org.palladiosimulator.probeframework.calculator.IGenericCalculatorFactory;
-import org.palladiosimulator.recorderframework.IRecorder;
-import org.palladiosimulator.recorderframework.config.AbstractRecorderConfiguration;
-import org.palladiosimulator.recorderframework.config.IRecorderConfiguration;
-import org.palladiosimulator.recorderframework.config.IRecorderConfigurationFactory;
-import org.palladiosimulator.recorderframework.utils.RecorderExtensionHelper;
+import org.palladiosimulator.recorderframework.core.IRecorder;
+import org.palladiosimulator.recorderframework.core.config.AbstractRecorderConfiguration;
+import org.palladiosimulator.recorderframework.core.config.IRecorderConfiguration;
+import org.palladiosimulator.recorderframework.core.config.IRecorderConfigurationFactory;
+import org.palladiosimulator.recorderframework.core.utils.RecorderExtensionHelper;
 
 public class RecorderAttachingCalculatorFactoryDecorator implements IGenericCalculatorFactory {
 

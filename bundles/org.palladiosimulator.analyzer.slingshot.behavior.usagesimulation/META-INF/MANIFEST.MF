@@ -12,7 +12,9 @@ Require-Bundle: org.palladiosimulator.pcm,
  org.palladiosimulator.analyzer.slingshot.ui.events,
  org.palladiosimulator.analyzer.slingshot.workflow.events,
  org.palladiosimulator.analyzer.workflow,
- org.palladiosimulator.analyzer.slingshot.core
+ org.palladiosimulator.analyzer.slingshot.core,
+ com.google.guava;bundle-version="30.1.0"
 Export-Package: org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation,
  org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation.interpreters,
  org.palladiosimulator.analyzer.slingshot.behavior.usagesimulation.repositories
+Import-Package: com.google.common.collect

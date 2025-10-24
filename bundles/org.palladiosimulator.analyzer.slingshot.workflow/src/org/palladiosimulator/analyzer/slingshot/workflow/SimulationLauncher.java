@@ -11,9 +11,10 @@ import org.palladiosimulator.analyzer.slingshot.core.Slingshot;
 import org.palladiosimulator.analyzer.slingshot.core.api.SystemDriver;
 import org.palladiosimulator.analyzer.slingshot.workflow.events.WorkflowLaunchConfigurationBuilderInitialized;
 import org.palladiosimulator.analyzer.slingshot.workflow.jobs.SimulationRootJob;
-import org.palladiosimulator.analyzer.workflow.configurations.AbstractPCMLaunchConfigurationDelegate;
+import org.palladiosimulator.analyzer.workflow.core.configurations.AbstractPCMLaunchConfigurationDelegate;
 
-import de.uka.ipd.sdq.simucomframework.SimuComConfig;
+import de.uka.ipd.sdq.simucomframework.core.SimuComConfig;
+import de.uka.ipd.sdq.workflow.WorkflowExceptionHandler;
 import de.uka.ipd.sdq.workflow.jobs.IJob;
 import de.uka.ipd.sdq.workflow.logging.console.LoggerAppenderStruct;
 
@@ -50,8 +51,14 @@ public class SimulationLauncher extends AbstractPCMLaunchConfigurationDelegate<S
 
 	@Override
 	protected ArrayList<LoggerAppenderStruct> setupLogging(final Level logLevel) throws CoreException {
-		final ArrayList<LoggerAppenderStruct> loggerList = super.setupLogging(Level.DEBUG); // Fixme
+		final ArrayList<LoggerAppenderStruct> loggerList = (ArrayList<LoggerAppenderStruct>) super.setupLogging(Level.DEBUG); // Fixme
 		loggerList.add(this.setupLogger("org.palladiosimulator.analyzer.slingshot", logLevel, logLevel == Level.DEBUG ? DETAILED_LOG_PATTERN : SHORT_LOG_PATTERN));
 		return loggerList;
+	}
+
+	@Override
+	protected WorkflowExceptionHandler createExceptionHandler(boolean interactive) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

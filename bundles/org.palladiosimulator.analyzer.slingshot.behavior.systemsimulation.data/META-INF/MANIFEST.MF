@@ -16,4 +16,5 @@ Require-Bundle: org.palladiosimulator.analyzer.slingshot.core,
  org.palladiosimulator.pcm,
  de.uka.ipd.sdq.simucomframework.variables,
  org.apache.log4j,
- org.palladiosimulator.analyzer.slingshot.common.utils;visibility:=reexport
+ org.palladiosimulator.analyzer.slingshot.common.utils;visibility:=reexport,
+ com.google.guava;bundle-version="30.1.0"

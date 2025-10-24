@@ -3,7 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.workflow;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
-import de.uka.ipd.sdq.simucomframework.SimuComConfig;
+import de.uka.ipd.sdq.simucomframework.core.SimuComConfig;
 
 /**
  * A provider for the {@link SimuComConfig} object that holds

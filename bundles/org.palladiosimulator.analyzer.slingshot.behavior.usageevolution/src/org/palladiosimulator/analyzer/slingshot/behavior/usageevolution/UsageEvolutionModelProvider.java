@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.eclipse.emf.ecore.EObject;
 import org.palladiosimulator.analyzer.slingshot.core.extension.ModelProvider;
 import org.palladiosimulator.analyzer.slingshot.core.extension.PCMResourceSetPartitionProvider;
-import org.palladiosimulator.analyzer.workflow.blackboard.PCMResourceSetPartition;
 import org.scaledl.usageevolution.UsageEvolution;
 import org.scaledl.usageevolution.UsageevolutionPackage;
 

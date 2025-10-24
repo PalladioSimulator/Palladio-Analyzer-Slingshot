@@ -24,7 +24,7 @@ import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.Provides;
 
-import de.uka.ipd.sdq.simucomframework.SimuComConfig;
+import de.uka.ipd.sdq.simucomframework.core.SimuComConfig;
 
 @Singleton
 public class SlingshotSimulationDriver implements SimulationDriver {

@@ -8,7 +8,8 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.palladiosimulator.analyzer.slingshot.core,
  org.palladiosimulator.pcm,
  de.uka.ipd.sdq.simucomframework.variables;bundle-version="4.3.0",
- org.palladiosimulator.analyzer.slingshot.common.utils;visibility:=reexport
+ org.palladiosimulator.analyzer.slingshot.common.utils;visibility:=reexport,
+ com.google.guava
 Export-Package: org.palladiosimulator.analyzer.slingshot.behavior.usagemodel.entities,
  org.palladiosimulator.analyzer.slingshot.behavior.usagemodel.entities.interpretationcontext,
  org.palladiosimulator.analyzer.slingshot.behavior.usagemodel.entities.scenariobehavior,
