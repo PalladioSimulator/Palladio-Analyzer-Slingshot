@@ -16,6 +16,7 @@
 		<module>org.palladiosimulator.analyzer.slingshot.extension.pcm.core</module>
 		<module>org.palladiosimulator.analyzer.slingshot.extension.monitoring.feature</module>
 		<module>org.palladiosimulator.analyzer.slingshot.extension.spd.interpreter</module>
+		<module>org.palladiosimulator.analyzer.slingshot.mcp.feature</module>
 	</modules>
 	
 </project>

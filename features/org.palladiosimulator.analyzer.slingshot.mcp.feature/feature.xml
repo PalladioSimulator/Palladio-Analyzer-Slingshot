@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.palladiosimulator.analyzer.slingshot.mcp.feature"
+      label="Slingshot MCP Server Feature"
+      version="1.0.0.qualifier">
+
+   <description>
+      MCP (Model Context Protocol) server for AI-assisted Palladio simulations.
+      Allows AI assistants like Claude to interact with Slingshot simulations.
+   </description>
+
+   <copyright>
+      Copyright (c) 2024 Palladio Simulator Team
+   </copyright>
+
+   <license url="http://www.eclipse.org/legal/epl-2.0">
+      Eclipse Public License - v 2.0
+   </license>
+
+   <requires>
+      <import feature="org.palladiosimulator.analyzer.slingshot.feature" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="org.palladiosimulator.analyzer.slingshot.extension.pcm.core" version="1.0.0" match="greaterOrEqual"/>
+      <import feature="org.palladiosimulator.analyzer.slingshot.extension.monitoring.feature" version="1.0.0" match="greaterOrEqual"/>
+   </requires>
+
+   <plugin
+         id="org.palladiosimulator.analyzer.slingshot.mcp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

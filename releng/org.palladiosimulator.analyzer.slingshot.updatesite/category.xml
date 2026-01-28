@@ -15,6 +15,9 @@
    <feature id="org.palladiosimulator.analyzer.slingshot.extension.monitoring.feature">
       <category name="org.palladiosimulator.addons.category"/>
    </feature>
+   <feature id="org.palladiosimulator.analyzer.slingshot.mcp.feature">
+      <category name="org.palladiosimulator.addons.category"/>
+   </feature>
    <category-def name="org.palladiosimulator.addons.category" label="Palladio Bench Addons">
       <description>
          Palladio Bench Addons
