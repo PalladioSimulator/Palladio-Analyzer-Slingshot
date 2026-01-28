@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Slingshot MCP Test
+Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.mcp.test
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.mcp.test
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Fragment-Host: org.palladiosimulator.analyzer.slingshot.mcp
+Require-Bundle: org.junit.jupiter.api;bundle-version="5.8.1",
+ org.hamcrest.core;bundle-version="1.3.0"

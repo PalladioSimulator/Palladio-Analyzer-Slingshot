@@ -11,5 +11,6 @@
   
   <modules>
   	<module>org.palladiosimulator.analyzer.slingshot.eventdriver.test</module>
+  	<module>org.palladiosimulator.analyzer.slingshot.mcp.test</module>
   </modules>
 </project>

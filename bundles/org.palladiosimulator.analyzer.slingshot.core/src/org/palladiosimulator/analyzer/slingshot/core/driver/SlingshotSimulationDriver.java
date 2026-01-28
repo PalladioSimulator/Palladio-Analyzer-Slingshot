@@ -50,13 +50,16 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 	@Override
 	public void init(final SimuComConfig config, final IProgressMonitor monitor) {
+		// Use a null-safe monitor (support headless mode where monitor may be null)
+		final IProgressMonitor safeMonitor = monitor != null ? monitor : new NullProgressMonitor();
+
 		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
-		partitionIncludedStream.add(new SimulationDriverSubModule(monitor));
+		partitionIncludedStream.add(new SimulationDriverSubModule(safeMonitor));
 		partitionIncludedStream.addAll(behaviorContainers);
 
 		final Injector childInjector = this.parentInjector.createChildInjector(partitionIncludedStream);
 
-		this.monitor = monitor;
+		this.monitor = safeMonitor;
 		this.config = config;
 
 		behaviorContainers.stream().flatMap(behaviorContainer -> behaviorContainer.getExtensions().stream())
@@ -158,6 +161,28 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 	@Override
 	public <T extends DESEvent> void registerEventHandler(final Subscriber<T> subscriber) {
 		this.engine.registerEventListener(subscriber);
+	}
+
+	/**
+	 * A no-op progress monitor for headless execution.
+	 */
+	private static class NullProgressMonitor implements IProgressMonitor {
+		@Override
+		public void beginTask(String name, int totalWork) {}
+		@Override
+		public void done() {}
+		@Override
+		public void internalWorked(double work) {}
+		@Override
+		public boolean isCanceled() { return false; }
+		@Override
+		public void setCanceled(boolean value) {}
+		@Override
+		public void setTaskName(String name) {}
+		@Override
+		public void subTask(String name) {}
+		@Override
+		public void worked(int work) {}
 	}
 
 }

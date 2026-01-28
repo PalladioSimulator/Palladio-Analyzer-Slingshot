@@ -30,6 +30,12 @@ public class Slingshot extends Plugin {
 	private static Slingshot bundle = null;
 	private List<AbstractSlingshotExtension> extensions = null;
 
+	/**
+	 * Custom extensions for headless mode. When set, these are used instead of
+	 * loading from Eclipse extension points.
+	 */
+	private static List<AbstractSlingshotExtension> customExtensions = null;
+
 	private InjectorHolder injectionHolder;
 
 	static {
@@ -55,11 +61,35 @@ public class Slingshot extends Plugin {
 
 	public List<AbstractSlingshotExtension> getExtensions() {
 		if (this.extensions == null) {
-			this.extensions = ExtensionHelper.getExecutableExtensions(ExtensionIds.EXTENSION_POINT_ID,
-					ExtensionIds.EXTENSION_ATTRIBUTE_NAME);
+			// Check for custom extensions (headless mode) first
+			if (customExtensions != null) {
+				this.extensions = customExtensions;
+				LOGGER.info("Using custom extensions for headless mode: " + customExtensions.size() + " extensions");
+			} else {
+				this.extensions = ExtensionHelper.getExecutableExtensions(ExtensionIds.EXTENSION_POINT_ID,
+						ExtensionIds.EXTENSION_ATTRIBUTE_NAME);
+			}
 		}
 
 		return Collections.unmodifiableList(this.extensions);
+	}
+
+	/**
+	 * Set custom extensions for headless mode.
+	 * This must be called before the Slingshot instance is accessed.
+	 *
+	 * @param extensions The list of extension modules to use
+	 */
+	public static void setCustomExtensions(List<AbstractSlingshotExtension> extensions) {
+		customExtensions = extensions;
+		LOGGER.info("Custom extensions set for headless mode: " + (extensions != null ? extensions.size() : 0) + " extensions");
+	}
+
+	/**
+	 * Clear custom extensions (useful for testing).
+	 */
+	public static void clearCustomExtensions() {
+		customExtensions = null;
 	}
 
 	public static Slingshot getInstance() {

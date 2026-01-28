@@ -44,5 +44,8 @@
 		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd</module>
 		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd.adjustment</module>
 		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd.data</module>
+
+    <!-- MCP Server module -->
+    <module>org.palladiosimulator.analyzer.slingshot.mcp</module>
   </modules>
 </project>
