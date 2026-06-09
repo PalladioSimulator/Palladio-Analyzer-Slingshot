@@ -48,8 +48,14 @@ import org.palladiosimulator.analyzer.slingshot.common.events.AbstractSimulation
 import org.palladiosimulator.analyzer.slingshot.common.events.modelchanges.AllocationChange;
 import org.palladiosimulator.analyzer.slingshot.common.events.modelchanges.ModelAdjusted;
 import org.palladiosimulator.analyzer.slingshot.common.events.modelchanges.ResourceEnvironmentChange;
+import org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.snapshot.ResourceSimulationSnapshot;
+import org.palladiosimulator.analyzer.slingshot.common.snapshot.SimulationSnapshot;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationFinished;
-import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.ExtensionSimulationSnapshotCaptured;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.ExtensionSimulationSnapshotRestored;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationSnapshotRequested;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationStateRestoreRequested;
+import org.palladiosimulator.analyzer.slingshot.core.extension.SnapshotCapableExtension;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.Subscribe;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.eventcontract.EventCardinality;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.eventcontract.OnEvent;
@@ -85,7 +91,9 @@ import org.palladiosimulator.analyzer.slingshot.common.utils.*;
 		CallOverWireSucceeded.class }, cardinality = EventCardinality.SINGLE)
 @OnEvent(when = JobAborted.class, then = { CallOverWireAborted.class,
 		ResourceDemandRequestAborted.class }, cardinality = SINGLE)
-public class ResourceSimulation implements SimulationBehaviorExtension {
+@OnEvent(when = SimulationSnapshotRequested.class, then = ExtensionSimulationSnapshotCaptured.class, cardinality = SINGLE)
+@OnEvent(when = SimulationStateRestoreRequested.class, then = ExtensionSimulationSnapshotRestored.class, cardinality = SINGLE)
+public class ResourceSimulation implements SnapshotCapableExtension {
 
 	private static final Logger LOGGER = Logger.getLogger(ResourceSimulation.class);
 
@@ -110,6 +118,50 @@ public class ResourceSimulation implements SimulationBehaviorExtension {
 		this.resourceTable.buildModel(this.allocation);
 		this.passiveResourceTable.buildTable(this.allocation);
 		this.linkingResourceTable.buildTable(this.allocation);
+	}
+
+	@Override
+	public String getExtensionId() {
+		return ResourceSimulationSnapshot.EXTENSION_ID;
+	}
+
+	@Override
+	public Class<? extends SimulationSnapshot> snapshotType() {
+		return ResourceSimulationSnapshot.class;
+	}
+
+	public ResourceSimulationSnapshot captureState() {
+		return new ResourceSimulationSnapshot(this.resourceTable.size(), this.passiveResourceTable.size(),
+				this.linkingResourceTable.size());
+	}
+
+	public void restoreState(final ResourceSimulationSnapshot snapshot) {
+		if (!this.supportsSnapshotSchema(snapshot.schemaVersion())) {
+			throw new IllegalArgumentException(
+					"Unsupported resource simulation snapshot schema: " + snapshot.schemaVersion());
+		}
+		LOGGER.debug(String.format(
+				"Restored resource simulation stub snapshot (active=%d, passive=%d, linking=%d).",
+				snapshot.getActiveResourceCount(), snapshot.getPassiveResourceCount(),
+				snapshot.getLinkingResourceCount()));
+	}
+
+	@Subscribe
+	public Result<ExtensionSimulationSnapshotCaptured> onSimulationSnapshotRequested(
+			final SimulationSnapshotRequested request) {
+		return Result.of(new ExtensionSimulationSnapshotCaptured(request.getRequestId(), this.captureState()));
+	}
+
+	@Subscribe
+	public Result<ExtensionSimulationSnapshotRestored> onSimulationStateRestoreRequested(
+			final SimulationStateRestoreRequested request) {
+		return request.getSnapshot()
+				.get(ResourceSimulationSnapshot.class)
+				.map(snapshot -> {
+					this.restoreState(snapshot);
+					return Result.of(ExtensionSimulationSnapshotRestored.success(this.getExtensionId()));
+				})
+				.orElseGet(() -> Result.of(ExtensionSimulationSnapshotRestored.skipped(this.getExtensionId())));
 	}
 
 	@Subscribe

@@ -17,4 +17,5 @@ Require-Bundle: org.palladiosimulator.analyzer.slingshot.core,
  org.palladiosimulator.analyzer.slingshot.common.utils,
  com.google.guava;bundle-version="30.1.0"
 Export-Package: org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation,
- org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.resources
+ org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.resources,
+ org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.snapshot

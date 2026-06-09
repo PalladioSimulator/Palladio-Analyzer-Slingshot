@@ -21,4 +21,8 @@ public abstract class AbstractResourceTable<K, R extends IResource> {
 	public Optional<R> getResourceById(final K id) {
 		return Optional.ofNullable(resources.get(id));
 	}
+
+	public int size() {
+		return this.resources.size();
+	}
 }
