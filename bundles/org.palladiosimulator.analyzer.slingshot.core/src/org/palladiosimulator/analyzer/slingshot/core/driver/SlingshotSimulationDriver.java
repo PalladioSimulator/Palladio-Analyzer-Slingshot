@@ -17,7 +17,7 @@ import org.palladiosimulator.analyzer.slingshot.core.behavior.CoreSnapshotBehavi
 import org.palladiosimulator.analyzer.slingshot.core.events.PreSimulationConfigurationStarted;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationFinished;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationStarted;
-import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationStateRestoreRequested;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationStateInitializationRequested;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorContainer;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SnapshotCapableExtension;
@@ -49,7 +49,7 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 	private IProgressMonitor monitor;
 	private SimuComConfig config;
-	private Optional<CompositeSimulationSnapshot> restoredState = Optional.empty();
+	private Optional<CompositeSimulationSnapshot> initializationSnapshot = Optional.empty();
 	private SnapshotContributorRegistry contributorRegistry;
 	private SimulationStateValidator stateValidator;
 
@@ -68,7 +68,7 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 	@Override
 	public void init(final SimuComConfig config, final IProgressMonitor monitor,
-			final Optional<CompositeSimulationSnapshot> restoredState) {
+			final Optional<CompositeSimulationSnapshot> initializationSnapshot) {
 		this.contributorRegistry = new SnapshotContributorRegistry();
 		final SnapshotCaptureCoordinator captureCoordinator = new SnapshotCaptureCoordinator();
 		this.stateValidator = new DefaultSimulationStateValidator();
@@ -82,7 +82,7 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 		this.monitor = monitor;
 		this.config = config;
-		this.restoredState = Objects.requireNonNull(restoredState);
+		this.initializationSnapshot = Objects.requireNonNull(initializationSnapshot);
 
 		behaviorContainers.stream().flatMap(behaviorContainer -> behaviorContainer.getExtensions().stream())
 				.forEach(simExtensionClass -> {
@@ -113,9 +113,9 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		this.running = true;
 
 		this.engine.init();
-		this.restoredState.ifPresent(snapshot -> {
+		this.initializationSnapshot.ifPresent(snapshot -> {
 			this.stateValidator.validate(snapshot, this.contributorRegistry);
-			this.scheduleEvent(new SimulationStateRestoreRequested(snapshot));
+			this.scheduleEvent(new SimulationStateInitializationRequested(snapshot));
 		});
 		this.scheduleEvent(new PreSimulationConfigurationStarted());
 		this.scheduleEvent(new SimulationStarted());

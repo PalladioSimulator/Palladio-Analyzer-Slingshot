@@ -5,11 +5,14 @@ import java.util.Objects;
 import org.palladiosimulator.analyzer.slingshot.common.events.AbstractSimulationEvent;
 import org.palladiosimulator.analyzer.slingshot.common.snapshot.CompositeSimulationSnapshot;
 
-public final class SimulationStateRestoreRequested extends AbstractSimulationEvent {
+/**
+ * Dispatched in pre-simulation to initialize extension state from a snapshot.
+ */
+public final class SimulationStateInitializationRequested extends AbstractSimulationEvent {
 
 	private final CompositeSimulationSnapshot snapshot;
 
-	public SimulationStateRestoreRequested(final CompositeSimulationSnapshot snapshot) {
+	public SimulationStateInitializationRequested(final CompositeSimulationSnapshot snapshot) {
 		super();
 		this.snapshot = Objects.requireNonNull(snapshot);
 	}

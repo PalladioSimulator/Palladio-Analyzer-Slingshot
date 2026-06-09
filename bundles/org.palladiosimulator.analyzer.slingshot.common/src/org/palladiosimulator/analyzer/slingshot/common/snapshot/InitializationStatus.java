@@ -1,6 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.common.snapshot;
 
-public enum RestoreStatus {
+public enum InitializationStatus {
 
 	SUCCESS,
 	FAILED,

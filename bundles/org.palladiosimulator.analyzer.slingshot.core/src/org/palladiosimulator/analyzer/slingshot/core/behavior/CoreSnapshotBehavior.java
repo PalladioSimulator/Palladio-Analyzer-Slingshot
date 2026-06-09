@@ -13,7 +13,7 @@ import org.palladiosimulator.analyzer.slingshot.core.api.SimulationInformation;
 import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.ExtensionSimulationSnapshotCaptured;
 import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationSnapshotCompleted;
 import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationSnapshotRequested;
-import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationStateRestoreRequested;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationStateInitializationRequested;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
 import org.palladiosimulator.analyzer.slingshot.core.snapshot.SnapshotCaptureCoordinator;
 import org.palladiosimulator.analyzer.slingshot.core.snapshot.SnapshotContributorRegistry;
@@ -27,7 +27,7 @@ import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 
 @OnEvent(when = SimulationSnapshotRequested.class, then = { SimulationSnapshotCompleted.class }, cardinality = EventCardinality.SINGLE)
 @OnEvent(when = ExtensionSimulationSnapshotCaptured.class, then = { SimulationSnapshotCompleted.class }, cardinality = EventCardinality.SINGLE)
-@OnEvent(when = SimulationStateRestoreRequested.class, then = {}, cardinality = EventCardinality.SINGLE)
+@OnEvent(when = SimulationStateInitializationRequested.class, then = {}, cardinality = EventCardinality.SINGLE)
 public class CoreSnapshotBehavior implements SimulationBehaviorExtension {
 
 	private static final Logger LOGGER = LogManager.getLogger(CoreSnapshotBehavior.class);
@@ -72,8 +72,9 @@ public class CoreSnapshotBehavior implements SimulationBehaviorExtension {
 	}
 
 	@Subscribe
-	public void onSimulationStateRestoreRequested(final SimulationStateRestoreRequested request) {
-		LOGGER.debug("Simulation state restore requested with contributors: " + request.getSnapshot().contributorIds());
+	public void onSimulationStateInitializationRequested(final SimulationStateInitializationRequested request) {
+		LOGGER.debug("Simulation state initialization requested with contributors: "
+				+ request.getSnapshot().contributorIds());
 	}
 
 	private Result<SimulationSnapshotCompleted> processCapturedSnapshot(

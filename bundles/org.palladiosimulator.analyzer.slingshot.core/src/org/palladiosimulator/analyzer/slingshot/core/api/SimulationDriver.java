@@ -16,7 +16,7 @@ public interface SimulationDriver extends SimulationScheduling {
 	public void init(final SimuComConfig config, final IProgressMonitor monitor);
 
 	public void init(final SimuComConfig config, final IProgressMonitor monitor,
-			Optional<CompositeSimulationSnapshot> restoredState);
+			Optional<CompositeSimulationSnapshot> initializationSnapshot);
 
 	public void start();
 

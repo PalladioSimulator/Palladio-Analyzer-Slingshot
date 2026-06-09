@@ -3,7 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.core.extension;
 import org.palladiosimulator.analyzer.slingshot.common.snapshot.SimulationSnapshot;
 
 /**
- * Marker for extensions that participate in snapshot capture and restore.
+ * Marker for extensions that participate in snapshot capture and state initialization.
  */
 public interface SnapshotCapableExtension extends SimulationBehaviorExtension {
 
@@ -15,7 +15,7 @@ public interface SnapshotCapableExtension extends SimulationBehaviorExtension {
 		return schemaVersion != null && schemaVersion.startsWith("1.");
 	}
 
-	default boolean isRequiredForRestore() {
+	default boolean isRequiredForInitialization() {
 		return this.isActive();
 	}
 
