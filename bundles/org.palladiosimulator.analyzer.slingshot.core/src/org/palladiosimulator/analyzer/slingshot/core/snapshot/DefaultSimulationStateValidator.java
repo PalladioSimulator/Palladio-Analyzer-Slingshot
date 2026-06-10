@@ -7,6 +7,14 @@ import org.palladiosimulator.analyzer.slingshot.common.snapshot.SimulationContex
 import org.palladiosimulator.analyzer.slingshot.common.snapshot.SimulationSnapshot;
 import org.palladiosimulator.analyzer.slingshot.core.exceptions.SimulationStateIncompatibleException;
 
+/**
+ * Default validator that checks contributor set equality, context compatibility, and schema version.
+ *
+ * <p>
+ * In this iteration, schema compatibility requires a {@code 1.} major-version prefix on each
+ * contributor snapshot. Stricter semver rules and upcasters may be added in future iterations.
+ * </p>
+ */
 public final class DefaultSimulationStateValidator implements SimulationStateValidator {
 
 	@Override

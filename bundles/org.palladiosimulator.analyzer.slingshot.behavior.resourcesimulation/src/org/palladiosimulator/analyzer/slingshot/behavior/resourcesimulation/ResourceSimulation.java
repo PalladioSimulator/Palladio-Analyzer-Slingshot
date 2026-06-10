@@ -74,6 +74,12 @@ import org.palladiosimulator.analyzer.slingshot.common.utils.*;
  * The resource simulation behavior initializes all the available resources on
  * start and will listen to requests for the simulation.
  *
+ * <p>
+ * Implements {@link org.palladiosimulator.analyzer.slingshot.core.extension.SnapshotCapableExtension}
+ * to contribute a {@link org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.snapshot.ResourceSimulationSnapshot}
+ * during capture and to initialize from a snapshot in pre-simulation.
+ * </p>
+ *
  * @author Julijan Katic, Floriment Klinaku
  */
 @OnEvent(when = SimulationFinished.class, then = {})
