@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?product
+      id="org.palladiosimulator.analyzer.slingshot.headless.product"
+      name="Slingshot Headless"
+      application="org.palladiosimulator.analyzer.slingshot.headless.slingshotHeadless"
+      version="1.0.0.qualifier"
+      useFeatures="true"
+      includeLaunchers="false"
+      autoIncludeRequirements="true"
+?>
+<product
+      uid="org.palladiosimulator.analyzer.slingshot.headless.product"
+      id="org.palladiosimulator.analyzer.slingshot.headless.product"
+      application="org.palladiosimulator.analyzer.slingshot.headless.slingshotHeadless"
+      version="1.0.0.qualifier"
+      name="Slingshot Headless"
+      useFeatures="true"
+      includeLaunchers="false"
+      autoIncludeRequirements="true">
+
+   <configIni use="default">
+   </configIni>
+
+   <features>
+      <feature id="org.palladiosimulator.analyzer.slingshot.feature"/>
+      <feature id="org.palladiosimulator.analyzer.slingshot.extension.pcm.core"/>
+      <feature id="org.palladiosimulator.analyzer.slingshot.extension.monitoring.feature"/>
+      <feature id="org.palladiosimulator.analyzer.slingshot.extension.spd.interpreter"/>
+   </features>
+
+   <configurations>
+      <plugin id="org.eclipse.core.runtime" autoStart="true" startLevel="4"/>
+      <plugin id="org.eclipse.equinox.common" autoStart="true" startLevel="2"/>
+      <plugin id="org.eclipse.equinox.ds" autoStart="true" startLevel="2"/>
+      <plugin id="org.eclipse.equinox.event" autoStart="true" startLevel="3"/>
+      <plugin id="org.eclipse.equinox.app" autoStart="true" startLevel="4"/>
+      <plugin id="org.palladiosimulator.analyzer.slingshot.core" autoStart="true" startLevel="4"/>
+      <plugin id="org.palladiosimulator.analyzer.slingshot.headless" autoStart="true" startLevel="4"/>
+   </configurations>
+</product>

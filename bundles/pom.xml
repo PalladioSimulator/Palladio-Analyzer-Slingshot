@@ -44,5 +44,8 @@
 		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd</module>
 		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd.adjustment</module>
 		<module>org.palladiosimulator.analyzer.slingshot.behavior.spd.data</module>
+
+    <!-- Headless CLI -->
+    <module>org.palladiosimulator.analyzer.slingshot.headless</module>
   </modules>
 </project>

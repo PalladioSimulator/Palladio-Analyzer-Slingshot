@@ -10,5 +10,6 @@
   
   <modules>
   	<module>org.palladiosimulator.analyzer.slingshot.updatesite</module>
+  	<module>org.palladiosimulator.analyzer.slingshot.headless.product</module>
   </modules>
 </project>
