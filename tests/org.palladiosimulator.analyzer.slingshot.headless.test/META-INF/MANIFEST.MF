@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Headless CLI Test
+Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.headless.test;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.headless.test
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Bundle: org.junit.jupiter.api;bundle-version="5.8.1",
+ org.palladiosimulator.analyzer.slingshot.headless,
+ org.palladiosimulator.analyzer.slingshot.core,
+ org.palladiosimulator.analyzer.workflow.core,
+ de.uka.ipd.sdq.workflow.mdsd.blackboard,
+ org.palladiosimulator.pcm,
+ org.palladiosimulator.pcm.resources,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.common
