@@ -48,8 +48,14 @@ import org.palladiosimulator.analyzer.slingshot.common.events.AbstractSimulation
 import org.palladiosimulator.analyzer.slingshot.common.events.modelchanges.AllocationChange;
 import org.palladiosimulator.analyzer.slingshot.common.events.modelchanges.ModelAdjusted;
 import org.palladiosimulator.analyzer.slingshot.common.events.modelchanges.ResourceEnvironmentChange;
+import org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.snapshot.ResourceSimulationSnapshot;
+import org.palladiosimulator.analyzer.slingshot.common.snapshot.SimulationSnapshot;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationFinished;
-import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.ExtensionSimulationSnapshotCaptured;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.ExtensionSimulationSnapshotInitialized;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationSnapshotRequested;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationStateInitializationRequested;
+import org.palladiosimulator.analyzer.slingshot.core.extension.SnapshotCapableExtension;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.Subscribe;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.eventcontract.EventCardinality;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.eventcontract.OnEvent;
@@ -68,6 +74,12 @@ import org.palladiosimulator.analyzer.slingshot.common.utils.*;
  * The resource simulation behavior initializes all the available resources on
  * start and will listen to requests for the simulation.
  *
+ * <p>
+ * Implements {@link org.palladiosimulator.analyzer.slingshot.core.extension.SnapshotCapableExtension}
+ * to contribute a {@link org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.snapshot.ResourceSimulationSnapshot}
+ * during capture and to initialize from a snapshot in pre-simulation.
+ * </p>
+ *
  * @author Julijan Katic, Floriment Klinaku
  */
 @OnEvent(when = SimulationFinished.class, then = {})
@@ -85,7 +97,9 @@ import org.palladiosimulator.analyzer.slingshot.common.utils.*;
 		CallOverWireSucceeded.class }, cardinality = EventCardinality.SINGLE)
 @OnEvent(when = JobAborted.class, then = { CallOverWireAborted.class,
 		ResourceDemandRequestAborted.class }, cardinality = SINGLE)
-public class ResourceSimulation implements SimulationBehaviorExtension {
+@OnEvent(when = SimulationSnapshotRequested.class, then = ExtensionSimulationSnapshotCaptured.class, cardinality = SINGLE)
+@OnEvent(when = SimulationStateInitializationRequested.class, then = ExtensionSimulationSnapshotInitialized.class, cardinality = SINGLE)
+public class ResourceSimulation implements SnapshotCapableExtension {
 
 	private static final Logger LOGGER = Logger.getLogger(ResourceSimulation.class);
 
@@ -110,6 +124,50 @@ public class ResourceSimulation implements SimulationBehaviorExtension {
 		this.resourceTable.buildModel(this.allocation);
 		this.passiveResourceTable.buildTable(this.allocation);
 		this.linkingResourceTable.buildTable(this.allocation);
+	}
+
+	@Override
+	public String getExtensionId() {
+		return ResourceSimulationSnapshot.EXTENSION_ID;
+	}
+
+	@Override
+	public Class<? extends SimulationSnapshot> snapshotType() {
+		return ResourceSimulationSnapshot.class;
+	}
+
+	private ResourceSimulationSnapshot captureState() {
+		return new ResourceSimulationSnapshot(this.resourceTable.size(), this.passiveResourceTable.size(),
+				this.linkingResourceTable.size());
+	}
+
+	private void initializeState(final ResourceSimulationSnapshot snapshot) {
+		if (!this.supportsSnapshotSchema(snapshot.schemaVersion())) {
+			throw new IllegalArgumentException(
+					"Unsupported resource simulation snapshot schema: " + snapshot.schemaVersion());
+		}
+		LOGGER.debug(String.format(
+				"Initialized resource simulation stub snapshot (active=%d, passive=%d, linking=%d).",
+				snapshot.getActiveResourceCount(), snapshot.getPassiveResourceCount(),
+				snapshot.getLinkingResourceCount()));
+	}
+
+	@Subscribe
+	public Result<ExtensionSimulationSnapshotCaptured> onSimulationSnapshotRequested(
+			final SimulationSnapshotRequested request) {
+		return Result.of(new ExtensionSimulationSnapshotCaptured(request.getRequestId(), this.captureState()));
+	}
+
+	@Subscribe
+	public Result<ExtensionSimulationSnapshotInitialized> onSimulationStateInitializationRequested(
+			final SimulationStateInitializationRequested request) {
+		return request.getSnapshot()
+				.get(ResourceSimulationSnapshot.class)
+				.map(snapshot -> {
+					this.initializeState(snapshot);
+					return Result.of(ExtensionSimulationSnapshotInitialized.success(this.getExtensionId()));
+				})
+				.orElseGet(() -> Result.of(ExtensionSimulationSnapshotInitialized.skipped(this.getExtensionId())));
 	}
 
 	@Subscribe

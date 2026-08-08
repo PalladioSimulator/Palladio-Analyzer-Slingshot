@@ -2,19 +2,29 @@ package org.palladiosimulator.analyzer.slingshot.core.driver;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import javax.inject.Singleton;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;
+import org.palladiosimulator.analyzer.slingshot.common.snapshot.CompositeSimulationSnapshot;
 import org.palladiosimulator.analyzer.slingshot.core.annotations.SimulationBehaviorExtensions;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationEngine;
 import org.palladiosimulator.analyzer.slingshot.core.behavior.CoreBehavior;
+import org.palladiosimulator.analyzer.slingshot.core.behavior.CoreSnapshotBehavior;
 import org.palladiosimulator.analyzer.slingshot.core.events.PreSimulationConfigurationStarted;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationFinished;
 import org.palladiosimulator.analyzer.slingshot.core.events.SimulationStarted;
+import org.palladiosimulator.analyzer.slingshot.core.events.snapshot.SimulationStateInitializationRequested;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorContainer;
 import org.palladiosimulator.analyzer.slingshot.core.extension.SimulationBehaviorExtension;
+import org.palladiosimulator.analyzer.slingshot.core.extension.SnapshotCapableExtension;
+import org.palladiosimulator.analyzer.slingshot.core.snapshot.DefaultSimulationStateValidator;
+import org.palladiosimulator.analyzer.slingshot.core.snapshot.SimulationStateValidator;
+import org.palladiosimulator.analyzer.slingshot.core.snapshot.SnapshotCaptureCoordinator;
+import org.palladiosimulator.analyzer.slingshot.core.snapshot.SnapshotContributorRegistry;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.Subscriber;
 
 
@@ -39,6 +49,9 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 	private IProgressMonitor monitor;
 	private SimuComConfig config;
+	private Optional<CompositeSimulationSnapshot> initializationSnapshot = Optional.empty();
+	private SnapshotContributorRegistry contributorRegistry;
+	private SimulationStateValidator stateValidator;
 
 	@Inject
 	public SlingshotSimulationDriver(final SimulationEngine engine, final Injector injector,
@@ -50,14 +63,26 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 
 	@Override
 	public void init(final SimuComConfig config, final IProgressMonitor monitor) {
+		this.init(config, monitor, Optional.empty());
+	}
+
+	@Override
+	public void init(final SimuComConfig config, final IProgressMonitor monitor,
+			final Optional<CompositeSimulationSnapshot> initializationSnapshot) {
+		this.contributorRegistry = new SnapshotContributorRegistry();
+		final SnapshotCaptureCoordinator captureCoordinator = new SnapshotCaptureCoordinator();
+		this.stateValidator = new DefaultSimulationStateValidator();
+
 		final List<Module> partitionIncludedStream = new ArrayList<>(behaviorContainers.size() + 1);
-		partitionIncludedStream.add(new SimulationDriverSubModule(monitor));
+		partitionIncludedStream.add(new SimulationDriverSubModule(monitor, this.contributorRegistry, captureCoordinator,
+				this.stateValidator));
 		partitionIncludedStream.addAll(behaviorContainers);
 
 		final Injector childInjector = this.parentInjector.createChildInjector(partitionIncludedStream);
 
 		this.monitor = monitor;
 		this.config = config;
+		this.initializationSnapshot = Objects.requireNonNull(initializationSnapshot);
 
 		behaviorContainers.stream().flatMap(behaviorContainer -> behaviorContainer.getExtensions().stream())
 				.forEach(simExtensionClass -> {
@@ -67,10 +92,14 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 					}
 					final SimulationBehaviorExtension simExtension = (SimulationBehaviorExtension) extension;
 					if (simExtension.isActive()) {
+						if (simExtension instanceof SnapshotCapableExtension snapshotCapable) {
+							this.contributorRegistry.register(snapshotCapable);
+						}
 						engine.registerEventListener(simExtension);
 					}
 				});
 
+		engine.registerEventListener(childInjector.getInstance(CoreSnapshotBehavior.class));
 		engine.registerEventListener(new CoreBehavior(this));
 		this.initialized = true;
 	}
@@ -84,6 +113,10 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		this.running = true;
 
 		this.engine.init();
+		this.initializationSnapshot.ifPresent(snapshot -> {
+			this.stateValidator.validate(snapshot, this.contributorRegistry);
+			this.scheduleEvent(new SimulationStateInitializationRequested(snapshot));
+		});
 		this.scheduleEvent(new PreSimulationConfigurationStarted());
 		this.scheduleEvent(new SimulationStarted());
 		this.scheduleEventAt(new SimulationFinished(), config.getSimuTime());
@@ -131,10 +164,19 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 	private class SimulationDriverSubModule extends AbstractModule {
 
 		private final IProgressMonitor monitor;
+		private final SnapshotContributorRegistry contributorRegistry;
+		private final SnapshotCaptureCoordinator captureCoordinator;
+		private final SimulationStateValidator stateValidator;
 
-		public SimulationDriverSubModule(final IProgressMonitor monitor) {
+		public SimulationDriverSubModule(final IProgressMonitor monitor,
+				final SnapshotContributorRegistry contributorRegistry,
+				final SnapshotCaptureCoordinator captureCoordinator,
+				final SimulationStateValidator stateValidator) {
 
 			this.monitor = monitor;
+			this.contributorRegistry = contributorRegistry;
+			this.captureCoordinator = captureCoordinator;
+			this.stateValidator = stateValidator;
 		}
 
 		@Provides
@@ -142,11 +184,20 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 			return this.monitor;
 		}
 
+		@Provides
+		public SnapshotContributorRegistry contributorRegistry() {
+			return this.contributorRegistry;
+		}
 
-//		@Provides
-//		public SimuComConfig config() {
-//			return config;
-//		}
+		@Provides
+		public SnapshotCaptureCoordinator captureCoordinator() {
+			return this.captureCoordinator;
+		}
+
+		@Provides
+		public SimulationStateValidator stateValidator() {
+			return this.stateValidator;
+		}
 
 	}
 

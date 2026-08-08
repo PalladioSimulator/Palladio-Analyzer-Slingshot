@@ -26,7 +26,11 @@ Bundle-Activator: org.palladiosimulator.analyzer.slingshot.core.Slingshot
 Export-Package: org.palladiosimulator.analyzer.slingshot.core,
  org.palladiosimulator.analyzer.slingshot.core.annotations,
  org.palladiosimulator.analyzer.slingshot.core.api,
+ org.palladiosimulator.analyzer.slingshot.core.behavior,
  org.palladiosimulator.analyzer.slingshot.core.events,
- org.palladiosimulator.analyzer.slingshot.core.extension
+ org.palladiosimulator.analyzer.slingshot.core.events.snapshot,
+ org.palladiosimulator.analyzer.slingshot.core.exceptions,
+ org.palladiosimulator.analyzer.slingshot.core.extension,
+ org.palladiosimulator.analyzer.slingshot.core.snapshot
 Bundle-ClassPath: lib/guice-grapher-5.1.0.jar,
  .

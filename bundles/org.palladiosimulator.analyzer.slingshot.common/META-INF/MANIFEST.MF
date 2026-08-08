@@ -16,5 +16,6 @@ Require-Bundle: org.palladiosimulator.commons,
  org.palladiosimulator.monitorrepository
 Export-Package: org.palladiosimulator.analyzer.slingshot.common.annotations,
  org.palladiosimulator.analyzer.slingshot.common.events,
- org.palladiosimulator.analyzer.slingshot.common.events.modelchanges
+ org.palladiosimulator.analyzer.slingshot.common.events.modelchanges,
+ org.palladiosimulator.analyzer.slingshot.common.snapshot
 Import-Package: org.eclipse.emf.ecore.util
