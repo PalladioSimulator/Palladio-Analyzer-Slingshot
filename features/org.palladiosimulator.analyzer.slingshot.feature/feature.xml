@@ -24,7 +24,7 @@
       <import plugin="org.palladiosimulator.commons"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.eclipse.emf.ecore"/>
-      <import plugin="javax.inject"/>
+      <import plugin="jakarta.inject.jakarta.inject-api"/>
       <import plugin="org.palladiosimulator.analyzer.workflow"/>
       <import plugin="de.uka.ipd.sdq.workflow.mdsd.blackboard"/>
       <import plugin="org.palladiosimulator.pcm"/>

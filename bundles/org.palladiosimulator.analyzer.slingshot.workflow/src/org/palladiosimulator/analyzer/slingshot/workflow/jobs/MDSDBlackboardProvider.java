@@ -1,6 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.workflow.jobs;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import de.uka.ipd.sdq.workflow.mdsd.blackboard.MDSDBlackboard;
 

@@ -2,7 +2,7 @@ package org.palladiosimulator.analyzer.slingshot.core.driver;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.palladiosimulator.analyzer.slingshot.common.events.DESEvent;

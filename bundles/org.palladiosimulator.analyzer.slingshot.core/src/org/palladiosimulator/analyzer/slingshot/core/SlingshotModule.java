@@ -3,7 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.core;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

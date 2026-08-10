@@ -2,7 +2,7 @@ package org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.rep
 
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.palladiosimulator.pcm.allocation.Allocation;
 import org.palladiosimulator.pcm.allocation.AllocationContext;

@@ -2,8 +2,8 @@ package org.palladiosimulator.analyzer.slingshot.core.driver;
 
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 
 import org.palladiosimulator.analyzer.slingshot.common.events.SystemEvent;
 import org.palladiosimulator.analyzer.slingshot.core.annotations.SystemBehaviorExtensions;

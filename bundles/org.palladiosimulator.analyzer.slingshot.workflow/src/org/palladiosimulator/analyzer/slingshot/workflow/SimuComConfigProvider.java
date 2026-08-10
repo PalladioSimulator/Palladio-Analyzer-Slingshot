@@ -1,7 +1,7 @@
 package org.palladiosimulator.analyzer.slingshot.workflow;
 
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 
 import de.uka.ipd.sdq.simucomframework.core.SimuComConfig;
 
