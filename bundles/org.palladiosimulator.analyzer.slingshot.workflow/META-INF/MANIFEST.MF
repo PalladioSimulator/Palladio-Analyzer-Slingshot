@@ -8,7 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-17
 Require-Bundle: org.palladiosimulator.analyzer.workflow;visibility:=reexport,
  de.uka.ipd.sdq.workflow.mdsd;visibility:=reexport,
  org.palladiosimulator.analyzer.slingshot.workflow.events,
- com.google.inject;bundle-version="5.0.1",
+ com.google.inject;bundle-version="[7.0.0,8.0.0)",
  org.palladiosimulator.analyzer.slingshot.core,
  de.uka.ipd.sdq.simucomframework
 Bundle-ActivationPolicy: lazy
