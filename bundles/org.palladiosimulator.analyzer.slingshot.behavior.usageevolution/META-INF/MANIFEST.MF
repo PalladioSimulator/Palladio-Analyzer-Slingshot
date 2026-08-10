@@ -4,7 +4,7 @@ Bundle-Name: Usageevolution
 Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.behavior.usageevolution;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.behavior.usageevolution
-Bundle-RequiredExecutionEnvironment: JavaSE-17
+Bundle-RequiredExecutionEnvironment: JavaSE-21
 Require-Bundle: org.palladiosimulator.analyzer.slingshot.common,
  org.palladiosimulator.pcm,
  org.scaledl.usageevolution,
