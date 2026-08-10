@@ -3,7 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.monitor.interpreter;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.emf.ecore.EObject;
 import org.palladiosimulator.analyzer.slingshot.common.annotations.Nullable;

@@ -1,6 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.core.behavior;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

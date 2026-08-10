@@ -1,6 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.behavior.systemsimulation;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.palladiosimulator.analyzer.slingshot.core.extension.ModelProvider;
 import org.palladiosimulator.analyzer.slingshot.core.extension.PCMResourceSetPartitionProvider;

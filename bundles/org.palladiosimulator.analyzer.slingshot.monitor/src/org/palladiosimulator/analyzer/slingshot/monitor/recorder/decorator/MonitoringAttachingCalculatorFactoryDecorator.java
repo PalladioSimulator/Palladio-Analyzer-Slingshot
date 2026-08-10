@@ -1,6 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.monitor.recorder.decorator;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.palladiosimulator.analyzer.slingshot.monitor.observer.EventBasedMeasurementObserver;

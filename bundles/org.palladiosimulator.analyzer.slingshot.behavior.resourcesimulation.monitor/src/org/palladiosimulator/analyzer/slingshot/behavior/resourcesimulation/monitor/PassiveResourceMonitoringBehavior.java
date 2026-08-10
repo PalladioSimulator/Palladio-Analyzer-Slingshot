@@ -1,6 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.monitor;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.events.PassiveResourceStateUpdated;
 import org.palladiosimulator.analyzer.slingshot.behavior.systemsimulation.entities.resource.ResourceDemandRequest.ResourceType;

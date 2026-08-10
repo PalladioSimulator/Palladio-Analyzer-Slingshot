@@ -3,7 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.core;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import org.apache.log4j.Appender;
 import org.apache.log4j.ConsoleAppender;

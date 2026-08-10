@@ -2,9 +2,9 @@ package org.palladiosimulator.analyzer.slingshot.monitor.calculator;
 
 import de.uka.ipd.sdq.simucomframework.core.SimuComConfig;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
-import javax.inject.Singleton;
+import jakarta.inject.Inject;
+import jakarta.inject.Provider;
+import jakarta.inject.Singleton;
 
 import org.palladiosimulator.analyzer.slingshot.monitor.observer.EventBasedMeasurementObserver;
 import org.palladiosimulator.analyzer.slingshot.monitor.recorder.decorator.MonitoringAttachingCalculatorFactoryDecorator;

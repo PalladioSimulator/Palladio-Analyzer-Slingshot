@@ -1,6 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.core.extension;
 
-import javax.inject.Provider;
+import jakarta.inject.Provider;
 
 import org.eclipse.emf.ecore.EObject;
 
