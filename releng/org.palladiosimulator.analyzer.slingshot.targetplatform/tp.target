@@ -4,13 +4,8 @@
 	<locations>
 		<location type="Target" uri="mvn:org.palladiosimulator:palladio-target-platforms:6.0.0-SNAPSHOT:target:palladio-2025-12"/>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-			<repository location="https://download.eclipse.org/tools/orbit/downloads/2023-03/"/>
 			<unit id="org.reactivestreams" version="0.0.0"/>
-			<unit id="net.bytebuddy.byte-buddy" version="0.0.0"/>
-			<unit id="net.bytebuddy.byte-buddy-agent" version="0.0.0"/>
-			<unit id="org.hamcrest.library" version="0.0.0"/>
-			<unit id="org.mockito.mockito-core" version="0.0.0"/>
-			<unit id="org.objenesis" version="0.0.0"/>
+			<repository location="https://download.eclipse.org/tools/orbit/downloads/2023-03/"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
 			<repository location="https://updatesite.palladio-simulator.com/palladio-addons-spd-metamodel/nightly/"/>
