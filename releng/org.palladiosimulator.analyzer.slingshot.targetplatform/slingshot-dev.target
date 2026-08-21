@@ -87,10 +87,6 @@
 			<unit id="org.palladiosimulator.pcm.feature.source.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.probeframework.feature.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.probeframework.feature.source.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.protocom.feature.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.protocom.feature.source.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.protocom.javaee.feature.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.protocom.javaee.feature.source.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.recorderframework.feature.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.recorderframework.feature.source.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.reliability.feature.feature.group" version="0.0.0"/>
