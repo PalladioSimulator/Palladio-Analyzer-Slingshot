@@ -25,5 +25,5 @@
   	<module>releng</module>
   	<module>features</module>
   	<module>tests</module>
-  </modules>
+  </modules> 
 </project>
