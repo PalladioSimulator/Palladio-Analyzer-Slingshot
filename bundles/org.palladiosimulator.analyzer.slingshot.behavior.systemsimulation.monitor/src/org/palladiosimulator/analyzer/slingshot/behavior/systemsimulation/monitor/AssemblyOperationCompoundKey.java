@@ -50,7 +50,7 @@ public final class AssemblyOperationCompoundKey {
 
 	@Override
 	public String toString() {
-		return this.assemblyContext.getId() + ":" + this.providedRole.getId();
+		return this.assemblyContext.getId() + ":" + this.providedRole.getId() + ":" + this.signature.getId();
 	}
 
 	public static AssemblyOperationCompoundKey of(final SEFFInterpretationContext context) {
