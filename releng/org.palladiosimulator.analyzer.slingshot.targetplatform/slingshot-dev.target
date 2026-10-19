@@ -3,10 +3,6 @@
 <target name="tp">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
-			<unit id="org.eclipse.m2m.qvt.oml.sdk.source.feature.group" version="0.0.0"/>
-			<repository location="https://download.eclipse.org/releases/2023-03/202303151000/"/>
-		</location>
-		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
 			<unit id="org.reactivestreams" version="0.0.0"/>
 			<unit id="org.reactivestreams.source" version="0.0.0"/>
 			<repository location="https://download.eclipse.org/tools/orbit/downloads/2023-03/"/>
@@ -14,6 +10,12 @@
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
 			<repository location="https://updatesite.palladio-simulator.com/palladio-addons-spd-metamodel/nightly/"/>
 			<unit id="org.palladiosimulator.spd.feature.feature.group" version="0.0.0"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+			<repository location="https://download.eclipse.org/mmt/qvto/builds/release/3.11.4/"/>
+			<unit id="org.eclipse.m2m.qvt.oml.sdk.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.m2m.qvt.oml.tools.coverage.feature.group" version="0.0.0"/>
+			<unit id="org.eclipse.m2m.qvt.oml.tools.coverage.source.feature.group" version="0.0.0"/>
 		</location>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
 			<repository location="https://updatesite.palladio-simulator.com/palladio-build-updatesite/nightly/"/>
@@ -105,12 +107,6 @@
 			<unit id="org.palladiosimulator.simulation.abstractsimengine.desmoj.feature.source.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.simulation.abstractsimengine.ssj.feature.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.simulation.abstractsimengine.ssj.feature.source.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.simulizar.feature.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.simulizar.feature.source.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.simulizar.reconfiguration.qvto.feature.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.simulizar.reconfiguration.qvto.feature.source.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.simulizar.reconfiguration.storydiagram.feature.feature.group" version="0.0.0"/>
-			<unit id="org.palladiosimulator.simulizar.reconfiguration.storydiagram.feature.source.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.solver.feature.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.solver.feature.source.feature.group" version="0.0.0"/>
 			<unit id="org.palladiosimulator.thirdpartywrapper.feature.feature.group" version="0.0.0"/>
@@ -134,11 +130,6 @@
 			<unit id="org.eclipse.emf.sdk.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.equinox.sdk.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.jdt.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.m2m.qvt.oml.sdk.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.m2m.qvt.oml.tools.coverage.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.m2m.qvt.oml.tools.coverage.source.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.qvtd.master.feature.group" version="0.0.0"/>
-			<unit id="org.eclipse.qvtd.master.source.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.sdk.feature.group" version="0.0.0"/>
 			<unit id="org.eclipse.xsd.sdk.feature.group" version="0.0.0"/>
 			<unit id="org.junit" version="0.0.0"/>
@@ -160,6 +151,11 @@
 			<unit id="junit-vintage-engine" version="0.0.0"/>
 			<unit id="org.eclipse.emf.ecoretools.design.feature.group" version="0.0.0"/>
 			<repository location="https://download.eclipse.org/releases/2025-12/202512101000/"/>
+		</location>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="false" type="InstallableUnit">
+			<repository location="https://download.eclipse.org/tools/orbit/simrel/orbit-aggregation/release/4.38.0/"/>
+			<unit id="org.mockito.mockito-core" version="0.0.0"/>
+			<unit id="org.mockito.junit-jupiter" version="0.0.0"/>
 		</location>
 	</locations>
 </target>
