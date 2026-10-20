@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Slingshot Application
+Bundle-SymbolicName: org.palladiosimulator.analyzer.slingshot.application;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Automatic-Module-Name: org.palladiosimulator.analyzer.slingshot.application
+Bundle-RequiredExecutionEnvironment: JavaSE-17
+Require-Bundle: org.eclipse.equinox.app,
+ org.eclipse.core.runtime,
+ org.eclipse.emf.ecore,
+ org.eclipse.emf.ecore.xmi,
+ de.uka.ipd.sdq.simucomframework,
+ de.uka.ipd.sdq.workflow,
+ de.uka.ipd.sdq.workflow.mdsd,
+ org.palladiosimulator.analyzer.slingshot.workflow,
+ org.palladiosimulator.experimentautomation,
+ org.palladiosimulator.experimentautomation.application,
+ org.palladiosimulator.experimentautomation.application.tooladapter.slingshot.model
+Bundle-ActivationPolicy: lazy
+Export-Package: org.palladiosimulator.analyzer.slingshot.application

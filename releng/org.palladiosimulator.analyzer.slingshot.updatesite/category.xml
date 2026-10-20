@@ -6,6 +6,9 @@
    <feature id="org.palladiosimulator.analyzer.slingshot.ui.feature">
       <category name="org.palladiosimulator.addons.category"/>
    </feature>
+   <feature id="org.palladiosimulator.analyzer.slingshot.application.feature">
+      <category name="org.palladiosimulator.addons.category"/>
+   </feature>
    <feature id="org.palladiosimulator.analyzer.slingshot.extension.spd.interpreter">
       <category name="org.palladiosimulator.addons.category"/>
    </feature>

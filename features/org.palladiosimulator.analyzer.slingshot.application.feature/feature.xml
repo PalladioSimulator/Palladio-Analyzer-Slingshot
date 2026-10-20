@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.palladiosimulator.analyzer.slingshot.application.feature"
+      label="Slingshot Headless Application Feature"
+      version="1.0.0.qualifier">
+
+   <description>
+      Headless application for running Slingshot simulations from Experiment Automation models.
+   </description>
+
+   <includes
+         id="org.palladiosimulator.analyzer.slingshot.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.palladiosimulator.analyzer.slingshot.extension.pcm.core"
+         version="0.0.0"/>
+
+   <includes
+         id="org.palladiosimulator.analyzer.slingshot.extension.monitoring.feature"
+         version="0.0.0"/>
+
+   <includes
+         id="org.palladiosimulator.analyzer.slingshot.extension.spd.interpreter"
+         version="0.0.0"/>
+
+   <requires>
+      <import plugin="org.eclipse.equinox.app"/>
+      <import plugin="org.eclipse.core.runtime"/>
+      <import plugin="org.eclipse.emf.ecore"/>
+      <import plugin="org.eclipse.emf.ecore.xmi"/>
+      <import plugin="de.uka.ipd.sdq.simucomframework"/>
+      <import plugin="de.uka.ipd.sdq.workflow"/>
+      <import plugin="de.uka.ipd.sdq.workflow.mdsd"/>
+      <import plugin="org.palladiosimulator.analyzer.slingshot.workflow"/>
+      <import plugin="org.palladiosimulator.experimentautomation"/>
+      <import plugin="org.palladiosimulator.experimentautomation.application"/>
+      <import plugin="org.palladiosimulator.experimentautomation.application.tooladapter.slingshot.model"/>
+   </requires>
+
+   <plugin
+         id="org.palladiosimulator.analyzer.slingshot.application"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
