@@ -10,6 +10,7 @@ import org.palladiosimulator.analyzer.slingshot.behavior.spd.interpreter.entity.
 import org.palladiosimulator.analyzer.slingshot.behavior.spd.interpreter.entity.trigger.TaskCountTriggerChecker;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.entity.Subscriber;
 import org.palladiosimulator.analyzer.slingshot.monitor.data.events.MeasurementMade;
+import org.palladiosimulator.spd.ScalingPolicy;
 import org.palladiosimulator.spd.targets.CompetingConsumersGroup;
 import org.palladiosimulator.spd.triggers.SimpleFireOnValue;
 import org.palladiosimulator.spd.triggers.expectations.ExpectedCount;
@@ -42,12 +43,14 @@ final class StimuliInterpreter extends StimuliSwitch<InterpretationResult> {
 	public InterpretationResult caseSimulationTime(final SimulationTime object) {
 		final ExpectedTime expectedTime = this.checkExpectedValue(ExpectedTime.class);
 
-		final SimulationTimeReached event = new SimulationTimeReached(this.scalingTriggerInterpreter.policy.getTargetGroup().getId(), expectedTime.getValue());
+		final ScalingPolicy policy = this.scalingTriggerInterpreter.policy;
+		final SimulationTimeReached event = new SimulationTimeReached(policy.getTargetGroup().getId(), policy.getId(),
+				expectedTime.getValue(), 0);
 
 		return (new InterpretationResult()).scheduleEvent(event)
 										   .listenEvent(Subscriber.builder(SimulationTimeReached.class)
 												   				  .name("something"))
-										   .triggerChecker(new SimulationTimeChecker(this.trigger));
+										   .triggerChecker(new SimulationTimeChecker(this.trigger, policy.getId()));
 	}
 
 

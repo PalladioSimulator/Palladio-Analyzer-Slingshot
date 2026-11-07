@@ -20,6 +20,7 @@ import org.palladiosimulator.analyzer.slingshot.common.events.AbstractSimulation
 public final class SimulationTimeReached extends AbstractSimulationEvent implements SpdBasedEvent {
 
 	private final String targetGroupId;
+	private final String scalingPolicyId;
 
 	/**
 	 * Constructs a new simulation time reached event that is scheduled at exactly {@code simulationTime} and a
@@ -33,17 +34,42 @@ public final class SimulationTimeReached extends AbstractSimulationEvent impleme
 	 * @param delay A non-negative number specifying a delay after the simulation time.
 	 */
 	public SimulationTimeReached(final String targetGroupId, final double simulationTime, final double delay) {
-		super(delay);
-		this.targetGroupId = targetGroupId;
-		this.setTime(simulationTime);
+		this(targetGroupId, null, simulationTime, delay);
 	}
 	
 	public SimulationTimeReached(final String targetGroupId, final double simulationTime) {
 		this(targetGroupId, simulationTime, 0);
 	}
 
+	/**
+	 * Constructs a simulation time reached event that belongs to one scaling policy: only that
+	 * policy's time trigger reacts to it, the other policies of the target group do not.
+	 *
+	 * @param targetGroupId   The target group identifier this event belongs to.
+	 * @param scalingPolicyId The scaling policy whose trigger scheduled this event, or
+	 *                        {@code null} for an event every policy of the group receives.
+	 * @param simulationTime  A positive number that specifies the exact simulation time that
+	 *                        should be reached.
+	 * @param delay           A non-negative number specifying a delay after the simulation time.
+	 */
+	public SimulationTimeReached(final String targetGroupId, final String scalingPolicyId,
+			final double simulationTime, final double delay) {
+		super(delay);
+		this.targetGroupId = targetGroupId;
+		this.scalingPolicyId = scalingPolicyId;
+		this.setTime(simulationTime);
+	}
+
 	public String getTargetGroupId() {
 		return targetGroupId;
+	}
+
+	/**
+	 * @return The scaling policy this event belongs to, or {@code null} if it belongs to every
+	 *         policy of its target group.
+	 */
+	public String getScalingPolicyId() {
+		return scalingPolicyId;
 	}
 	
 	
