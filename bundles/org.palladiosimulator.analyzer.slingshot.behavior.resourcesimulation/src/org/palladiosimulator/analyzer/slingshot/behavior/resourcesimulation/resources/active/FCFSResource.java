@@ -138,7 +138,7 @@ public class FCFSResource extends AbstractActiveResource {
 	 * @return The new JobProgressed event if there is any, an empty Optional
 	 *         otherwise.
 	 */
-	private Optional<JobProgressed> scheduleNextEvent() {
+	protected Optional<JobProgressed> scheduleNextEvent() {
 		if (this.processes.isEmpty()) {
 			return Optional.empty();
 		}

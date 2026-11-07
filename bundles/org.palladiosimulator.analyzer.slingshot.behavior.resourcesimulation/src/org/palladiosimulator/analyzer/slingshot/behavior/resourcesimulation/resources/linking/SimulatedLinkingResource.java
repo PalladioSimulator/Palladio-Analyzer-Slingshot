@@ -1,5 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.behavior.resourcesimulation.resources.linking;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -50,15 +51,25 @@ public class SimulatedLinkingResource extends FCFSResource {
 
 	@Override
 	public Set<AbstractJobEvent> onJobProgressed(final JobProgressed jobProgressed) {
-		final double ranNumber = Math.random();
 		final Job job = jobProgressed.getEntity();
 
-		if (ranNumber < this.failureRate) {
-			this.abortJob(job);
+		/*
+		 * Draw only if a failure is possible: a draw at probability 0 would shift the random
+		 * stream of every later branch for nothing.
+		 */
+		if (this.failureRate > 0) {
+			final double ranNumber = Math.random();
+			if (ranNumber < this.failureRate) {
+				this.abortJob(job);
 
-			return Set.of(new JobAborted(job, 0, String.format(
-					"Linking resource simulated a failure: Number was %f and thus within the failure rate of %f",
-					ranNumber, this.failureRate)));
+				final Set<AbstractJobEvent> events = new HashSet<>();
+				events.add(new JobAborted(job, 0, String.format(
+						"Linking resource simulated a failure: Number was %f and thus within the failure rate of %f",
+						ranNumber, this.failureRate)));
+				/* The failed transfer leaves the link: the next queued transfer starts. */
+				this.scheduleNextEvent().ifPresent(events::add);
+				return events;
+			}
 		}
 
 
