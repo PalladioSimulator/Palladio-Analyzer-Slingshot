@@ -30,8 +30,18 @@ import org.palladiosimulator.spd.targets.TargetGroup;
  */
 public class TargetGroupUtils {
 	
-	private static final Allocation allocation = Slingshot.getInstance().getInstance(Allocation.class);
-	private static final Configuration configuration = Slingshot.getInstance().getInstance(Configuration.class);
+	/*
+	 * The models are looked up per call, not kept in static fields: a static field would hold
+	 * the first run's allocation and semantic configuration for every later run in the same
+	 * JVM, so two runs would see each other's group size.
+	 */
+	private static Allocation allocation() {
+		return Slingshot.getInstance().getInstance(Allocation.class);
+	}
+
+	private static Configuration configuration() {
+		return Slingshot.getInstance().getInstance(Configuration.class);
+	}
 	
 	/**
 	 * Checks whether the container is part of the elastic infrastructure.
@@ -43,7 +53,7 @@ public class TargetGroupUtils {
 	 */
 	public static boolean isContainerInElasticInfrastructure(final ResourceContainer container, final ElasticInfrastructure targetGroup) {
 		
-		List<ElasticInfrastructureCfg> elasticInfraCfgs = configuration.getTargetCfgs().stream()
+		List<ElasticInfrastructureCfg> elasticInfraCfgs = configuration().getTargetCfgs().stream()
 														  .filter(cfg->cfg instanceof ElasticInfrastructureCfg c)
 														  .map(c -> (ElasticInfrastructureCfg)c)
 														  .filter(c -> c.getUnit().getId().equals(targetGroup.getUnit().getId()))
@@ -189,7 +199,7 @@ public class TargetGroupUtils {
 	private static Stream<AssemblyContext> getRelatedAssemblyContextFromInfrastructure(
 			final ElasticInfrastructure infrastructure) {
 		return infrastructure.getPCM_ResourceEnvironment().getResourceContainer_ResourceEnvironment().stream()
-				.flatMap(rc -> allocation.getAllocationContexts_Allocation().stream()
+				.flatMap(rc -> allocation().getAllocationContexts_Allocation().stream()
 						.filter(ac -> ac.getResourceContainer_AllocationContext().getId().equals(rc.getId()))
 						.map(AllocationContext::getAssemblyContext_AllocationContext));
 	}
@@ -219,7 +229,7 @@ public class TargetGroupUtils {
 	 * @return stream of resource containers related to the assembly context.
 	 */
 	private static Stream<ResourceContainer> getContainerRelatedToContext(final AssemblyContext context) {
-		return allocation.getAllocationContexts_Allocation().stream()
+		return allocation().getAllocationContexts_Allocation().stream()
 				.filter(ac -> ac.getAssemblyContext_AllocationContext().getId().equals(context.getId()))
 				.map(AllocationContext::getResourceContainer_AllocationContext)
 				.flatMap(rc -> rc.getResourceEnvironment_ResourceContainer().getResourceContainer_ResourceEnvironment()
@@ -232,7 +242,7 @@ public class TargetGroupUtils {
 	 * the replicated contexts as well.
 	 */
 	private static Stream<AssemblyContext> getAllContextsToConsider(final ServiceGroup serviceGroup) {
-		return configuration.getTargetCfgs().stream()
+		return configuration().getTargetCfgs().stream()
 					.filter(ServiceGroupCfg.class::isInstance)
 					.map(ServiceGroupCfg.class::cast)
 					.filter(sgc -> sgc.getUnit().getId().equals(serviceGroup.getUnitAssembly().getId()))
@@ -241,7 +251,7 @@ public class TargetGroupUtils {
 
 	private static Stream<AssemblyContext> getAllContextsToConsider(
 			final CompetingConsumersGroup competingConsumersGroup) {
-		return configuration.getTargetCfgs().stream().filter(CompetingConsumersGroupCfg.class::isInstance)
+		return configuration().getTargetCfgs().stream().filter(CompetingConsumersGroupCfg.class::isInstance)
 				.map(CompetingConsumersGroupCfg.class::cast)
 				.filter(ccgc -> ccgc.getUnit().getId().equals(competingConsumersGroup.getUnitAssembly().getId()))
 				.flatMap(ccgc -> Stream.concat(Stream.of(ccgc.getBrokerAssembly()), ccgc.getElements().stream()));
@@ -257,7 +267,7 @@ public class TargetGroupUtils {
 	 */
 	private static boolean isResourceContainerInContextsToConsider(final ResourceContainer container,
 			final Supplier<Stream<AssemblyContext>> contextsToConsider) {
-		return allocation.getAllocationContexts_Allocation().stream()
+		return allocation().getAllocationContexts_Allocation().stream()
 				.filter(ac -> contextsToConsider
 						.get()
 						.anyMatch(asc -> ac.getAssemblyContext_AllocationContext().getId().equals(asc.getId())))
