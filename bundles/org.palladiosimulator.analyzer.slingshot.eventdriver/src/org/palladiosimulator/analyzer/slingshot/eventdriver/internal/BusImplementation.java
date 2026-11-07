@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import org.apache.log4j.Logger;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.HandlerException;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.OnException;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.PostIntercept;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.PreIntercept;
@@ -53,6 +54,12 @@ public final class BusImplementation implements Bus {
 
 	private final Map<Class<?>, Set<Subscriber<?>>> subscribers = new HashMap<>();
 
+
+	/**
+	 * The first error a subscriber threw while the current event was delivered; rethrown by
+	 * {@link #post(Object)} once the delivery is over.
+	 */
+	private Throwable pendingError = null;
 
 	private boolean registrationOpened = true;
 	private boolean invocationOpened = true;
@@ -149,6 +156,13 @@ public final class BusImplementation implements Bus {
 		}
 		LOGGER.debug("Now post " + event.getClass().getSimpleName());
 		this.bus.onNext(Objects.requireNonNull(event));
+		final Throwable error = this.pendingError;
+		if (error != null) {
+			/* A throwing handler aborts the run instead of being dropped silently. */
+			this.pendingError = null;
+			throw error instanceof final HandlerException handlerException ? handlerException
+					: new HandlerException(event, error);
+		}
 	}
 
 	private void searchForSubscribers(final CompositeDisposable composite,
@@ -191,6 +205,9 @@ public final class BusImplementation implements Bus {
 				.filter(exClazz -> exClazz.isAssignableFrom(error.getClass()))
 				.flatMap(exClazz -> this.exceptionHandlers.get(exClazz).stream())
 				.forEach(exHandler -> exHandler.accept(error));
+		if (this.pendingError == null) {
+			this.pendingError = error;
+		}
 	}
 
 	/**
