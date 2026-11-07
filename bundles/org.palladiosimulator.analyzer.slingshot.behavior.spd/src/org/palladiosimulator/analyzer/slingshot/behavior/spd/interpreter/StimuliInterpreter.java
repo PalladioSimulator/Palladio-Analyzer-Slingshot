@@ -1,5 +1,6 @@
 package org.palladiosimulator.analyzer.slingshot.behavior.spd.interpreter;
 
+import org.eclipse.emf.ecore.EObject;
 import org.palladiosimulator.analyzer.slingshot.behavior.spd.data.SimulationTimeReached;
 import org.palladiosimulator.analyzer.slingshot.behavior.spd.interpreter.ScalingTriggerInterpreter.InterpretationResult;
 import org.palladiosimulator.analyzer.slingshot.behavior.spd.interpreter.entity.trigger.CPUUtilizationTriggerChecker;
@@ -93,6 +94,11 @@ final class StimuliInterpreter extends StimuliSwitch<InterpretationResult> {
 
 		return (new InterpretationResult()).listenEvent(Subscriber.builder(MeasurementMade.class).name("queueLength"))
 				.triggerChecker(new QueueLengthTriggerChecker(this.trigger, object));
+	}
+
+	@Override
+	public InterpretationResult defaultCase(final EObject object) {
+		throw ScalingTriggerInterpreter.unsupported(this.scalingTriggerInterpreter.policy, "stimulus", object);
 	}
 
 	@SuppressWarnings("unchecked")

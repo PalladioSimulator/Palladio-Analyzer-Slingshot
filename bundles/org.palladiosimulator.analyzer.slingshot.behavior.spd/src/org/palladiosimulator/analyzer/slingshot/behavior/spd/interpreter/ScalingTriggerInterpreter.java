@@ -3,6 +3,7 @@ package org.palladiosimulator.analyzer.slingshot.behavior.spd.interpreter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EObject;
 import org.palladiosimulator.analyzer.slingshot.behavior.spd.data.SpdBasedEvent;
 import org.palladiosimulator.analyzer.slingshot.behavior.spd.interpreter.entities.Filter;
 import org.palladiosimulator.analyzer.slingshot.behavior.spd.interpreter.entities.LogicalANDComboundFilter;
@@ -42,8 +43,23 @@ public class ScalingTriggerInterpreter extends TriggersSwitch<ScalingTriggerInte
 
 	@Override
 	public InterpretationResult caseSimpleFireOnTrend(final SimpleFireOnTrend object) {
-		// TODO Auto-generated method stub
-		return super.caseSimpleFireOnTrend(object);
+		throw unsupported(this.policy, "trigger", object);
+	}
+
+	@Override
+	public InterpretationResult defaultCase(final EObject object) {
+		throw unsupported(this.policy, "trigger", object);
+	}
+
+	/**
+	 * An element of the policy the interpreter has no checker for. The configuration fails with
+	 * this error instead of dropping the whole SPD with a {@link NullPointerException}.
+	 */
+	static IllegalArgumentException unsupported(final ScalingPolicy policy, final String kind,
+			final EObject element) {
+		return new IllegalArgumentException(String.format(
+				"Scaling policy %s [%s]: the %s %s is not supported by the SPD interpreter.",
+				policy.getEntityName(), policy.getId(), kind, element.eClass().getName()));
 	}
 	
 	static final class InterpretationResult {
