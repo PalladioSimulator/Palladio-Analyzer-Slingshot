@@ -87,6 +87,11 @@ public class UsageScenarioInterpreter extends UsagemodelSwitch<Set<DESEvent>> {
         final int numberOfLoops = StackContext.evaluateStatic(loop.getLoopIteration_Loop()
             .getSpecification(), Integer.class);
         LOGGER.debug("Interpret loop. Maximum loop number: " + numberOfLoops);
+
+        if (numberOfLoops <= 0) {
+            /* No iteration: the body is skipped, the user continues after the loop. */
+            return Set.of(new UserInterpretationProgressed(this.userContext.updateAction(loop.getSuccessor())));
+        }
         final ScenarioBehaviour bodyBehavior = loop.getBodyBehaviour_Loop();
 
         final UsageScenarioBehaviorContext behaviorContext = LoopScenarioBehaviorContext.builder()
