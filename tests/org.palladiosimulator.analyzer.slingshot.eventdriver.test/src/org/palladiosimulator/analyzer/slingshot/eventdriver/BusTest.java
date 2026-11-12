@@ -49,7 +49,21 @@ public class BusTest {
 		/* the error is reported once: the next post is not failed by it */
 		this.bus.post(new SomeEvent());
 	}
-	
+
+	@Test
+	public void aThrowingHandlerStaysSubscribed() {
+		final Other other = new Other();
+		this.bus.register(other);
+		this.bus.closeRegistration();
+		assertThrows(HandlerException.class, () -> this.bus.post(new SomeOtherEvent()));
+		/*
+		 * the same event type again: the handler still runs and fails again (a bus that lives longer
+		 * than one run, like the system bus, keeps reporting it)
+		 */
+		assertThrows(HandlerException.class, () -> this.bus.post(new SomeOtherEvent()));
+		assertEquals(2, other.exceptions);
+	}
+
 	@PreIntercept
 	public InterceptionResult preIntercept(final InterceptorInformation inf, final SomeEvent event) {
 		System.out.println("We intercept this SomeEvent of the method " + inf.getName());
