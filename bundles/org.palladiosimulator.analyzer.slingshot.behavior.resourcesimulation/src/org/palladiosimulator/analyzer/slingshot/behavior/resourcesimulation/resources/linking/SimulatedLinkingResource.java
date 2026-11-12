@@ -68,6 +68,8 @@ public class SimulatedLinkingResource extends FCFSResource {
 						ranNumber, this.failureRate)));
 				/* The failed transfer leaves the link: the next queued transfer starts. */
 				this.scheduleNextEvent().ifPresent(events::add);
+				/* the link's queue length and utilization after the failure, as on a completion */
+				events.add(this.publishState(job));
 				return events;
 			}
 		}
