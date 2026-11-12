@@ -1,21 +1,15 @@
 package org.palladiosimulator.analyzer.slingshot.behavior.systemsimulation.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.apache.log4j.Logger;
-import org.eclipse.emf.common.util.EList;
 import org.palladiosimulator.pcm.core.composition.AssemblyConnector;
 import org.palladiosimulator.pcm.core.composition.AssemblyContext;
 import org.palladiosimulator.pcm.core.composition.AssemblyInfrastructureConnector;
 import org.palladiosimulator.pcm.core.composition.ProvidedDelegationConnector;
-import org.palladiosimulator.pcm.repository.BasicComponent;
-import org.palladiosimulator.pcm.repository.OperationProvidedRole;
 import org.palladiosimulator.pcm.repository.ProvidedRole;
-import org.palladiosimulator.pcm.repository.RepositoryComponent;
 import org.palladiosimulator.pcm.repository.RequiredRole;
-import org.palladiosimulator.pcm.repository.Role;
-import org.palladiosimulator.pcm.repository.Signature;
-import org.palladiosimulator.pcm.seff.ServiceEffectSpecification;
 import org.palladiosimulator.pcm.system.System;
 
 /**
@@ -24,7 +18,7 @@ import org.palladiosimulator.pcm.system.System;
  * {@link SystemModelRepository#getDefaultInstance()} or use the {@code @Inject}
  * annotation and let the module system inject this instance.
  *
- * @author Julijan Katic
+ * @author Julijan Katic, Sarah Stieß
  */
 public class SystemModelRepositoryImpl implements SystemModelRepository {
 
@@ -38,58 +32,35 @@ public class SystemModelRepositoryImpl implements SystemModelRepository {
 	}
 
 	@Override
-	public Optional<ServiceEffectSpecification> findSeffFromRequiredRole(final RequiredRole requiredRole,
-			final Signature signature) {
-		return this.systemModel.getConnectors__ComposedStructure().stream()
+	public Optional<AssemblyConnector> findOutgoingAssemblyConnector(final RequiredRole requiredRole,
+			final AssemblyContext requiringContext) {
+		final List<AssemblyConnector> connectors = this.systemModel.getConnectors__ComposedStructure().stream()
 				.filter(connector -> connector instanceof AssemblyConnector)
 				.map(connector -> (AssemblyConnector) connector)
-				.filter(assemblyConnector -> assemblyConnector.getRequiredRole_AssemblyConnector().getId()
-						.equals(requiredRole.getId()))
-				.map(AssemblyConnector::getProvidingAssemblyContext_AssemblyConnector)
-				.map(AssemblyContext::getEncapsulatedComponent__AssemblyContext)
-				.filter(BasicComponent.class::isInstance).map(BasicComponent.class::cast)
-				.map(component -> this.getSeffFromBasicComponent(component, signature)).filter(Optional::isPresent)
-				.map(Optional::get)
-				.findFirst();
+				.filter(connector -> connector.getRequiredRole_AssemblyConnector().getId().equals(requiredRole.getId())
+						&& connector.getRequiringAssemblyContext_AssemblyConnector().getId()
+								.equals(requiringContext.getId()))
+				.toList();
 
-	}
+		if (connectors.size() > 1) {
+			LOGGER.debug(String.format(
+					"More than one matching connector for role %s required by %s :  %s. Selecting arbitrarily.",
+					requiredRole.getId(), requiringContext.getId(), connectors.toString()));
+		}
 
-	public Optional<AssemblyContext> findAssemblyContextFromRepositoryComponent(final RepositoryComponent component) {
-		return this.systemModel.getAssemblyContexts__ComposedStructure().stream()
-				.filter(context -> context.getEncapsulatedComponent__AssemblyContext().getId()
-						.equals(component.getId()))
-				.findFirst();
-	}
-
-	@Override
-	public Optional<AssemblyContext> findAssemblyContextFromRequiredRole(final RequiredRole requiredRole) {
-		return this.systemModel.getConnectors__ComposedStructure().stream()
-				.filter(connector -> connector instanceof AssemblyConnector)
-				.map(connector -> (AssemblyConnector) connector)
-				.filter(assemblyConnector -> assemblyConnector.getRequiredRole_AssemblyConnector().getId()
-						.equals(requiredRole.getId()))
-				.map(AssemblyConnector::getProvidingAssemblyContext_AssemblyConnector)
-				.findFirst();
-	}
-
-	@Override
-	public Optional<OperationProvidedRole> findProvidedRoleFromRequiredRole(final RequiredRole requiredRole) {
-		return this.systemModel.getConnectors__ComposedStructure().stream()
-				.filter(connector -> connector instanceof AssemblyConnector)
-				.map(connector -> (AssemblyConnector) connector)
-				.filter(assemblyConnector -> assemblyConnector.getRequiredRole_AssemblyConnector().getId()
-						.equals(requiredRole.getId()))
-				.map(AssemblyConnector::getProvidedRole_AssemblyConnector).findFirst();
+		return connectors.stream().findAny();
 	}
 
 	@Override
 	public Optional<AssemblyContext> findInfrastructureAssemblyContextFromRequiredRole(
-			final RequiredRole requiredRole) {
+			final RequiredRole requiredRole, final AssemblyContext requiringContext) {
 		return this.systemModel.getConnectors__ComposedStructure().stream()
 				.filter(connector -> connector instanceof AssemblyInfrastructureConnector)
 				.map(connector -> (AssemblyInfrastructureConnector) connector)
-				.filter(assemblyInfraConnector -> assemblyInfraConnector
-						.getRequiredRole__AssemblyInfrastructureConnector().getId().equals(requiredRole.getId()))
+				.filter(connector -> connector
+						.getRequiredRole__AssemblyInfrastructureConnector().getId().equals(requiredRole.getId())
+						&& connector.getRequiringAssemblyContext__AssemblyInfrastructureConnector().getId()
+								.equals(requiringContext.getId()))
 				.map(AssemblyInfrastructureConnector::getProvidingAssemblyContext__AssemblyInfrastructureConnector)
 				.findFirst();
 	}
@@ -97,8 +68,6 @@ public class SystemModelRepositoryImpl implements SystemModelRepository {
 	@Override
 	public Optional<ProvidedDelegationConnector> getConnectedProvidedDelegationConnector(
 			final ProvidedRole providedRole) {
-
-		final EList<ProvidedRole> roles = this.systemModel.getProvidedRoles_InterfaceProvidingEntity();
 
 		final boolean providedRolePresent = this.systemModel.getProvidedRoles_InterfaceProvidingEntity().stream()
 				.filter(systemProvidedRole -> systemProvidedRole.getId().equals(providedRole.getId()))
@@ -117,83 +86,6 @@ public class SystemModelRepositoryImpl implements SystemModelRepository {
 				.filter(connector -> connector.getOuterProvidedRole_ProvidedDelegationConnector().getId()
 						.equals(providedRole.getId()))
 				.findFirst();
-	}
-
-	@Override
-	public Optional<ServiceEffectSpecification> getDelegatedComponentSeff(final ProvidedDelegationConnector connector,
-			final Signature signature) {
-		final ProvidedRole role = connector.getInnerProvidedRole_ProvidedDelegationConnector();
-		return this.getSeffFromProvidedRole(role, signature);
-	}
-
-	@Override
-	public Optional<ServiceEffectSpecification> getSeffFromProvidedRole(final ProvidedRole role,
-			final Signature signature) {
-
-		LOGGER.info("Find SEFF: " + role.getEntityName() + " (ProvidedRole) and " + signature.getEntityName()
-				+ " (Signature)");
-
-		LOGGER.debug(
-				"Number of assembly contexts: " + this.systemModel.getAssemblyContexts__ComposedStructure().size());
-
-		return this.systemModel.getAssemblyContexts__ComposedStructure().stream()
-				.map(AssemblyContext::getEncapsulatedComponent__AssemblyContext)
-				.peek(component -> LOGGER.debug("Encapsulated Component: " + component.getEntityName()))
-				.filter(component -> component.getProvidedRoles_InterfaceProvidingEntity().stream()
-						.anyMatch(providedRole -> providedRole.getId().equals(role.getId())))
-				.peek(component -> LOGGER.info("Found the component: " + component.getEntityName()))
-				.filter(BasicComponent.class::isInstance)
-				.map(BasicComponent.class::cast)
-				.peek(component -> LOGGER.info("Found the basic component: " + component.getEntityName()))
-				.map(basicComponent -> this.getSeffFromBasicComponent(basicComponent, signature))
-				.filter(Optional::isPresent)
-				.map(Optional::get)
-				.findFirst();
-
-	}
-
-	@Override
-	public Optional<AssemblyContext> findAssemblyContextByProvidedRole(final ProvidedRole role) {
-		LOGGER.debug("findAssemblyContextByProvidedRole: ProvidedRole[id=" + role.getId() + "]");
-//		return this.systemModel.getConnectors__ComposedStructure().stream()
-//				.filter(AssemblyConnector.class::isInstance)
-//				.map(AssemblyConnector.class::cast)
-//				.peek(connector -> LOGGER
-//						.debug("AssemblyConnector found: " + connector.getProvidedRole_AssemblyConnector().getId()))
-//				.filter(connector -> connector.getProvidedRole_AssemblyConnector().getId().equals(role.getId()))
-//				.map(AssemblyConnector::getProvidingAssemblyContext_AssemblyConnector)
-//				.findFirst();
-		return this.systemModel.getAssemblyContexts__ComposedStructure().stream().filter(
-				context -> this.isProvidedRoleInComponent(context.getEncapsulatedComponent__AssemblyContext(), role))
-				.findFirst();
-	}
-
-	private boolean isProvidedRoleInComponent(final RepositoryComponent component, final ProvidedRole role) {
-		return component.getProvidedRoles_InterfaceProvidingEntity().stream()
-				.anyMatch(providedRole -> providedRole.getId().equals(role.getId()));
-	}
-
-	@Override
-	public Optional<AssemblyContext> findAssemblyContextByRole(final Role role) {
-		final Optional<AssemblyContext> result;
-		if (role instanceof ProvidedRole) {
-			result = this.findAssemblyContextByProvidedRole((ProvidedRole) role);
-		} else if (role instanceof RequiredRole) {
-			result = this.findAssemblyContextFromRequiredRole((RequiredRole) role);
-		} else {
-			throw new IllegalArgumentException("The role must be either a ProvidedRole or a RequiredRole.");
-		}
-		return result;
-	}
-
-	public Optional<ServiceEffectSpecification> getSeffFromBasicComponent(final BasicComponent basicComponent,
-			final Signature signature) {
-
-		LOGGER.info("Start searching for seff: " + basicComponent.getEntityName());
-		return basicComponent.getServiceEffectSpecifications__BasicComponent().stream()
-				.filter(spec -> spec.getDescribedService__SEFF().getId().equals(signature.getId()))
-				.findFirst();
-
 	}
 
 }
