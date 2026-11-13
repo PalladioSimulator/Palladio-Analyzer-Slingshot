@@ -12,8 +12,21 @@ import org.palladiosimulator.spd.triggers.stimuli.SimulationTime;
 
 public final class SimulationTimeChecker extends TriggerChecker<SimulationTime> {
 
+	/** The policy whose time events this checker reacts to; {@code null}: every time event. */
+	private final String scalingPolicyId;
+
 	public SimulationTimeChecker(final SimpleFireOnValue trigger) {
+		this(trigger, null);
+	}
+
+	/**
+	 * @param trigger         The trigger to check.
+	 * @param scalingPolicyId The policy of the trigger: time events that another policy of the
+	 *                        target group scheduled are disregarded.
+	 */
+	public SimulationTimeChecker(final SimpleFireOnValue trigger, final String scalingPolicyId) {
 		super(trigger, SimulationTime.class, Set.of(ExpectedTime.class));
+		this.scalingPolicyId = scalingPolicyId;
 	}
 
 	@Override
@@ -24,6 +37,11 @@ public final class SimulationTimeChecker extends TriggerChecker<SimulationTime> 
 		}
 		
 		final SimulationTimeReached simulationTimeReached = (SimulationTimeReached) event;
+		if (this.scalingPolicyId != null && simulationTimeReached.getScalingPolicyId() != null
+				&& !this.scalingPolicyId.equals(simulationTimeReached.getScalingPolicyId())) {
+			/* A time policy hears only its own clock, not the instants of the other policies. */
+			return FilterResult.disregard("The simulation time event belongs to another scaling policy.");
+		}
 		final ComparatorResult comparatorResult = this.compareToTrigger(simulationTimeReached.time());
 		if (comparatorResult == ComparatorResult.IN_ACCORDANCE) {
 			return FilterResult.success(event);

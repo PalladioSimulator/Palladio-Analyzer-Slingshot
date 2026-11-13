@@ -6,6 +6,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.palladiosimulator.analyzer.slingshot.core.Slingshot;
 import org.palladiosimulator.analyzer.slingshot.core.api.SimulationDriver;
 import org.palladiosimulator.analyzer.slingshot.core.extension.PCMResourceSetPartitionProvider;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.HandlerException;
 import org.palladiosimulator.analyzer.slingshot.workflow.WorkflowConfigurationModule;
 import org.palladiosimulator.analyzer.workflow.core.ConstantsContainer;
 import org.palladiosimulator.analyzer.workflow.core.blackboard.PCMResourceSetPartition;
@@ -51,7 +52,11 @@ public class SimulationJob implements IBlackboardInteractingJob<MDSDBlackboard> 
 		monitor.worked(1);
 
 		monitor.subTask("Start simulation");
-		simulationDriver.start();
+		try {
+			simulationDriver.start();
+		} catch (final HandlerException e) {
+			throw new JobFailedException("The simulation was aborted: " + e.getMessage(), e);
+		}
 		monitor.worked(1);
 
 		monitor.subTask("Restore");

@@ -155,6 +155,11 @@ public class SeffInterpreter extends SeffSwitch<Set<SEFFInterpreted>> {
 
 		LOGGER.info("LoopAction: Count " + iterationCount);
 
+		if (iterationCount <= 0) {
+			/* No iteration: the body is skipped, the interpretation continues after the loop. */
+			return Set.of(new SEFFInterpretationProgressed(this.context));
+		}
+
 		final LoopBehaviorContextHolder holder = new LoopBehaviorContextHolder(object.getBodyBehaviour_Loop(),
 				object.getSuccessor_AbstractAction(), this.context.getBehaviorContext().getCurrentProcessedBehavior(),
 				iterationCount);

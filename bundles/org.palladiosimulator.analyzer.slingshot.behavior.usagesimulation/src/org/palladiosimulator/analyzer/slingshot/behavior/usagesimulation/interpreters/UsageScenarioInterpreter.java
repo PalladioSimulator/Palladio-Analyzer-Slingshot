@@ -87,10 +87,16 @@ public class UsageScenarioInterpreter extends UsagemodelSwitch<Set<DESEvent>> {
         final int numberOfLoops = StackContext.evaluateStatic(loop.getLoopIteration_Loop()
             .getSpecification(), Integer.class);
         LOGGER.debug("Interpret loop. Maximum loop number: " + numberOfLoops);
+
+        final AbstractUserAction afterLoop = actionAfter(loop);
+        if (numberOfLoops <= 0) {
+            /* No iteration: the body is skipped, the user continues after the loop. */
+            return Set.of(new UserInterpretationProgressed(this.userContext.updateAction(afterLoop)));
+        }
         final ScenarioBehaviour bodyBehavior = loop.getBodyBehaviour_Loop();
 
         final UsageScenarioBehaviorContext behaviorContext = LoopScenarioBehaviorContext.builder()
-            .withNextAction(Optional.of(loop.getSuccessor()))
+            .withNextAction(Optional.of(afterLoop))
             .withParent(Optional.of(this.userContext.getBehaviorContext()))
             .withScenarioBehavior(bodyBehavior)
             .withMaximalLoopCount(numberOfLoops)
@@ -109,6 +115,29 @@ public class UsageScenarioInterpreter extends UsagemodelSwitch<Set<DESEvent>> {
         final InnerScenarioBehaviorInitiated behaviorInitiated = new InnerScenarioBehaviorInitiated(newContext, 0);
 
         return Set.of(behaviorInitiated);
+    }
+
+    /**
+     * The action after a loop: its successor. A loop without a successor is the last action of its
+     * behaviour (PCM requires a successor for every user action except Stop, so such a model breaks
+     * that constraint); the behaviour then ends after the loop, at its Stop action, so that the user
+     * finishes, the enclosing loop repeats or the enclosing behaviour continues as usual.
+     *
+     * @throws IllegalStateException
+     *             if the loop has no successor and its behaviour no Stop action.
+     */
+    private static AbstractUserAction actionAfter(final Loop loop) {
+        if (loop.getSuccessor() != null) {
+            return loop.getSuccessor();
+        }
+        final ScenarioBehaviour behaviour = loop.getScenarioBehaviour_AbstractUserAction();
+        return behaviour.getActions_ScenarioBehaviour()
+            .stream()
+            .filter(Stop.class::isInstance)
+            .findFirst()
+            .orElseThrow(() -> new IllegalStateException(String.format(
+                    "Loop %s [%s] has no successor, and its behaviour %s [%s] has no Stop action.",
+                    loop.getEntityName(), loop.getId(), behaviour.getEntityName(), behaviour.getId())));
     }
 
     /**

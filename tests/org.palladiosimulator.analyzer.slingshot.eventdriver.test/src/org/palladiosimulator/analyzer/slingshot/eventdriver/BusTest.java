@@ -1,6 +1,10 @@
 package org.palladiosimulator.analyzer.slingshot.eventdriver;
 
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.OnException;
@@ -28,9 +32,38 @@ public class BusTest {
 		this.bus.register(new Other());
 		this.bus.closeRegistration();
 		this.bus.post(new SomeEvent());
-		this.bus.post(new SomeOtherEvent());
+		/* Other's handler throws: the post fails instead of dropping the handler silently. */
+		final SomeOtherEvent failing = new SomeOtherEvent();
+		final HandlerException e = assertThrows(HandlerException.class, () -> this.bus.post(failing));
+		assertSame(failing, e.getEvent());
+		assertEquals("COOL!! AN EXCEPTION OMGG!", e.getCause().getMessage());
 	}
-	
+
+	@Test
+	public void aThrowingHandlerFailsOnlyItsOwnPost() {
+		final Other other = new Other();
+		this.bus.register(other);
+		this.bus.closeRegistration();
+		assertThrows(HandlerException.class, () -> this.bus.post(new SomeOtherEvent()));
+		assertEquals(1, other.exceptions);
+		/* the error is reported once: the next post is not failed by it */
+		this.bus.post(new SomeEvent());
+	}
+
+	@Test
+	public void aThrowingHandlerStaysSubscribed() {
+		final Other other = new Other();
+		this.bus.register(other);
+		this.bus.closeRegistration();
+		assertThrows(HandlerException.class, () -> this.bus.post(new SomeOtherEvent()));
+		/*
+		 * the same event type again: the handler still runs and fails again (a bus that lives longer
+		 * than one run, like the system bus, keeps reporting it)
+		 */
+		assertThrows(HandlerException.class, () -> this.bus.post(new SomeOtherEvent()));
+		assertEquals(2, other.exceptions);
+	}
+
 	@PreIntercept
 	public InterceptionResult preIntercept(final InterceptorInformation inf, final SomeEvent event) {
 		System.out.println("We intercept this SomeEvent of the method " + inf.getName());
@@ -68,8 +101,11 @@ public class BusTest {
 			throw new Exception("COOL!! AN EXCEPTION OMGG!");
 		}
 		
+		int exceptions = 0;
+
 		@OnException
 		public void onException(final Exception exception) {
+			this.exceptions++;
 			System.out.println("Caught the following exception: ");
 			System.out.println(exception.getClass().getSimpleName() + ": " + exception.getMessage());
 		}

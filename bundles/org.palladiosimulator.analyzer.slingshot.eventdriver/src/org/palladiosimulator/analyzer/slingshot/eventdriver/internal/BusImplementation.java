@@ -13,6 +13,7 @@ import java.util.function.Consumer;
 
 import org.apache.log4j.Logger;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.Bus;
+import org.palladiosimulator.analyzer.slingshot.eventdriver.HandlerException;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.OnException;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.PostIntercept;
 import org.palladiosimulator.analyzer.slingshot.eventdriver.annotations.PreIntercept;
@@ -26,6 +27,7 @@ import org.palladiosimulator.analyzer.slingshot.eventdriver.internal.contractche
 import org.palladiosimulator.analyzer.slingshot.eventdriver.returntypes.Result;
 
 import io.reactivex.rxjava3.disposables.CompositeDisposable;
+import io.reactivex.rxjava3.exceptions.Exceptions;
 import io.reactivex.rxjava3.subjects.PublishSubject;
 import io.reactivex.rxjava3.subjects.Subject;
 
@@ -53,6 +55,12 @@ public final class BusImplementation implements Bus {
 
 	private final Map<Class<?>, Set<Subscriber<?>>> subscribers = new HashMap<>();
 
+
+	/**
+	 * The first error a subscriber threw while the current event was delivered; rethrown by
+	 * {@link #post(Object)} once the delivery is over.
+	 */
+	private Throwable pendingError = null;
 
 	private boolean registrationOpened = true;
 	private boolean invocationOpened = true;
@@ -94,7 +102,22 @@ public final class BusImplementation implements Bus {
 											.orElseGet(subscriber::getName), id -> new CompositeDisposable())
 				 .add(this.bus.ofType(subscriber.getEventType())
 						 	  .doOnNext(this::doOnNext)
-						 	  .subscribe(subscriber, this::doError));
+						 	  .subscribe(event -> this.deliver(subscriber, event), this::doError));
+	}
+
+	/**
+	 * Delivers an event to one subscriber. What the subscriber throws is caught here, not by RxJava:
+	 * RxJava would dispose the subscription, so the handler would never run again (on the system bus,
+	 * for the rest of the Eclipse session). The error is recorded and rethrown by
+	 * {@link #post(Object)} once the delivery is over.
+	 */
+	private <T> void deliver(final Subscriber<T> subscriber, final T event) throws Throwable {
+		try {
+			subscriber.accept(event);
+		} catch (final Throwable error) {
+			Exceptions.throwIfFatal(error);
+			this.doError(error);
+		}
 	}
 
 	@Override
@@ -149,6 +172,13 @@ public final class BusImplementation implements Bus {
 		}
 		LOGGER.debug("Now post " + event.getClass().getSimpleName());
 		this.bus.onNext(Objects.requireNonNull(event));
+		final Throwable error = this.pendingError;
+		if (error != null) {
+			/* A throwing handler aborts the run instead of being dropped silently. */
+			this.pendingError = null;
+			throw error instanceof final HandlerException handlerException ? handlerException
+					: new HandlerException(event, error);
+		}
 	}
 
 	private void searchForSubscribers(final CompositeDisposable composite,
@@ -191,6 +221,9 @@ public final class BusImplementation implements Bus {
 				.filter(exClazz -> exClazz.isAssignableFrom(error.getClass()))
 				.flatMap(exClazz -> this.exceptionHandlers.get(exClazz).stream())
 				.forEach(exHandler -> exHandler.accept(error));
+		if (this.pendingError == null) {
+			this.pendingError = error;
+		}
 	}
 
 	/**

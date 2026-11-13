@@ -87,7 +87,13 @@ public class SlingshotSimulationDriver implements SimulationDriver {
 		this.scheduleEvent(new PreSimulationConfigurationStarted());
 		this.scheduleEvent(new SimulationStarted());
 		this.scheduleEventAt(new SimulationFinished(), config.getSimuTime());
-		this.engine.start();
+		try {
+			this.engine.start();
+		} catch (final RuntimeException e) {
+			/* A handler failed (HandlerException) or the engine threw: the run ends here. */
+			this.stop();
+			throw e;
+		}
 	}
 
 	@Override
